@@ -1,7 +1,7 @@
 # clue
 Clue game for Software Engineering class in Masters program
 
-# Pre-requisites
+# Pre-reqs
 
 ```
 # Install ant to compile our project
@@ -23,13 +23,13 @@ sudo make install
 
 ```
 
-# Compile the project
+# Compile
 ```
 ant compile
 ```
 
 
-# Run the project
+# Run
 ```
 # since run is the default target...
 ant
@@ -40,13 +40,22 @@ ant run
 ```
 
 
-# Clean all sources
+# Clean
 ```
+# clean all compiled sources
 ant clean
 ```
 
+# API Docs
+```
+ant doc
+google-chrome javadoc/index.html
+```
 
-# How to setup protobuf dependency from source (note has already been done, just putting it here as reference)
+
+
+
+# How to setup protobuf dependency from source (note: this has already been done, just putting it here as a reference)
 
 ```
 sudo yum -y install maven

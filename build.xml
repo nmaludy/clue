@@ -13,7 +13,7 @@
   <property name="protobuf.dir"  value="${src.dir}/protobuf"/>
   <property name="jar" value="${dist.dir}/clue.jar"/>
   <!-- name of main class (without the .java) -->
-  <property name="main-class" value="com.clue.app.Main"/> 
+  <property name="main-class" value="com.clue.app.Main"/>
   <property name="protobuf"  value="protoc"/>
   <property name="protobuf.include"  value="-I=${protobuf.dir}"/>
   <property name="protobuf.destination"  value="--java_out=${java.dir}"/>
@@ -46,12 +46,11 @@
 
   <target name="compile" depends="init, protobuf" description="compile the source">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac
-        srcdir="${java.dir}"
-        destdir="${build.dir}"
-        debug="true"
-        debuglevel="lines,vars,source"
-        includeantruntime="false">
+    <javac srcdir="${java.dir}"
+           destdir="${build.dir}"
+           debug="true"
+           debuglevel="lines,vars,source"
+           includeantruntime="false">
       <classpath>
         <pathelement path="${classpath}"/>
         <pathelement path="${build.dir}"/>
@@ -63,7 +62,7 @@
   </target>
 
   <target name="build" depends="compile"/>
-  
+
   <target name="dist" depends="compile" description="generate the distribution">
     <delete file="${jar}"/>
     <!-- By default, exclude all files and directories-->
@@ -90,21 +89,24 @@
       <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=n"/>
     </java>
   </target>
-  
+
   <target name="document">
     <javadoc access="public"
              destdir="${doc.dir}"
              author="true"
              version="true"
              use="true"
-             windowtitle="Clue API"> 
-      
+             windowtitle="Clue API">
       <fileset dir="${src.dir}" defaultexcludes="yes">
         <include name="**/*.java"/>
       </fileset>
+      <classpath>
+        <!-- Add all .jar files inside of the lib directory to our classpath -->
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+      </classpath>
     </javadoc>
   </target>
-  
+
   <target name="doc" depends="document" />
 
 </project>

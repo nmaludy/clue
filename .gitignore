@@ -5,5 +5,8 @@ build/
 # Package Files
 dist/
 
-# Exclude all generated protobuf messages
+# Generated protobuf messages
 src/java/com/clue/msgs/*.java
+
+# Javadocs
+javadoc/
