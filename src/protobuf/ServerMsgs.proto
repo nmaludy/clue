@@ -1,0 +1,17 @@
+syntax = "proto2";
+package msgs;
+
+option java_package         = "com.clue.msgs";
+option java_outer_classname = "TestMsgsProto";
+
+message GameListResponse {
+	required string all_games   = 1;
+}
+
+message GameStart {
+	required string name   = 1;
+}
+
+message GameOver {
+	required string name   = 1;
+}

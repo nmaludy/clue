@@ -1,0 +1,13 @@
+syntax = "proto2";
+package msgs;
+
+option java_package         = "com.clue.msgs";
+option java_outer_classname = "ClientMsgsProto";
+
+message GameListRequest {
+	required string query = 2;
+}
+
+message TakeTurn {
+	required string action = 2;
+}
