@@ -8,6 +8,9 @@ Clue game for Software Engineering class in Masters program
 sudo yum -y install ant
 
 # Install the protobuf compiler (protoc)
+# If you're running RedHat based distros you can follow below
+# otherwise check out the protobuf website for instructions
+# https://developers.google.com/protocol-buffers/
 sudo yum -y install protobuf-compiler
 
 # or, from source
