@@ -46,7 +46,7 @@ ant clean
 ```
 
 
-# How to setup protobuf dependency from source
+# How to setup protobuf dependency from source (note has already been done, just putting it here as reference)
 
 ```
 sudo yum -y install maven
