@@ -49,9 +49,8 @@ ant clean
 # API Docs
 ```
 ant doc
-google-chrome javadoc/index.html
+google-chrome doc/index.html
 ```
-
 
 
 

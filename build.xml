@@ -8,7 +8,7 @@
   <property name="build.dir" value="build"/>
   <property name="lib.dir" value="lib" />
   <property name="dist.dir"  value="dist"/>
-  <property name="doc.dir"  value="javadoc"/>
+  <property name="doc.dir"  value="doc"/>
   <property name="java.dir"  value="${src.dir}/java"/>
   <property name="protobuf.dir"  value="${src.dir}/protobuf"/>
   <property name="jar" value="${dist.dir}/clue.jar"/>
@@ -25,9 +25,10 @@
 
   <target name="clean" description="clean up">
     <delete dir="${build.dir}"/>
-    <delete dir="${dist.dir}"/>
     <!-- Remove generated Proto Buff files -->
     <delete dir="${src.dir}/java/com/clue/msgs" />
+    <delete dir="${dist.dir}"/>
+    <delete dir="${doc.dir}"/>
   </target>
 
   <target name="protobuf" description="compile the protocol buffers">
@@ -57,7 +58,8 @@
         <!-- Add all .jar files inside of the lib directory to our classpath -->
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
       </classpath>
-      <compilerarg value="-Xlint"/>
+      <!-- Remove extra warnings because protobuf generated java files are noisy -->
+      <!-- <compilerarg value="-Xlint"/> -->
     </javac>
   </target>
 
