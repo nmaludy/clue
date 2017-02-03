@@ -3,9 +3,21 @@ Clue game for Software Engineering class in Masters program
 
 # Pre-requisites
 
-Install ant to compile our project
 ```
+# Install ant to compile our project
 sudo yum -y install ant
+
+# Install the protobuf compiler (protoc)
+sudo yum -y install protobuf-compiler
+
+# or, from source
+wget https://github.com/google/protobuf/releases/download/v3.1.0/protobuf-java-3.1.0.tar.gz
+tar -xvf protobuf-java-3.0.1.tar.gz
+cd protobuf-3.1.0
+./configure
+make -j`nproc`
+sudo make install
+
 ```
 
 # Compile the project
