@@ -7,6 +7,7 @@
   <property name="src.dir" value="src"/>
   <property name="build.dir" value="build"/>
   <property name="lib.dir" value="lib" />
+  <property name="log.dir" value="log" />
   <property name="dist.dir"  value="dist"/>
   <property name="doc.dir"  value="doc"/>
   <property name="java.dir"  value="${src.dir}/java"/>
@@ -29,6 +30,7 @@
     <delete dir="${src.dir}/java/com/clue/msgs" />
     <delete dir="${dist.dir}"/>
     <delete dir="${doc.dir}"/>
+    <delete dir="${log.dir}"/>
   </target>
 
   <target name="protobuf" description="compile the protocol buffers">
