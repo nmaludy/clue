@@ -1,21 +1,7 @@
 package com.clue.app;
 
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-
-import org.cfg4j.provider.ConfigurationProvider;
-import org.cfg4j.provider.ConfigurationProviderBuilder;
-import org.cfg4j.source.ConfigurationSource;
-import org.cfg4j.source.context.environment.Environment;
-import org.cfg4j.source.context.environment.ImmutableEnvironment;
-import org.cfg4j.source.context.filesprovider.ConfigFilesProvider;
-import org.cfg4j.source.files.FilesConfigurationSource;
-import org.cfg4j.source.reload.ReloadStrategy;
-import org.cfg4j.source.reload.strategy.PeriodicalReloadStrategy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.clue.app.Logger;
+import com.clue.app.Config;
 
 /**
  * Class that boots up the application
@@ -24,59 +10,17 @@ public class Main  {
 
 	private static final long serialVersionUID = 0;
 
-  private static final String defaultConfigFile = "./config/application.yaml";
-
-  private static ConfigurationProvider configInstance = null;
-
-  private static Logger logger = null;
-   
-	// Lazy Initialization (If required then only)
-	public static ConfigurationProvider getConfig(String configFile) {
-		if (configInstance == null) {
-			// Thread Safe. Might be costly operation in some case
-			synchronized (ConfigurationProvider.class) {
-				if (configInstance == null) {
-          // Specify which files to load. Configuration from both files will be merged.
-          ConfigFilesProvider configFilesProvider =
-              () -> Arrays.asList(Paths.get(configFile));
-
-          // Use local files as configuration store
-          ConfigurationSource source = new FilesConfigurationSource(configFilesProvider);
-
-          // Select path to use, without this all paths are treated relative
-          // to the users home directory
-          Environment environment = new ImmutableEnvironment(".");
-
-          // Create provider
-          configInstance = new ConfigurationProviderBuilder()
-              .withConfigurationSource(source)
-              .withEnvironment(environment)
-              .build();
-				}
-			}
-		}
-		return configInstance;
-	}
+  private static Logger logger = new Logger(Main.class);
+  private static Config config = Config.getInstance();
   
-	public static ConfigurationProvider getConfig() {
-    return getConfig(defaultConfigFile);
-  }
-
-  public static Logger getLogger() {
-    if (logger == null) {
-      synchronized (Logger.class) {
-        if (logger == null) {
-          logger = LoggerFactory.getLogger(Main.class);
-        }
-      }
+  public static <T> T instantiate(final String className, final Class<T> type){
+    try {
+      return type.cast(Class.forName(className).newInstance());
+    } catch(InstantiationException
+            | IllegalAccessException
+            | ClassNotFoundException e){
+      throw new IllegalStateException(e);
     }
-    return logger;
-  }
-
-  public static void printConfig(String cfgKey) {
-    ConfigurationProvider config = getConfig();
-    String cfg_value = config.getProperty(cfgKey, String.class);
-    getLogger().debug("Config property [" + cfgKey+ "] = " + cfg_value);
   }
   
   /**
@@ -85,29 +29,30 @@ public class Main  {
    */
 	public static void main(final String[] args) throws Exception {
     // Initialize the logger
-    // To override this on the command line simply do:
-    //  java -Dlog4j.configurationFile=/path/to/log4j2.config -jar clue.jar
-    System.setProperty("log4j.configurationFile", "./config/log4j2.properties");
-    getLogger().debug("Logger initialized");
+    logger.debug("Logger initialized");
 
     // Initialize our config file
     // To override this on the commnad line simply do:
     //  java -Dconfig.file=/path/to/config.yaml -jar clue.jar 
     String configFile = System.getProperty("config.file");
+    logger.debug("Property config file = " + configFile);
     if (configFile == null) {
-      configFile = defaultConfigFile;
+      configFile = Config.defaultConfigFile;
     }
-    getConfig(configFile);
-    getLogger().debug("Config initialized");
+    logger.debug("Loading config file = " + configFile);
+    config.getConfig(configFile);
+    logger.debug("Config initialized");
     
-    getLogger().debug("Hello World");
+    logger.debug("Hello World");
     for (int i = 0; i < args.length; ++i) {
-      getLogger().debug("Command line argument[" + Integer.toString(i) + "] = "
+      logger.debug("Command line argument[" + Integer.toString(i) + "] = "
                         + args[i]);
     }
-
-    printConfig("name");
-    printConfig("testObj.otherName");
+    
+    config.printProperty("main.class");
+    String main_classname = config.getProperty("main.class", String.class);
+    Runnable main_class = instantiate(main_classname, Runnable.class);
+    main_class.run();
 	} // end main()
   
 } // end class Main

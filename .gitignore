@@ -6,7 +6,7 @@ build/
 dist/
 
 # Generated protobuf messages
-src/java/com/clue/msgs/*.java
+src/java/com/clue/proto/*.java
 
 # Javadocs
 javadoc/

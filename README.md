@@ -145,3 +145,16 @@ cp ./cfg4j-core/build/libs/cfg4j-core-4.4.0.jar ~/src/git/nmaludy/clue/lib
 ```
 
 
+# Networking - jeromq
+
+```
+# jeromq
+wget https://github.com/zeromq/jeromq/archive/v0.3.6.tar.gz -O jeromq-0.3.6.tar.gz
+tar -xvf jeromq-0.3.6.tar.gz
+cd jeromq-0.3.6
+mvn package -DskipTests=true
+cp ./target/jeromq-0.3.6.jar ~/src/git/nmaludy/clue/lib
+# examples https://github.com/zeromq/jeromq/tree/master/src/test/java/guide
+```
+
+
