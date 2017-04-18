@@ -69,7 +69,6 @@
   <target name="build" depends="compile"/>
 
   <target name="dist" depends="compile" description="generate the distribution">
-    <delete file="${jar}"/>
     <!-- By default, exclude all files and directories-->
     <jar jarfile="${jar}" basedir="." excludes="**/**">
       <!-- Include the entire src directory in the jar file-->
