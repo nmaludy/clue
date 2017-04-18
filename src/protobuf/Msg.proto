@@ -1,0 +1,84 @@
+syntax = "proto2";
+package msg;
+
+option java_package         = "com.clue.proto";
+option java_outer_classname = "Msg";
+
+import "Data.proto";
+
+message Header {
+	optional string msgType    = 1;
+	optional int32 source      = 2;
+	optional int32 destination = 3;
+}
+
+message ConnectRequest {
+  optional Header header = 1;
+  optional string name   = 2;
+}
+
+message ConnectResponse {
+  optional Header header  = 1;
+  optional int32 clientId = 2;
+}
+
+message GameStateRequest {
+  optional Header header  = 1;
+}
+
+message GameState {
+  optional Header header            = 1;
+  repeated data.Player players      = 2;
+  repeated data.Game.Status status  = 3;
+  optional int32 clientPreviousTurn = 4;
+  optional int32 clientCurrentTurn  = 5;
+}
+
+message RevealClues {
+  optional Header header    = 1;
+  optional data.Clues clues = 2;
+}
+
+message SuspectClaimRequest {
+  optional Header header = 1;
+  optional data.Suspect.Identity suspect = 2;
+}
+
+message SuspectClaimResponse {
+  optional Header header = 1;
+  optional bool claimSuccess = 2;
+}
+
+message PlayerMove {
+  optional Header header = 1;
+  optional data.Location.Identity destination = 2;
+}
+
+message PlayerSuggestion {
+  optional Header header    = 1;
+  optional data.Guess guess = 2;
+}
+
+message PlayerAccusation {
+  optional Header header    = 1;
+  optional data.Guess guess = 2;
+}
+
+message PlayerAccusationFailed {
+  optional Header header    = 1;
+}
+
+message DisproveRequest {
+  optional Header header    = 1;
+  optional data.Guess guess = 2;
+}
+
+message DisproveResponse {
+  optional Header header          = 1;
+  optional data.Solution disproval = 2;
+}
+
+message GameEnd {
+  optional Header header      = 1;
+  optional int32 clientWinner = 2;
+}

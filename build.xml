@@ -7,6 +7,7 @@
   <property name="src.dir" value="src"/>
   <property name="build.dir" value="build"/>
   <property name="lib.dir" value="lib" />
+  <property name="log.dir" value="log" />
   <property name="dist.dir"  value="dist"/>
   <property name="doc.dir"  value="doc"/>
   <property name="java.dir"  value="${src.dir}/java"/>
@@ -26,9 +27,10 @@
   <target name="clean" description="clean up">
     <delete dir="${build.dir}"/>
     <!-- Remove generated Proto Buff files -->
-    <delete dir="${src.dir}/java/com/clue/msgs" />
+    <delete dir="${src.dir}/java/com/clue/proto" />
     <delete dir="${dist.dir}"/>
     <delete dir="${doc.dir}"/>
+    <delete dir="${log.dir}"/>
   </target>
 
   <target name="protobuf" description="compile the protocol buffers">
@@ -41,7 +43,7 @@
       <fileset dir="." includes="**/*.proto"/>
       <!-- checks if the .proto file is newer than the *Proto.java file -->
       <!-- this will allow us to only run protoc on .proto files that change -->
-      <mapper type="glob" from="src/protobuf/*.proto" to="src/java/com/clue/msgs/*Proto.java"/>
+      <mapper type="glob" from="src/protobuf/*.proto" to="src/java/com/clue/proto/*.java"/>
     </apply>
   </target>
 
@@ -89,6 +91,24 @@
     <java jar="${jar}" fork="true">
       <jvmarg value="-Xdebug"/>
       <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=n"/>
+    </java>
+  </target>
+
+  <target name="run-client" depends="dist" description="run the compiled jar as a client">
+    <java jar="${jar}" fork="true">
+      <jvmarg value="-Dlogger.id=client"/>
+      <jvmarg value="-Dconfig.file=./config/client.yaml"/>
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8100,suspend=n"/>
+    </java>
+  </target>
+
+  <target name="run-server" depends="dist" description="run the compiled jar as a server">
+    <java jar="${jar}" fork="true">
+      <jvmarg value="-Dlogger.id=server"/>
+      <jvmarg value="-Dconfig.file=./config/server.yaml"/>
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8200,suspend=n"/>
     </java>
   </target>
 

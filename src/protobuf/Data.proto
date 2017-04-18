@@ -1,0 +1,95 @@
+syntax = "proto2";
+package data;
+
+option java_package         = "com.clue.proto";
+option java_outer_classname = "Data";
+
+message Suspect {
+  enum Identity {
+    SUS_NONE = -1;
+    SUS_MISS_SCARLETT = 0;
+    SUS_COL_MUSTARD = 1;
+    SUS_MRS_WHITE = 2;
+    SUS_MR_GREEN = 3;
+    SUS_MRS_PEACOCK = 4;
+    SUS_PROF_PLUM = 5;
+  }
+
+  optional Identity identity = 1;
+}
+
+message Location {
+  enum Identity {
+    LOC_NONE = -1;
+    LOC_STUDY = 0;
+    LOC_HALL = 1;
+    LOC_LOUNGE = 2;
+    LOC_LIBRARY = 3;
+    LOC_BILLIARD_ROOM = 4;
+    LOC_DINING_ROOM = 5;
+    LOC_CONSERVATORY = 6;
+    LOC_BALLROOM = 7;
+    LOC_KITCHEN = 8;
+    LOC_HALLWAY_0 = 9;
+    LOC_HALLWAY_1 = 10;
+    LOC_HALLWAY_2 = 11;
+    LOC_HALLWAY_3 = 12;
+    LOC_HALLWAY_4 = 13;
+    LOC_HALLWAY_5 = 14;
+    LOC_HALLWAY_6 = 15;
+    LOC_HALLWAY_7 = 16;
+    LOC_HALLWAY_8 = 17;
+    LOC_HALLWAY_9 = 18;
+    LOC_HALLWAY_10 = 19;
+    LOC_HALLWAY_11 = 20;
+  }
+
+  optional Identity identity = 1;
+}
+
+message Weapon {
+  enum Identity {    
+    WPN_NONE = -1;
+    WPN_CANDLESTICK = 0;
+    WPN_KNIFE = 1;
+    WPN_LEAD_PIPE = 2;
+    WPN_REVOLVER = 3;
+    WPN_ROPE = 4;
+    WPN_WRENCH = 5;
+  }
+
+  optional Identity identity = 1;
+}
+
+message Player {
+  optional int32 clientId = 1;
+  optional string name = 2;
+  optional Suspect.Identity suspect = 3;
+  optional Location.Identity location = 4;
+}
+
+message Game {
+  enum Status {
+    GAME_NOT_STARTED = 0;
+    GAME_IN_PROGRESS = 1;
+    GAME_FINISHED    = 2;
+  }
+  optional Status status = 1;
+}
+
+message Solution {
+  optional Weapon.Identity weapon = 1;
+  optional Suspect.Identity suspect = 2;
+  optional Location.Identity location = 3;
+}
+
+message Guess {
+  optional int32 clientId = 1;
+  optional Solution solution = 2;
+}
+
+message Clues {
+  repeated Weapon.Identity weapons = 1;
+  repeated Suspect.Identity suspects = 2;
+  repeated Location.Identity locations = 3;
+}
