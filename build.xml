@@ -43,7 +43,8 @@
       <fileset dir="." includes="**/*.proto"/>
       <!-- checks if the .proto file is newer than the *Proto.java file -->
       <!-- this will allow us to only run protoc on .proto files that change -->
-      <mapper type="glob" from="src/protobuf/*.proto" to="src/java/com/clue/proto/*.java"/>
+      <!-- handledirsep="true" necessary for cross-platform builds -->
+      <globmapper from="src/protobuf/*.proto" to="src/java/com/clue/proto/*.java" handledirsep="true"/>
     </apply>
   </target>
 
@@ -68,7 +69,6 @@
   <target name="build" depends="compile"/>
 
   <target name="dist" depends="compile" description="generate the distribution">
-    <delete file="${jar}"/>
     <!-- By default, exclude all files and directories-->
     <jar jarfile="${jar}" basedir="." excludes="**/**">
       <!-- Include the entire src directory in the jar file-->
