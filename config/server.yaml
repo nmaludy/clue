@@ -1,11 +1,12 @@
 
 main.class: com.clue.app.Server
 
-
 instance:
   type: server
+  id: 0
 
 server:
+  id: 0
   bind: '*'
   port: 5559
   protocol: tcp

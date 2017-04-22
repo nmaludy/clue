@@ -2,6 +2,8 @@ package com.clue.route;
 
 import java.util.HashMap;
 
+import com.clue.proto.Msg;
+
 public class MessageParserFactory {
 
   private HashMap<String, com.google.protobuf.Message> registry = null;
@@ -9,21 +11,21 @@ public class MessageParserFactory {
   private MessageParserFactory() {
     registry = new HashMap<String, com.google.protobuf.Message>();
     
-    register(com.clue.proto.Msg.Header.getDefaultInstance());
-    register(com.clue.proto.Msg.ConnectRequest.getDefaultInstance());
-    register(com.clue.proto.Msg.ConnectResponse.getDefaultInstance());
-    register(com.clue.proto.Msg.GameStateRequest.getDefaultInstance());
-    register(com.clue.proto.Msg.GameState.getDefaultInstance());
-    register(com.clue.proto.Msg.RevealClues.getDefaultInstance());
-    register(com.clue.proto.Msg.SuspectClaimRequest.getDefaultInstance());
-    register(com.clue.proto.Msg.SuspectClaimResponse.getDefaultInstance());
-    register(com.clue.proto.Msg.PlayerMove.getDefaultInstance());
-    register(com.clue.proto.Msg.PlayerSuggestion.getDefaultInstance());
-    register(com.clue.proto.Msg.PlayerAccusation.getDefaultInstance());
-    register(com.clue.proto.Msg.PlayerAccusationFailed.getDefaultInstance());
-    register(com.clue.proto.Msg.DisproveRequest.getDefaultInstance());
-    register(com.clue.proto.Msg.DisproveResponse.getDefaultInstance());
-    register(com.clue.proto.Msg.GameEnd.getDefaultInstance());
+    register(Msg.Header.getDefaultInstance());
+    register(Msg.ConnectRequest.getDefaultInstance());
+    register(Msg.ConnectResponse.getDefaultInstance());
+    register(Msg.GameStateRequest.getDefaultInstance());
+    register(Msg.GameState.getDefaultInstance());
+    register(Msg.RevealClues.getDefaultInstance());
+    register(Msg.SuspectClaimRequest.getDefaultInstance());
+    register(Msg.SuspectClaimResponse.getDefaultInstance());
+    register(Msg.PlayerMove.getDefaultInstance());
+    register(Msg.PlayerSuggestion.getDefaultInstance());
+    register(Msg.PlayerAccusation.getDefaultInstance());
+    register(Msg.PlayerAccusationFailed.getDefaultInstance());
+    register(Msg.DisproveRequest.getDefaultInstance());
+    register(Msg.DisproveResponse.getDefaultInstance());
+    register(Msg.GameEnd.getDefaultInstance());
   }
 
   private static class SingletonHelper {

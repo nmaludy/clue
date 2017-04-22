@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.clue.proto.Msg.Header;
+import com.clue.proto.Msg;
 
 public class Transport implements Runnable {
 
@@ -34,7 +34,7 @@ public class Transport implements Runnable {
     this.type = Type.CLIENT;
   }
 
-  public Transport(Type type, MessageHandler msgHandler) {
+  public Transport(Type type, TransportMessageHandler msgHandler) {
     this.type = type;
     this.worker = new Worker(msgHandler);
   }
@@ -62,7 +62,7 @@ public class Transport implements Runnable {
     ConcurrentLinkedQueue<TransportMessage> outboundQueue = null;
     Serializer serializer = null;
 
-    public Worker(MessageHandler msgHandler) {
+    public Worker(TransportMessageHandler msgHandler) {
       super("Transport.Worker");
       int num_io_threads = 1;
       this.context = ZMQ.context(num_io_threads);
@@ -110,9 +110,17 @@ public class Transport implements Runnable {
       int socket_id = items.register(socket, Poller.POLLIN);
       int notifier_id = items.register(notifier.rcvrSocket(), Poller.POLLIN);
 
+      boolean b_term_context = true;
+
       while (!Thread.currentThread().isInterrupted()) {
         // poll and memorize multipart detection
-        int num_polled = items.poll(100);
+        try {
+          int num_polled = items.poll(100);
+        } catch (Exception ex) {
+          logger.info("Exception in poll() - exiting transport worker thread");
+          b_term_context = false;
+          break;
+        }
 
         // Got message to send
         if (items.pollin(notifier_id)) {
@@ -121,8 +129,22 @@ public class Transport implements Runnable {
             // remove the notification from the notifier queue to ack
             // that we've received it
             notifier.clearRecv();
-
+            
             // send the message
+            if (type == Type.SERVER) {
+              // if we're the server, we need to tell ZMQ which client the
+              // message needs to go to.
+              int client_id = msg.getHeader().getDestination();
+              String rcvr_identity = ClientRegistry.getInstance()
+                  .getTransportIdentity(client_id);
+              if (rcvr_identity == null) {
+                logger.error("Unable to find client identity in the registry: "
+                             + Integer.toString(client_id));
+                logger.error("Dropping message with header: " + msg.getHeader().toString());
+                continue;
+              }
+              socket.sendMore(rcvr_identity);
+            }
             socket.sendMore(""); // message envelope marker
             socket.sendMore(serializer.convertToBinary(msg.getHeader()));
             socket.send(msg.getData(), 0);
@@ -182,31 +204,25 @@ public class Transport implements Runnable {
               String envelope = message_parts.get(0);
               String msg_hdr  = message_parts.get(1);
               String msg_data = message_parts.get(2);
-              Header header = serializer.convertToHeader(msg_hdr);
+              Msg.Header header = serializer.convertToHeader(msg_hdr);
               logger.debug("header   =  " + header.toString());
 
-              notifier.getCallback().receiveMessage(
+              notifier.getCallback().handleTransportMessage(
                   new TransportMessage(header, msg_data.getBytes()));
-            
+              
             } else if (type == Type.SERVER && message_parts.size() == 4) {
               String sndr_identity = message_parts.get(0);
               String envelope = message_parts.get(1);
               String msg_hdr  = message_parts.get(2);
               String msg_data = message_parts.get(3);
-              Header header = serializer.convertToHeader(msg_hdr);
+              Msg.Header header = serializer.convertToHeader(msg_hdr);
               logger.debug("identity =  " + sndr_identity);
               logger.debug("header   =  " + header.toString());
 
-              notifier.getCallback().receiveMessage(
+              ClientRegistry.getInstance().register(sndr_identity, header.getSource());
+              
+              notifier.getCallback().handleTransportMessage(
                   new TransportMessage(header, msg_data.getBytes()));
-
-              // Just as a test, send this back to the client
-              socket.sendMore(sndr_identity);
-              socket.sendMore("");
-              socket.sendMore(msg_hdr);
-              socket.send(msg_data);
-
-              // @todo deserializer
             } else {
               logger.error("Received a message with < 4 parts! (ignorning)");
             }
@@ -220,7 +236,9 @@ public class Transport implements Runnable {
     
       logger.debug("shuttig down zmq server");
       socket.close();
-      context.term();
+      if (b_term_context) {
+        context.term();
+      }
       context = null;
       logger.debug("finishedzmq server");
     }
@@ -233,7 +251,7 @@ public class Transport implements Runnable {
     public void kill() {
       notifier.sndNotify();
     }
-    
+
     public void printHex(String message) {
       logger.debug("Message: " + message );
       for (int j = 0; j < message.length(); j++) {
@@ -253,7 +271,7 @@ public class Transport implements Runnable {
     
     @Override
     public void run() {
-      System.out.println("W: interrupt received, killing server...");
+      logger.info("Interrupt received, killing Transport (Network)...");
       try {
         worker.interrupt();
         worker.kill();

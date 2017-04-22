@@ -4,11 +4,15 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMQ.Context;
 import org.zeromq.ZMQ.Socket;
 
+import com.clue.app.Config;
 import com.clue.app.Logger;
 import com.clue.route.Message;
 import com.clue.route.NetworkMessageHandler;
+import com.clue.route.Router;
 
-import com.clue.proto.Msg.*;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import org.pushingpixels.substance.api.skin.*;
 
 /**
 * Hello World client
@@ -18,52 +22,27 @@ import com.clue.proto.Msg.*;
 public class Client implements Runnable {
 
   private static Logger logger = new Logger(Client.class);
-
+  private static Config config = Config.getInstance();
+  
   public void run() {
     logger.debug("running client.");
     NetworkMessageHandler net = new NetworkMessageHandler();
-    Header hdr = Header.newBuilder()
-        .setMsgType(ConnectRequest.getDescriptor().getFullName())
-        .setSource(1)
-        .setDestination(0)
-        .build();
-    ConnectRequest req = ConnectRequest.newBuilder()
-        .setHeader(hdr)
-        .setName("test")
-        .build();
-    net.sendMessage(new Message(hdr, req));
-    net.join();
     
-    logger.debug("finished client.");
+    JFrame.setDefaultLookAndFeelDecorated(true);
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+        try {
+          // Skin options available here:
+          // https://github.com/kirill-grouchnikov/substance/blob/master/www/docs/skins/toneddown.md
+          
+					// UIManager.setLookAndFeel(new SubstanceBusinessLookAndFeel());
+          UIManager.setLookAndFeel(new SubstanceModerateLookAndFeel());
+				} catch (Exception e) {
+					System.out.println("Substance Graphite failed to initialize");
+				}
+				JFrame f = com.clue.gui.GUI.getInstance();
+				// f.setIconImage(new ImageIcon(imageURL).getImage());
+			}
+		});
   }
-
-  // private static Random rand = new Random(System.currentTimeMillis());  
-  // public void run() {
-  //   logger.debug("running client.");
-  //   logger.debug("startign up zmq.");
-  //   Context context = ZMQ.context(1);
-    
-  //   //  Socket to talk to server
-  //   logger.debug("creating socket.");
-  //   Socket requester = context.socket(ZMQ.DEALER);
-    
-  //   String identity = String.format("%04X-%04X", rand.nextInt(), rand.nextInt());
-  //   requester.setIdentity(identity.getBytes (ZMQ.CHARSET));
-    
-  //   logger.debug("connecting to server.");
-  //   requester.connect("tcp://localhost:5559");
-        
-  //   logger.debug("launch and connect client.");
-
-      
-  //   for (int request_nbr = 0; request_nbr < 10; request_nbr++) {
-  //     requester.sendMore(""); // message envelope marker
-  //     requester.send("Hello", 0);
-  //     String reply = requester.recvStr(0);
-  //     logger.debug("Received reply " + request_nbr + " [" + reply + "]");
-  //   }
-        
-  //   requester.close();
-  //   context.term();
-  // }
 }
