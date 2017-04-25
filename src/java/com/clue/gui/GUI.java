@@ -27,11 +27,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
-/**
- * Hello World client
-* Connects REQ socket to tcp://localhost:5559
-* Sends "Hello" to server, expects "World" back
-*/
 public class GUI extends JFrame implements ActionListener, MessageHandler {
 
   private static Logger logger = new Logger(GUI.class);

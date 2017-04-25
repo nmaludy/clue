@@ -1,0 +1,13 @@
+
+main.class: com.clue.app.ClientTerminal
+
+instance:
+  type: client
+  id: 1
+  broadcast_id: -1
+
+server:
+  id: 0
+  host: localhost
+  port: 5559
+  protocol: tcp
