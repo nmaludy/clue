@@ -1,24 +1,13 @@
 package com.clue.app;
 
-import org.zeromq.ZMQ;
-import org.zeromq.ZMQ.Context;
-import org.zeromq.ZMQ.Socket;
-
 import com.clue.app.Config;
 import com.clue.app.Logger;
-import com.clue.route.Message;
 import com.clue.route.NetworkMessageHandler;
-import com.clue.route.Router;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import org.pushingpixels.substance.api.skin.*;
 
-/**
-* Hello World client
-* Connects REQ socket to tcp://localhost:5559
-* Sends "Hello" to server, expects "World" back
-*/
 public class Client implements Runnable {
 
   private static Logger logger = new Logger(Client.class);
