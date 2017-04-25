@@ -8,9 +8,15 @@ public class SubscriptionAllOutgoing implements Subscription {
 
   @Override
   public boolean matches(Message msg) {
-
-    logger.debug("destination = " + Integer.toString(msg.getHeader().getDestination())
+    int destination = msg.getHeader().getDestination();
+    logger.debug("destination = " + Integer.toString(destination)
                  + "  instance id = " + Integer.toString(Instance.getId()));
-    return msg.getHeader().getDestination() != Instance.getId();
+    if (Instance.isServer()) {
+      return destination != Instance.getId();
+    } else {
+      // client's should not send broadcast messages
+      return destination != Instance.getId() &&
+          destination != Instance.getBroadcastId();
+    }
   }
 }

@@ -4,6 +4,7 @@ main.class: com.clue.app.Client
 instance:
   type: client
   id: 1
+  broadcast_id: -1
 
 server:
   id: 0

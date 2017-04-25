@@ -1,6 +1,7 @@
 package com.clue.route;
 
 import com.clue.app.Config;
+import com.clue.app.Instance;
 import com.clue.app.Logger;
 
 public class NetworkMessageHandler implements MessageHandler, TransportMessageHandler {
@@ -13,17 +14,10 @@ public class NetworkMessageHandler implements MessageHandler, TransportMessageHa
   private Router router;
   
   public NetworkMessageHandler() {
-    String instance_type = config.getProperty("instance.type", String.class);
-    Transport.Type type = Transport.Type.CLIENT;
-    if (instance_type.toLowerCase().equals("client")) {
-      type = Transport.Type.CLIENT;
-    } else if (instance_type.toLowerCase().equals("server")) {
-      type = Transport.Type.SERVER;
-    }
     this.router = Router.getInstance();
     this.router.register(new SubscriptionAllOutgoing(), this);
     this.serializer = new Serializer();
-    this.transport = new Transport(type, this);
+    this.transport = new Transport(Instance.getType(), this);
     this.transport.run();
   }
 

@@ -26,10 +26,12 @@ public class GameLogic implements MessageHandler {
 
   public void echoBackToSender(Message msg) {
     logger.debug("EchoReplyHandler received message");
+    
+    //.setDestination(msg.getHeader().getSource())
     Msg.Header hdr = Msg.Header.newBuilder()
         .setMsgType(msg.getMessage().getDescriptorForType().getFullName())
         .setSource(Instance.getId())
-        .setDestination(msg.getHeader().getSource())
+        .setDestination(Instance.getBroadcastId())
         .build();
 
     com.google.protobuf.Message proto = msg.getMessage().toBuilder()
