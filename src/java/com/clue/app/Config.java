@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class Config {
 
   public static final String defaultConfigFile = "./config/application.yaml";
-  private static Logger logger = new Logger(Client.class);
+  private static Logger logger = new Logger(Config.class);
   
   private ConfigurationProvider configInstance = null;
 

@@ -1,0 +1,10 @@
+
+main.class: com.clue.app.GUI
+
+instance:
+  type: client
+
+server:
+  host: localhost
+  port: 5559
+  protocol: tcp

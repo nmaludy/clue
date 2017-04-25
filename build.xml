@@ -43,7 +43,8 @@
       <fileset dir="." includes="**/*.proto"/>
       <!-- checks if the .proto file is newer than the *Proto.java file -->
       <!-- this will allow us to only run protoc on .proto files that change -->
-      <mapper type="glob" from="src/protobuf/*.proto" to="src/java/com/clue/proto/*.java"/>
+      <!-- handledirsep="true" necessary for cross-platform builds -->
+      <globmapper from="src/protobuf/*.proto" to="src/java/com/clue/proto/*.java" handledirsep="true"/>
     </apply>
   </target>
 
@@ -68,7 +69,6 @@
   <target name="build" depends="compile"/>
 
   <target name="dist" depends="compile" description="generate the distribution">
-    <delete file="${jar}"/>
     <!-- By default, exclude all files and directories-->
     <jar jarfile="${jar}" basedir="." excludes="**/**">
       <!-- Include the entire src directory in the jar file-->
@@ -100,6 +100,15 @@
       <jvmarg value="-Dconfig.file=./config/client.yaml"/>
       <jvmarg value="-Xdebug"/>
       <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8100,suspend=n"/>
+    </java>
+  </target>
+
+  <target name="run-gui" depends="dist" description="run the compiled jar as a GUI">
+    <java jar="${jar}" fork="true">
+      <jvmarg value="-Dlogger.id=gui"/>
+      <jvmarg value="-Dconfig.file=./config/gui.yaml"/>
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8101,suspend=n"/>
     </java>
   </target>
 
