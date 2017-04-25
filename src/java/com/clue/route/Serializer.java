@@ -8,13 +8,13 @@ public class Serializer {
   public Serializer() {
   }
   
-  public String convertToBinary(Msg.Header header) {
-    return new String(header.toByteArray());
+  public byte[] convertToBinary(Msg.Header header) {
+    return header.toByteArray();
   }
 
-  public Msg.Header convertToHeader(String data)
+  public Msg.Header convertToHeader(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
-    return Msg.Header.parseFrom(data.getBytes());
+    return Msg.Header.parseFrom(data);
   }
 
   public TransportMessage convertToBinary(Message message) {
