@@ -10,3 +10,6 @@ src/java/com/clue/proto/*.java
 
 # Javadocs
 javadoc/
+
+# logs
+log/

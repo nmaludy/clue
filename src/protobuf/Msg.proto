@@ -13,13 +13,14 @@ message Header {
 }
 
 message ConnectRequest {
-  optional Header header = 1;
-  optional string name   = 2;
+  optional Header header  = 1;
+  optional string name    = 2;
+  optional int32 clientId = 3;
 }
 
 message ConnectResponse {
-  optional Header header  = 1;
-  optional int32 clientId = 2;
+  optional Header header       = 1;
+  optional bool goodConnection = 2;
 }
 
 message GameStateRequest {

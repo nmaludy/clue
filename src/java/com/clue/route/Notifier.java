@@ -14,14 +14,14 @@ public class Notifier {
   private static Logger logger = new Logger(Notifier.class);
   
   private Context context = null;
-  private MessageHandler callback = null;
+  private TransportMessageHandler callback = null;
   private String connectStr = null;
 
   private Socket socketRcvr = null;
   private Socket socketSndr = null;
   
   public Notifier(Context context,
-                  MessageHandler callback) {
+                  TransportMessageHandler callback) {
     this.context = context;
     this.callback = callback;
 
@@ -64,7 +64,7 @@ public class Notifier {
     }
   }
 
-  public MessageHandler getCallback() {
+  public TransportMessageHandler getCallback() {
     return callback;
   }
 
