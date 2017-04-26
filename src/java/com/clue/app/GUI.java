@@ -24,6 +24,16 @@ public class GUI implements Runnable {
     logger.debug("running GUI.");
 
     // GUI
+    System.out.print("hi there");
+    // build the gameboard here using array
+    
+    
+    // create method to print the array
+    
+    
+    // create method to make a move
+    
+    
     
     logger.debug("finished GUI.");
   }
