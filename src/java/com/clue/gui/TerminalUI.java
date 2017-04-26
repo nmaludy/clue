@@ -99,7 +99,7 @@ public class TerminalUI implements MessageHandler, Runnable
 		
   } // end of run
 	
-  public static void buildClueBoard()
+  public void buildClueBoard()
 	{
 		// instantiate the array
 		clueBoard = new String  [boardYDimension][boardXDimension];
@@ -119,7 +119,7 @@ public class TerminalUI implements MessageHandler, Runnable
 	} // end of buildclueBoard
 	
 	
-	public static void buildClueRooms()
+	public void buildClueRooms()
 	{
 		// Build the Study
 		for ( int i=2; i<9; i++ )
@@ -288,7 +288,7 @@ public class TerminalUI implements MessageHandler, Runnable
 			
 	}
 	
-	public static void buildClueHallways()
+	public void buildClueHallways()
 	{
 		// Build the Study-Hall Hallway Passage
 		for ( int i=4; i<7; i++)
@@ -516,7 +516,7 @@ public class TerminalUI implements MessageHandler, Runnable
 	} //end of buildClueHallways()
 	
 	
-	public static void writeRoomNames()
+	public void writeRoomNames()
 	{
 		// Study 
 		clueBoard[3][6] = "S";
@@ -612,7 +612,7 @@ public class TerminalUI implements MessageHandler, Runnable
 	}
 	
 	
-	public static void printClueBoard()
+	public void printClueBoard()
 	{
 		System.out.println();
 		
@@ -629,7 +629,7 @@ public class TerminalUI implements MessageHandler, Runnable
 		System.out.println();
 	} // end of printClueBoard()
 	
-	public static void printGameStatus()
+	public void printGameStatus()
 	{
 		// print your character (profile data)
 		System.out.println("Character: " + "Mr. Plum?");
