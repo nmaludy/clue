@@ -34,6 +34,9 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 	private JButton connectButton = new JButton("Connect");
 	private JButton moveButton = new JButton("Move");
 	private JButton suggestionButton = new JButton("Suggestion");
+	private GUIpanel panel = new GUIpanel();
+	private NotebookPanel notebook = new NotebookPanel();
+	private CluesPanel cluesPanel = new CluesPanel();
   private Router router = Router.getInstance();
 
 	/*
@@ -52,18 +55,30 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 						.addComponent(connectButton)
 						.addComponent(moveButton)
 						.addComponent(suggestionButton)
-            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))));
+						.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+						.addComponent(panel, 800, 800, 800)
+						.addComponent(notebook))
 
-    layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+						.addComponent(cluesPanel))));
+
+		layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 				.addGroup(layout.createSequentialGroup()
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(connectButton)
 						.addComponent(moveButton)
-						.addComponent(suggestionButton))));
-
+						.addComponent(suggestionButton))
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(panel, 800, 800, 800)
+						.addComponent(notebook))
+					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(cluesPanel))));
 
 		layout.linkSize(SwingConstants.VERTICAL, connectButton, moveButton, suggestionButton);
 
+		notebook.strikeThrough();
+		
 		connectButton.addActionListener(this);
 		moveButton.addActionListener(this);
 		suggestionButton.addActionListener(this);
