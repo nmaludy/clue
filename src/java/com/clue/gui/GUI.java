@@ -13,6 +13,7 @@ import com.clue.proto.Data;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -31,65 +32,68 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 
   private static Logger logger = new Logger(GUI.class);
 
-	private JButton connectButton = new JButton("Connect");
-	private JButton moveButton = new JButton("Move");
-	private JButton suggestionButton = new JButton("Suggestion");
-	private GUIpanel panel = new GUIpanel();
-	private NotebookPanel notebook = new NotebookPanel();
-	private CluesPanel cluesPanel = new CluesPanel();
+  private JButton connectButton = new JButton("Connect");
+  private JButton moveButton = new JButton("Move");
+  private JButton suggestionButton = new JButton("Suggestion");
+  private GUIpanel panel = new GUIpanel();
+  private NotebookPanel notebook = new NotebookPanel();
+  private CluesPanel cluesPanel = new CluesPanel();
   private Router router = Router.getInstance();
 
-	/*
-	 * Initialze and layout all GUI components.
-	 */
-	private GUI() {
-		super();
-		GroupLayout layout = new GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
+  /*
+   * Initialze and layout all GUI components.
+   */
+  private GUI() {
+    super();
+    GroupLayout layout = new GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
 
-		layout.setAutoCreateGaps(true);
-		layout.setHorizontalGroup(layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-					.addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(connectButton)
-						.addComponent(moveButton)
-						.addComponent(suggestionButton)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-						.addComponent(panel, 800, 800, 800)
-						.addComponent(notebook))
+    layout.setAutoCreateGaps(true);
+    layout.setHorizontalGroup(layout.createSequentialGroup()
+        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+          .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(connectButton)
+            .addComponent(moveButton)
+            .addComponent(suggestionButton)
+            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addComponent(panel, 800, 800, 800)
+            .addComponent(notebook))
 
-					.addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-						.addComponent(cluesPanel))));
+          .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addComponent(cluesPanel))));
 
-		layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				.addGroup(layout.createSequentialGroup()
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-						.addComponent(connectButton)
-						.addComponent(moveButton)
-						.addComponent(suggestionButton))
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-						.addComponent(panel, 800, 800, 800)
-						.addComponent(notebook))
-					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(cluesPanel))));
+    layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+        .addGroup(layout.createSequentialGroup()
+          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+            .addComponent(connectButton)
+            .addComponent(moveButton)
+            .addComponent(suggestionButton))
+          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+            .addComponent(panel, 800, 800, 800)
+            .addComponent(notebook))
+          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+              .addComponent(cluesPanel))));
 
-		layout.linkSize(SwingConstants.VERTICAL, connectButton, moveButton, suggestionButton);
+    layout.linkSize(SwingConstants.VERTICAL, connectButton, moveButton, suggestionButton);
 
-		notebook.strikeThrough();
-		
-		connectButton.addActionListener(this);
-		moveButton.addActionListener(this);
-		suggestionButton.addActionListener(this);
+    notebook.strikeThrough();
+    
+    connectButton.addActionListener(this);
+    moveButton.addActionListener(this);
+    suggestionButton.addActionListener(this);
 
-		setTitle("Clue-less");
-		pack();
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setVisible(true);
+    setTitle("Clue-less");
+    pack();
+    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    setVisible(true);
+
+    URL imageURL = this.getClass().getResource("/images/clue_icon.png");
+    setIconImage(new ImageIcon(imageURL).getImage());
 
     router.register(new SubscriptionAllIncoming(), this);
-	}
+  }
 
   private static class SingletonHelper {
     private static final GUI INSTANCE = new GUI();
@@ -100,17 +104,17 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   }
 
   /*
-	 * Handle events for button presses
-	 */
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(connectButton)) {
+   * Handle events for button presses
+   */
+  public void actionPerformed(ActionEvent e) {
+    if (e.getSource().equals(connectButton)) {
       connect();
-		} else if (e.getSource().equals(moveButton)) {
+    } else if (e.getSource().equals(moveButton)) {
       move();
-		} else if (e.getSource().equals(suggestionButton)) {
-			suggestion();
-		}
-	}
+    } else if (e.getSource().equals(suggestionButton)) {
+      suggestion();
+    }
+  }
 
   public void connect() {
     Msg.ConnectRequest req = Msg.ConnectRequest.newBuilder()
