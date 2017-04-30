@@ -51,6 +51,8 @@ public class GameLogic implements MessageHandler {
     String msg_type = msg.getHeader().getMsgType();
     if (msg_type.equals(Msg.ConnectRequest.getDescriptor().getFullName())) {
       logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+    } else if (msg_type.equals(Msg.PlayerMove.getDescriptor().getFullName())) {
+        logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
     } else {
       logger.debug("handleMessage() - got unhandled message type: " + msg_type);
     }
