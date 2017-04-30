@@ -11,6 +11,9 @@ import com.clue.route.SubscriptionAllIncoming;
 import com.clue.proto.Msg;
 import com.clue.proto.Data;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -39,6 +42,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private NotebookPanel notebook = new NotebookPanel();
   private CluesPanel cluesPanel = new CluesPanel();
   private Router router = Router.getInstance();
+  private MoveFrame MoveFrame = new MoveFrame( router );
+  private SuggestionFrame SuggestionFrame = new SuggestionFrame( router );
 
   /*
    * Initialze and layout all GUI components.
@@ -87,6 +92,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     setTitle("Clue-less");
     pack();
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    centerFrame(this);
     setVisible(true);
 
     URL imageURL = this.getClass().getResource("/images/clue_icon.png");
@@ -129,34 +135,11 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   }
 
   public void move() {
-    Msg.PlayerMove mv = Msg.PlayerMove.newBuilder()
-        .setHeader(Msg.Header.newBuilder()
-                   .setMsgType(Msg.PlayerMove.getDescriptor().getFullName())
-                   .setSource(Instance.getId())
-                   .setDestination(Instance.getServerId())
-                   .build())
-        .setDestination(Data.Location.Identity.LOC_STUDY)
-        .build();
-    router.route(new Message(mv.getHeader(), mv));
+    MoveFrame.setVisible( true );;
   }
 
   public void suggestion() {
-    Msg.PlayerSuggestion sg = Msg.PlayerSuggestion.newBuilder()
-        .setHeader(Msg.Header.newBuilder()
-                   .setMsgType(Msg.PlayerSuggestion.getDescriptor().getFullName())
-                   .setSource(Instance.getId())
-                   .setDestination(Instance.getServerId())
-                   .build())
-        .setGuess(Data.Guess.newBuilder()
-                  .setClientId(Instance.getId())
-                  .setSolution(Data.Solution.newBuilder()
-                               .setWeapon(Data.Weapon.Identity.WPN_KNIFE)
-                               .setSuspect(Data.Suspect.Identity.SUS_MRS_PEACOCK)
-                               .setLocation(Data.Location.Identity.LOC_KITCHEN)
-                               .build())
-                  .build())
-        .build();
-    router.route(new Message(sg.getHeader(), sg));
+    SuggestionFrame.setVisible( true );
   }
 
   public void handleMessage(Message msg) {
@@ -184,6 +167,20 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     } else {
       logger.debug("handleMessage() - got unhandled message type: " + msg_type);
     }
+  }
+
+  /**
+   * 
+   * Center the GUI frame in the middle of the user's screen
+   * @param w is the window of the GUI
+   */
+  public void centerFrame(Window w)
+  {
+    Toolkit tk = Toolkit.getDefaultToolkit();
+    Dimension d = tk.getScreenSize();
+    int xLoc = (d.width - w.getWidth())/2;
+    int yLoc = (d.height - w.getHeight())/2;
+    setLocation(xLoc, yLoc);
   }
 
 
