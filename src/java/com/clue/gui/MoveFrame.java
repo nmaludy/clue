@@ -11,7 +11,7 @@ public class MoveFrame extends JFrame
     public MoveFrame( Router router )
     {
         setTitle( "Move" );
-        setSize( 1200, 175 );
+        setSize( 1250, 200 );
         setDefaultCloseOperation( MoveFrame.HIDE_ON_CLOSE );
         centerFrame(this);
         JPanel panel = new MovePanel( router );

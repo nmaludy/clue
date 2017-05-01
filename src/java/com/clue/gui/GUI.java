@@ -37,7 +37,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 
   private JButton connectButton = new JButton("Connect");
   private JButton moveButton = new JButton("Move");
-  private JButton suggestionButton = new JButton("Suggestion");
+  private JButton suggestionButton = new JButton("Suggestions & Accustations");
   private GUIpanel panel = new GUIpanel();
   private NotebookPanel notebook = new NotebookPanel();
   private CluesPanel cluesPanel = new CluesPanel();

@@ -11,7 +11,7 @@ public class SuggestionFrame extends JFrame
     public SuggestionFrame(Router router)
     {
         setTitle( "Suggestion" );
-        setSize( 800, 225 );
+        setSize( 850, 350 );
         setDefaultCloseOperation( MoveFrame.HIDE_ON_CLOSE );
         centerFrame(this);
         JPanel panel = new SuggestionPanel( router );
