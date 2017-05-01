@@ -354,7 +354,6 @@ public class SuggestionPanel extends JPanel implements ActionListener {
         // Send Suggestion
         if ( e.getSource().equals(suggestionButton) )
         {
-        	System.out.println("Getting to Suggestion Submit Button");
 	        Msg.PlayerSuggestion sg = Msg.PlayerSuggestion.newBuilder()
 		            .setHeader(Msg.Header.newBuilder()
 		                       .setMsgType(Msg.PlayerSuggestion.getDescriptor().getFullName())
@@ -376,7 +375,6 @@ public class SuggestionPanel extends JPanel implements ActionListener {
         // Send Accusation
         if ( e.getSource().equals(accusationButton) )
         {
-        	System.out.println("Getting to Accusation Submit Button");
 	        Msg.PlayerAccusation sg = Msg.PlayerAccusation.newBuilder()
 		            .setHeader(Msg.Header.newBuilder()
 		                       .setMsgType(Msg.PlayerAccusation.getDescriptor().getFullName())

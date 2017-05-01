@@ -321,7 +321,6 @@ public class MovePanel extends JPanel implements ActionListener {
         // After submitting, send move message
         if ( e.getSource().equals(submitButton) )
         {
-        	System.out.println("Getting to Move Submit Button");
             Msg.PlayerMove mv = Msg.PlayerMove.newBuilder()
                     .setHeader(Msg.Header.newBuilder()
                                .setMsgType(Msg.PlayerMove.getDescriptor().getFullName())
