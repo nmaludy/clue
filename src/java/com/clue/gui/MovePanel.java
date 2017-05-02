@@ -39,6 +39,9 @@ public class MovePanel extends JPanel implements ActionListener {
     private JRadioButton Hallway9Button;
     private JRadioButton Hallway10Button;
     private JRadioButton Hallway11Button;
+    
+    // Submit Button
+    private JButton submitButton = new JButton("Submit");
 
     // Panel Constructor
     public MovePanel( Router routerIn )
@@ -156,27 +159,17 @@ public class MovePanel extends JPanel implements ActionListener {
         Hallway9Button.addActionListener(this);
         Hallway10Button.addActionListener(this);
         Hallway11Button.addActionListener(this);
-
-        /*
-        StudyButton.setEnabled(false);
-        HallButton.setEnabled(false);
-        LoungeButton.setEnabled(false);
-        LibraryButton.setEnabled(false);
-        BilliardRoomButton.setEnabled(false);
-        DiningRoomButton.setEnabled(false);
-        ConservatoryButton.setEnabled(false);
-        BallroomButton.setEnabled(false);
-        KitchenButton.setEnabled(false);
-        HallwayUpButton.setEnabled(false);
-        HallwayRightButton.setEnabled(false);
-        HallwayDownButton.setEnabled(false);
-        HallwayLeftButton.setEnabled(false);
-        */
+        
+        submitButton.addActionListener(this);
+        
+        // By default disable submit button, until location is selected
+    	submitButton.setEnabled(false);
         
         // Add panels to the main panel and arrange layout
         this.setLayout( new BorderLayout() );
         this.add( buttonPanel1, BorderLayout.NORTH );
         this.add( buttonPanel2, BorderLayout.CENTER );
+        this.add( submitButton, BorderLayout.SOUTH );
     }
     
 
@@ -190,123 +183,157 @@ public class MovePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e)
     {
     	com.clue.proto.Data.Location.Identity moveTo = null;
+    	boolean selectedLocation = false;
         
         // Determine message based on selection
-        if (StudyButton.isSelected() )
+        if ( StudyButton.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_STUDY;
+        	selectedLocation = true;
         }
         
-        if (HallButton.isSelected() )
+        if ( HallButton.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALL;
+        	selectedLocation = true;
         }
         
-        if (LoungeButton.isSelected() )
+        if ( LoungeButton.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_LOUNGE;
+        	selectedLocation = true;
         }
 
-        if (LibraryButton.isSelected() )
+        if ( LibraryButton.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_LIBRARY;
+        	selectedLocation = true;
         }
         
-        if (BilliardRoomButton.isSelected() )
+        if ( BilliardRoomButton.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_BILLIARD_ROOM;
+        	selectedLocation = true;
         }
         
-        if (DiningRoomButton.isSelected() )
+        if ( DiningRoomButton.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_DINING_ROOM;
+        	selectedLocation = true;
         }
 
-        if (ConservatoryButton.isSelected() )
+        if ( ConservatoryButton.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_CONSERVATORY;
+        	selectedLocation = true;
         }
         
-        if (BallroomButton.isSelected() )
+        if ( BallroomButton.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_BALLROOM;
+        	selectedLocation = true;
         }
         
-        if (KitchenButton.isSelected() )
+        if ( KitchenButton.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_KITCHEN;
+        	selectedLocation = true;
         }
 
-        if (Hallway0Button.isSelected() )
+        if ( Hallway0Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_0;
+        	selectedLocation = true;
         }
         
-        if (Hallway1Button.isSelected() )
+        if ( Hallway1Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_1;
+        	selectedLocation = true;
         }
 
-        if (Hallway2Button.isSelected() )
+        if ( Hallway2Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_2;
+        	selectedLocation = true;
         }
 
-        if (Hallway3Button.isSelected() )
+        if ( Hallway3Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_3;
+        	selectedLocation = true;
         }
 
-        if (Hallway4Button.isSelected() )
+        if ( Hallway4Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_4;
+        	selectedLocation = true;
         }
 
-        if (Hallway5Button.isSelected() )
+        if ( Hallway5Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_5;
+        	selectedLocation = true;
         }
 
-        if (Hallway6Button.isSelected() )
+        if ( Hallway6Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_6;
+        	selectedLocation = true;
         }
 
-        if (Hallway7Button.isSelected() )
+        if ( Hallway7Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_7;
+        	selectedLocation = true;
         }
 
-        if (Hallway8Button.isSelected() )
+        if ( Hallway8Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_8;
+        	selectedLocation = true;
         }
 
-        if (Hallway9Button.isSelected() )
+        if ( Hallway9Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_9;
+        	selectedLocation = true;
         }
 
-        if (Hallway10Button.isSelected() )
+        if ( Hallway10Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_10;
+        	selectedLocation = true;
         }
 
-        if (Hallway11Button.isSelected() )
+        if ( Hallway11Button.isSelected() )
         {
         	moveTo = Data.Location.Identity.LOC_HALLWAY_11;
+        	selectedLocation = true;
+        }
+
+        // After selecting a location, enable the submit button
+        if ( selectedLocation )
+        {
+        	submitButton.setEnabled(true);
         }
         
+        // After submitting, send move message
+        if ( e.getSource().equals(submitButton) )
+        {
+            Msg.PlayerMove mv = Msg.PlayerMove.newBuilder()
+                    .setHeader(Msg.Header.newBuilder()
+                               .setMsgType(Msg.PlayerMove.getDescriptor().getFullName())
+                               .setSource(Instance.getId())
+                               .setDestination(Instance.getServerId())
+                               .build())
+                    .setDestination(moveTo)
+                    .build();
+                router.route(new Message(mv.getHeader(), mv));
+        }
+        
+        
 
-        Msg.PlayerMove mv = Msg.PlayerMove.newBuilder()
-            .setHeader(Msg.Header.newBuilder()
-                       .setMsgType(Msg.PlayerMove.getDescriptor().getFullName())
-                       .setSource(Instance.getId())
-                       .setDestination(Instance.getServerId())
-                       .build())
-            .setDestination(moveTo)
-            .build();
-        router.route(new Message(mv.getHeader(), mv));
     }
 
 }

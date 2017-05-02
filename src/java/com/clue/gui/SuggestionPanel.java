@@ -42,6 +42,10 @@ public class SuggestionPanel extends JPanel implements ActionListener {
     private JRadioButton MrGreenButton;
     private JRadioButton MrsPeacockButton;
     private JRadioButton ProfPlumButton;
+    
+    // Submit Buttons
+    private JButton suggestionButton = new JButton("Submit Suggestion");
+    private JButton accusationButton = new JButton("Submit Accusation");
 
     // Panel Constructor
     public SuggestionPanel( Router routerIn )
@@ -173,12 +177,22 @@ public class SuggestionPanel extends JPanel implements ActionListener {
         MrGreenButton.addActionListener(this);
         MrsPeacockButton.addActionListener(this);
         ProfPlumButton.addActionListener(this);
+
+        suggestionButton.addActionListener(this);
+        accusationButton.addActionListener(this);
+        
+        //Default Submit Buttons to disabled
+        suggestionButton.setEnabled(false);
+        accusationButton.setEnabled(false);
         
         // Add panels to the main panel and arrange layout
-        this.setLayout( new BorderLayout() );
-        this.add( buttonRoomPanel, BorderLayout.NORTH );
-        this.add( buttonWeaponPanel, BorderLayout.CENTER );
-        this.add( buttonSuspectPanel, BorderLayout.SOUTH );
+		this.setLayout(new GridLayout(5,1));
+        //this.setLayout( new BorderLayout() );
+        this.add( buttonRoomPanel );
+        this.add( buttonWeaponPanel );
+        this.add( buttonSuspectPanel );
+        this.add( suggestionButton );
+        this.add( accusationButton );
     }
     
 
@@ -330,25 +344,55 @@ public class SuggestionPanel extends JPanel implements ActionListener {
         	selectedSuspect = true;
         }
         
+        // If each type of clue is selected
         if (selectedRoom && selectedWeapon && selectedSuspect)
         {
-	        Msg.PlayerSuggestion sg = Msg.PlayerSuggestion.newBuilder()
-	            .setHeader(Msg.Header.newBuilder()
-	                       .setMsgType(Msg.PlayerSuggestion.getDescriptor().getFullName())
-	                       .setSource(Instance.getId())
-	                       .setDestination(Instance.getServerId())
-	                       .build())
-	            .setGuess(Data.Guess.newBuilder()
-	                      .setClientId(Instance.getId())
-	                      .setSolution(Data.Solution.newBuilder()
-	                                   .setWeapon(sWeapon)
-	                                   .setSuspect(sSuspect)
-	                                   .setLocation(sRoom)
-	                                   .build())
-	                      .build())
-	            .build();
-	        router.route(new Message(sg.getHeader(), sg));
+            suggestionButton.setEnabled(true);
+            accusationButton.setEnabled(true);
         }
+
+        // Send Suggestion
+        if ( e.getSource().equals(suggestionButton) )
+        {
+	        Msg.PlayerSuggestion sg = Msg.PlayerSuggestion.newBuilder()
+		            .setHeader(Msg.Header.newBuilder()
+		                       .setMsgType(Msg.PlayerSuggestion.getDescriptor().getFullName())
+		                       .setSource(Instance.getId())
+		                       .setDestination(Instance.getServerId())
+		                       .build())
+		            .setGuess(Data.Guess.newBuilder()
+		                      .setClientId(Instance.getId())
+		                      .setSolution(Data.Solution.newBuilder()
+		                                   .setWeapon(sWeapon)
+		                                   .setSuspect(sSuspect)
+		                                   .setLocation(sRoom)
+		                                   .build())
+		                      .build())
+		            .build();
+		        router.route(new Message(sg.getHeader(), sg));
+        }
+        
+        // Send Accusation
+        if ( e.getSource().equals(accusationButton) )
+        {
+	        Msg.PlayerAccusation sg = Msg.PlayerAccusation.newBuilder()
+		            .setHeader(Msg.Header.newBuilder()
+		                       .setMsgType(Msg.PlayerAccusation.getDescriptor().getFullName())
+		                       .setSource(Instance.getId())
+		                       .setDestination(Instance.getServerId())
+		                       .build())
+		            .setGuess(Data.Guess.newBuilder()
+		                      .setClientId(Instance.getId())
+		                      .setSolution(Data.Solution.newBuilder()
+		                                   .setWeapon(sWeapon)
+		                                   .setSuspect(sSuspect)
+		                                   .setLocation(sRoom)
+		                                   .build())
+		                      .build())
+		            .build();
+		        router.route(new Message(sg.getHeader(), sg));
+        }
+        
     }
 
 }
