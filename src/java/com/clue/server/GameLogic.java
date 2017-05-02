@@ -1,5 +1,9 @@
 package com.clue.server;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
+
 import com.clue.app.Instance;
 import com.clue.app.Logger;
 import com.clue.app.Config;
@@ -19,13 +23,18 @@ public class GameLogic implements MessageHandler {
 
   private Router router;
   private Msg.GameState.Builder state;
+  private Data.Solution solution;
 
   public GameLogic() {
     this.state = Msg.GameState.newBuilder()
         .setHeader(Msg.Header.newBuilder()
                    .setMsgType(Msg.GameState.getDescriptor().getFullName())
                    .setSource(Instance.getId())
-                   .setDestination(Instance.getBroadcastId()));
+                   .setDestination(Instance.getBroadcastId()))
+        .setStatus(Data.GameStatus.GAME_NOT_STARTED)
+        .setClientPreviousTurn(-1)
+        .setClientCurrentTurn(-1);
+    this.solution = null;
     
     this.router = Router.getInstance();
     this.router.register(new SubscriptionAllIncoming(), this);
@@ -131,6 +140,108 @@ public class GameLogic implements MessageHandler {
     // Send updated gate state (player chose a suspect)
     sendCurrentGameState(Instance.getBroadcastId());
   }
+
+  public void handleStartGameRequest(Msg.StartGameRequest req) {
+    int client_id = req.getHeader().getSource();
+    logger.debug("handleStartGameRequest() - received request from: "
+                 + Integer.toString(client_id));
+
+    if (state.getStatus() != Data.GameStatus.GAME_IN_PROGRESS) {
+      // Generate solution
+      ArrayList<Data.Suspect> suspects = new ArrayList<Data.Suspect>();
+      suspects.add(Data.Suspect.SUS_MISS_SCARLETT);
+      suspects.add(Data.Suspect.SUS_COL_MUSTARD);
+      suspects.add(Data.Suspect.SUS_MRS_WHITE);
+      suspects.add(Data.Suspect.SUS_MR_GREEN);
+      suspects.add(Data.Suspect.SUS_MRS_PEACOCK);
+      suspects.add(Data.Suspect.SUS_PROF_PLUM);
+
+      ArrayList<Data.Location> locations = new ArrayList<Data.Location>();
+      locations.add(Data.Location.LOC_STUDY);
+      locations.add(Data.Location.LOC_HALL);
+      locations.add(Data.Location.LOC_LOUNGE);
+      locations.add(Data.Location.LOC_LIBRARY);
+      locations.add(Data.Location.LOC_BILLIARD_ROOM);
+      locations.add(Data.Location.LOC_DINING_ROOM);
+      locations.add(Data.Location.LOC_CONSERVATORY);
+      locations.add(Data.Location.LOC_BALLROOM);
+      locations.add(Data.Location.LOC_KITCHEN);
+
+      ArrayList<Data.Weapon> weapons = new ArrayList<Data.Weapon>();
+      weapons.add(Data.Weapon.WPN_CANDLESTICK);
+      weapons.add(Data.Weapon.WPN_KNIFE);
+      weapons.add(Data.Weapon.WPN_LEAD_PIPE);
+      weapons.add(Data.Weapon.WPN_REVOLVER);
+      weapons.add(Data.Weapon.WPN_ROPE);
+      weapons.add(Data.Weapon.WPN_WRENCH);
+
+      // Randomly shuffle all collections
+      Collections.shuffle(suspects);
+      Collections.shuffle(locations);
+      Collections.shuffle(weapons);
+
+      // Create a solution from the shuffled collections
+      this.solution = Data.Solution.newBuilder()
+          .setSuspect(suspects.remove(0))
+          .setLocation(locations.remove(0))
+          .setWeapon(weapons.remove(0))
+          .build();
+      logger.debug("handleStartGameRequest() - created solution: "
+                   + solution.toString());
+
+      // Reveal the remaining clues to the clients playing the game
+      ArrayList<Msg.RevealClues.Builder> reveal_list =
+          new ArrayList<Msg.RevealClues.Builder>();
+      for (Data.Player.Builder player : state.getPlayersBuilderList()) {
+        reveal_list.add(Msg.RevealClues.newBuilder()
+                        .setHeader(Msg.Header.newBuilder()
+                                   .setMsgType(Msg.RevealClues.getDescriptor().getFullName())
+                                   .setSource(Instance.getId())
+                                   .setDestination(player.getClientId())));
+      }
+
+      int index = 0;
+      while (!suspects.isEmpty()) {
+        Msg.RevealClues.Builder reveal = reveal_list.get(index++ % reveal_list.size());
+        reveal.getCluesBuilder().addSuspects(suspects.remove(0));
+      }
+      
+      index = 0;
+      while (!locations.isEmpty()) {
+        Msg.RevealClues.Builder reveal = reveal_list.get(index++ % reveal_list.size());
+        reveal.getCluesBuilder().addLocations(locations.remove(0));
+      }
+      
+      index = 0;
+      while (!weapons.isEmpty()) {
+        Msg.RevealClues.Builder reveal = reveal_list.get(index++ % reveal_list.size());
+        reveal.getCluesBuilder().addWeapons(weapons.remove(0));
+      }
+
+      // Send reveal messages to clients
+      for (Msg.RevealClues.Builder reveal : reveal_list) {
+        Msg.RevealClues msg = reveal.build();
+        logger.debug("handleStartGameRequest() - revealing clues to player: "
+                     + msg.toString());
+        router.route(new Message(msg.getHeader(), msg));
+      }
+      
+      
+      // Randomly choose who goes first
+      // nextInt is normally exclusive of the top value,
+      // so add 1 to make it inclusive
+      int current_client_id =
+          ThreadLocalRandom.current().nextInt(0, state.getPlayersBuilderList().size());
+      state.setStatus(Data.GameStatus.GAME_IN_PROGRESS);
+      state.setClientCurrentTurn(current_client_id);
+
+      logger.debug("handleStartGameRequest() - starting game, player going first = "
+                   + current_client_id);
+
+      // tell all clients that the game has started
+      sendCurrentGameState(Instance.getBroadcastId());
+    }
+  }
   
   
   @Override
@@ -141,10 +252,16 @@ public class GameLogic implements MessageHandler {
     
     if (msg_type.equals(Msg.ConnectRequest.getDescriptor().getFullName())) {
       handleConnectionRequest((Msg.ConnectRequest)msg.getMessage());
+      
     } else if (msg_type.equals(Msg.SuspectClaimRequest.getDescriptor().getFullName())) {
       handleSuspectClaimRequest((Msg.SuspectClaimRequest)msg.getMessage());
+      
     } else if (msg_type.equals(Msg.GameStateRequest.getDescriptor().getFullName())) {
       sendCurrentGameState(msg.getHeader().getSource());
+      
+    } else if (msg_type.equals(Msg.StartGameRequest.getDescriptor().getFullName())) {
+      handleStartGameRequest((Msg.StartGameRequest)msg.getMessage());
+      
     } else {
       logger.debug("handleMessage() - got unhandled message type: " + msg_type);
     }

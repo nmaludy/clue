@@ -23,6 +23,10 @@ message ConnectResponse {
   optional bool goodConnection = 2;
 }
 
+message StartGameRequest {
+  optional Header header  = 1;
+}
+
 message GameStateRequest {
   optional Header header  = 1;
 }
@@ -30,7 +34,7 @@ message GameStateRequest {
 message GameState {
   optional Header header            = 1;
   repeated data.Player players      = 2;
-  repeated data.Game.Status status  = 3;
+  optional data.GameStatus status   = 3;
   optional int32 clientPreviousTurn = 4;
   optional int32 clientCurrentTurn  = 5;
 }
@@ -42,7 +46,7 @@ message RevealClues {
 
 message SuspectClaimRequest {
   optional Header header = 1;
-  optional data.Suspect.Identity suspect = 2;
+  optional data.Suspect suspect = 2;
 }
 
 message SuspectClaimResponse {
@@ -52,7 +56,7 @@ message SuspectClaimResponse {
 
 message PlayerMove {
   optional Header header = 1;
-  optional data.Location.Identity destination = 2;
+  optional data.Location destination = 2;
 }
 
 message PlayerSuggestion {

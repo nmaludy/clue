@@ -182,133 +182,133 @@ public class MovePanel extends JPanel implements ActionListener {
      */
     public void actionPerformed(ActionEvent e)
     {
-    	com.clue.proto.Data.Location.Identity moveTo = null;
+    	com.clue.proto.Data.Location moveTo = null;
     	boolean selectedLocation = false;
         
         // Determine message based on selection
         if ( StudyButton.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_STUDY;
+        	moveTo = Data.Location.LOC_STUDY;
         	selectedLocation = true;
         }
         
         if ( HallButton.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALL;
+        	moveTo = Data.Location.LOC_HALL;
         	selectedLocation = true;
         }
         
         if ( LoungeButton.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_LOUNGE;
+        	moveTo = Data.Location.LOC_LOUNGE;
         	selectedLocation = true;
         }
 
         if ( LibraryButton.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_LIBRARY;
+        	moveTo = Data.Location.LOC_LIBRARY;
         	selectedLocation = true;
         }
         
         if ( BilliardRoomButton.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_BILLIARD_ROOM;
+        	moveTo = Data.Location.LOC_BILLIARD_ROOM;
         	selectedLocation = true;
         }
         
         if ( DiningRoomButton.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_DINING_ROOM;
+        	moveTo = Data.Location.LOC_DINING_ROOM;
         	selectedLocation = true;
         }
 
         if ( ConservatoryButton.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_CONSERVATORY;
+        	moveTo = Data.Location.LOC_CONSERVATORY;
         	selectedLocation = true;
         }
         
         if ( BallroomButton.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_BALLROOM;
+        	moveTo = Data.Location.LOC_BALLROOM;
         	selectedLocation = true;
         }
         
         if ( KitchenButton.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_KITCHEN;
+        	moveTo = Data.Location.LOC_KITCHEN;
         	selectedLocation = true;
         }
 
         if ( Hallway0Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_0;
+        	moveTo = Data.Location.LOC_HALLWAY_0;
         	selectedLocation = true;
         }
         
         if ( Hallway1Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_1;
+        	moveTo = Data.Location.LOC_HALLWAY_1;
         	selectedLocation = true;
         }
 
         if ( Hallway2Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_2;
+        	moveTo = Data.Location.LOC_HALLWAY_2;
         	selectedLocation = true;
         }
 
         if ( Hallway3Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_3;
+        	moveTo = Data.Location.LOC_HALLWAY_3;
         	selectedLocation = true;
         }
 
         if ( Hallway4Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_4;
+        	moveTo = Data.Location.LOC_HALLWAY_4;
         	selectedLocation = true;
         }
 
         if ( Hallway5Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_5;
+        	moveTo = Data.Location.LOC_HALLWAY_5;
         	selectedLocation = true;
         }
 
         if ( Hallway6Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_6;
+        	moveTo = Data.Location.LOC_HALLWAY_6;
         	selectedLocation = true;
         }
 
         if ( Hallway7Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_7;
+        	moveTo = Data.Location.LOC_HALLWAY_7;
         	selectedLocation = true;
         }
 
         if ( Hallway8Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_8;
+        	moveTo = Data.Location.LOC_HALLWAY_8;
         	selectedLocation = true;
         }
 
         if ( Hallway9Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_9;
+        	moveTo = Data.Location.LOC_HALLWAY_9;
         	selectedLocation = true;
         }
 
         if ( Hallway10Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_10;
+        	moveTo = Data.Location.LOC_HALLWAY_10;
         	selectedLocation = true;
         }
 
         if ( Hallway11Button.isSelected() )
         {
-        	moveTo = Data.Location.Identity.LOC_HALLWAY_11;
+        	moveTo = Data.Location.LOC_HALLWAY_11;
         	selectedLocation = true;
         }
 
