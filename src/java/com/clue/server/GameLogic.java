@@ -132,6 +132,38 @@ public class GameLogic implements MessageHandler {
     sendCurrentGameState(Instance.getBroadcastId());
   }
   
+  /*
+   * this feature is for handling an accusation. @TODO: fix handling msg
+   * 1. ask nick about PlayerAccusation vs Guess
+   * 
+   */
+  public void handleAccusationRequest(Msg.PlayerAccusation req){
+	  int client_id = req.getHeader().getSource();
+	  
+	  logger.debug("handleAccusationRequest() - received request from: "
+                + Integer.toString(client_id));
+//	  logger.debug("handleAccusationRequest() - client trying to make accusation: "
+//                + req.getSuspect().name());
+	  
+	  /* Read in the room, weapon, suspect from the player accusation message */
+	  int room = req.data.guess.get req.getLocation().name();
+	  int weapon = req.getWeapon().name();
+	  int suspect = req.getSuspect().name();
+	  
+	  logger.debug("handleAccusationRequest()  - client's guess: " + req.getSuspect().name(), ", " +
+			  		req.getLocation().name() + ", " + req.getWeapon().name());
+	  
+	  /* check solution message to see if room, weapon, and/or suspect matches ? */
+	  
+	  
+	  
+	  
+  }
+  
+  
+  
+  
+  
   
   @Override
   public void handleMessage(Message msg) {

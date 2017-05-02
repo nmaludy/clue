@@ -181,7 +181,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     Dimension d = tk.getScreenSize();
     int xLoc = (d.width - w.getWidth())/2;
     int yLoc = (d.height - w.getHeight())/2;
-    setLocation(xLoc, yLoc);
+    //setLocation(xLoc, yLoc);
   }
 
 
