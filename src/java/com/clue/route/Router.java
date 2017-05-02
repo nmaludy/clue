@@ -36,11 +36,22 @@ public class Router {
   public void route(Message msg) {
     logger.debug("routing message");
     for (Map.Entry<Subscription, MessageHandler> entry : subscriptions.entrySet()) {
-      
-      if (entry.getKey().matches(msg)) {
+      Subscription subscription = entry.getKey();
+      MessageHandler handler = entry.getValue();
+      if (subscription.matches(msg)) {
         
         logger.debug("message matched");
-        entry.getValue().handleMessage(msg);
+        if (handler.shouldCallHandleOnGuiThread()) {
+          // @note this WILL be called on a background thread, so the
+          // following code is scheduled to run back onto the GUI EventDispatch thread
+          javax.swing.SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                handler.handleMessage(msg);
+              }
+            });
+        } else {
+          handler.handleMessage(msg);
+        }
       }
     }
   }

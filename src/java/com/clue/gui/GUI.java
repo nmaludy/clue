@@ -42,6 +42,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private NotebookPanel notebook = new NotebookPanel();
   private CluesPanel cluesPanel = new CluesPanel();
   private Router router = Router.getInstance();
+  private ConnectFrame connectFrame = new ConnectFrame();
   private MoveFrame MoveFrame = new MoveFrame( router );
   private SuggestionFrame SuggestionFrame = new SuggestionFrame( router );
 
@@ -95,6 +96,15 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     centerFrame(this);
     setVisible(true);
 
+    // Initialize our frames in a jacked up terrible because otherwise Linux
+    // will render them as blank boxe
+    connectFrame.setState(JFrame.ICONIFIED);
+    connectFrame.setVisible(false);
+    MoveFrame.setState(JFrame.ICONIFIED);
+    MoveFrame.setVisible(false);
+    SuggestionFrame.setState(JFrame.ICONIFIED);
+    SuggestionFrame.setVisible(false);
+
     URL imageURL = this.getClass().getResource("/images/clue_icon.png");
     setIconImage(new ImageIcon(imageURL).getImage());
 
@@ -123,40 +133,31 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   }
 
   public void connect() {
-    Msg.ConnectRequest req = Msg.ConnectRequest.newBuilder()
-        .setHeader(Msg.Header.newBuilder()
-                   .setMsgType(Msg.ConnectRequest.getDescriptor().getFullName())
-                   .setSource(Instance.getId())
-                   .setDestination(Instance.getServerId())
-                   .build())
-        .setName("test")
-        .build();
-    router.route(new Message(req.getHeader(), req));
+    
+    connectFrame.setVisible( true );
+    connectFrame.setState(JFrame.NORMAL);
   }
 
   public void move() {
-    MoveFrame.setVisible( true );;
+    MoveFrame.setVisible( true );
+    MoveFrame.setState(JFrame.NORMAL);
   }
 
   public void suggestion() {
     SuggestionFrame.setVisible( true );
   }
 
-  public void handleMessage(Message msg) {
-    // @note this WILL be called on a background thread, so the
-    // following code is scheduled to run back onto the GUI EventDispatch thread
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          handleMessageGuiThread(msg);
-        }
-      });
+  @Override
+  public boolean shouldCallHandleOnGuiThread() {
+    return true;
   }
 
   /**
    * @brief This is where all message "handling" should be done
    * @param msg 
    */
-  public void handleMessageGuiThread(Message msg) {
+  @Override
+  public void handleMessage(Message msg) {
     logger.debug("got message on thread: " + Thread.currentThread().getName());
     logger.debug("msg header = " + msg.getHeader().toString());
 
