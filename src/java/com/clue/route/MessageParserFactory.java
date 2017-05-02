@@ -14,6 +14,7 @@ public class MessageParserFactory {
     register(Msg.Header.getDefaultInstance());
     register(Msg.ConnectRequest.getDefaultInstance());
     register(Msg.ConnectResponse.getDefaultInstance());
+    register(Msg.StartGameRequest.getDefaultInstance());
     register(Msg.GameStateRequest.getDefaultInstance());
     register(Msg.GameState.getDefaultInstance());
     register(Msg.RevealClues.getDefaultInstance());

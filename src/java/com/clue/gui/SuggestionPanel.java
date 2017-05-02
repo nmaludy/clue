@@ -209,138 +209,138 @@ public class SuggestionPanel extends JPanel implements ActionListener {
     	boolean selectedWeapon = false;
     	boolean selectedSuspect = false;
     	
-    	com.clue.proto.Data.Location.Identity sRoom = null;
-    	com.clue.proto.Data.Weapon.Identity sWeapon = null;
-    	com.clue.proto.Data.Suspect.Identity sSuspect = null;
+    	com.clue.proto.Data.Location sRoom = null;
+    	com.clue.proto.Data.Weapon sWeapon = null;
+    	com.clue.proto.Data.Suspect sSuspect = null;
         
         // Determine message based on selection
     	
     	// Rooms
         if (StudyButton.isSelected() )
         {
-        	sRoom = Data.Location.Identity.LOC_STUDY;
+        	sRoom = Data.Location.LOC_STUDY;
         	selectedRoom = true;
         }
         
         if (HallButton.isSelected() )
         {
-        	sRoom = Data.Location.Identity.LOC_HALL;
+        	sRoom = Data.Location.LOC_HALL;
         	selectedRoom = true;
         }
         
         if (LoungeButton.isSelected() )
         {
-        	sRoom = Data.Location.Identity.LOC_LOUNGE;
+        	sRoom = Data.Location.LOC_LOUNGE;
         	selectedRoom = true;
         }
 
         if (LibraryButton.isSelected() )
         {
-        	sRoom = Data.Location.Identity.LOC_LIBRARY;
+        	sRoom = Data.Location.LOC_LIBRARY;
         	selectedRoom = true;
         }
         
         if (BilliardRoomButton.isSelected() )
         {
-        	sRoom = Data.Location.Identity.LOC_BILLIARD_ROOM;
+        	sRoom = Data.Location.LOC_BILLIARD_ROOM;
         	selectedRoom = true;
         }
         
         if (DiningRoomButton.isSelected() )
         {
-        	sRoom = Data.Location.Identity.LOC_DINING_ROOM;
+        	sRoom = Data.Location.LOC_DINING_ROOM;
         	selectedRoom = true;
         }
 
         if (ConservatoryButton.isSelected() )
         {
-        	sRoom = Data.Location.Identity.LOC_CONSERVATORY;
+        	sRoom = Data.Location.LOC_CONSERVATORY;
         	selectedRoom = true;
         }
         
         if (BallroomButton.isSelected() )
         {
-        	sRoom = Data.Location.Identity.LOC_BALLROOM;
+        	sRoom = Data.Location.LOC_BALLROOM;
         	selectedRoom = true;
         }
         
         if (KitchenButton.isSelected() )
         {
-        	sRoom = Data.Location.Identity.LOC_KITCHEN;
+        	sRoom = Data.Location.LOC_KITCHEN;
         	selectedRoom = true;
         }
         
         // Weapons
         if (CandlestickButton.isSelected() )
         {
-        	sWeapon = Data.Weapon.Identity.WPN_CANDLESTICK;
+        	sWeapon = Data.Weapon.WPN_CANDLESTICK;
         	selectedWeapon = true;
         }
         
         if (KnifeButton.isSelected() )
         {
-        	sWeapon = Data.Weapon.Identity.WPN_KNIFE;
+        	sWeapon = Data.Weapon.WPN_KNIFE;
         	selectedWeapon = true;
         }
         
         if (LeadPipeButton.isSelected() )
         {
-        	sWeapon = Data.Weapon.Identity.WPN_LEAD_PIPE;
+        	sWeapon = Data.Weapon.WPN_LEAD_PIPE;
         	selectedWeapon = true;
         }
         
         if (RevolverButton.isSelected() )
         {
-        	sWeapon = Data.Weapon.Identity.WPN_REVOLVER;
+        	sWeapon = Data.Weapon.WPN_REVOLVER;
         	selectedWeapon = true;
         }
 
         if (RopeButton.isSelected() )
         {
-        	sWeapon = Data.Weapon.Identity.WPN_ROPE;
+        	sWeapon = Data.Weapon.WPN_ROPE;
         	selectedWeapon = true;
         }
         
         if (WrenchButton.isSelected() )
         {
-        	sWeapon = Data.Weapon.Identity.WPN_WRENCH;
+        	sWeapon = Data.Weapon.WPN_WRENCH;
         	selectedWeapon = true;
         }
         
         // Suspects
         if (MsScarlettButton.isSelected() )
         {
-        	sSuspect = Data.Suspect.Identity.SUS_MISS_SCARLETT;
+        	sSuspect = Data.Suspect.SUS_MISS_SCARLETT;
         	selectedSuspect = true;
         }
         
         if (ColMustardButton.isSelected() )
         {
-        	sSuspect = Data.Suspect.Identity.SUS_COL_MUSTARD;
+        	sSuspect = Data.Suspect.SUS_COL_MUSTARD;
         	selectedSuspect = true;
         }
         
         if (MrsWhiteButton.isSelected() )
         {
-        	sSuspect = Data.Suspect.Identity.SUS_MRS_WHITE;
+        	sSuspect = Data.Suspect.SUS_MRS_WHITE;
         	selectedSuspect = true;
         }
 
         if (MrGreenButton.isSelected() )
         {
-        	sSuspect = Data.Suspect.Identity.SUS_MR_GREEN;
+        	sSuspect = Data.Suspect.SUS_MR_GREEN;
         	selectedSuspect = true;
         }
         
         if (MrsPeacockButton.isSelected() )
         {
-        	sSuspect = Data.Suspect.Identity.SUS_MRS_PEACOCK;
+        	sSuspect = Data.Suspect.SUS_MRS_PEACOCK;
         	selectedSuspect = true;
         }
         
         if (ProfPlumButton.isSelected() )
         {
-        	sSuspect = Data.Suspect.Identity.SUS_PROF_PLUM;
+        	sSuspect = Data.Suspect.SUS_PROF_PLUM;
         	selectedSuspect = true;
         }
         

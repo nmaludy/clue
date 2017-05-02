@@ -36,8 +36,10 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private static Logger logger = new Logger(GUI.class);
 
   private JButton connectButton = new JButton("Connect");
+  private JButton startButton = new JButton("Start");
   private JButton moveButton = new JButton("Move");
   private JButton suggestionButton = new JButton("Suggestions & Accustations");
+  
   private GUIpanel panel = new GUIpanel();
   private NotebookPanel notebook = new NotebookPanel();
   private CluesPanel cluesPanel = new CluesPanel();
@@ -60,6 +62,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
           .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
             .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(connectButton)
+            .addComponent(startButton)
             .addComponent(moveButton)
             .addComponent(suggestionButton)
             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -74,6 +77,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
         .addGroup(layout.createSequentialGroup()
           .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
             .addComponent(connectButton)
+            .addComponent(startButton)
             .addComponent(moveButton)
             .addComponent(suggestionButton))
           .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -87,6 +91,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     notebook.strikeThrough();
     
     connectButton.addActionListener(this);
+    startButton.addActionListener(this);
     moveButton.addActionListener(this);
     suggestionButton.addActionListener(this);
 
@@ -125,6 +130,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   public void actionPerformed(ActionEvent e) {
     if (e.getSource().equals(connectButton)) {
       connect();
+    } else if (e.getSource().equals(startButton)) {
+      start();
     } else if (e.getSource().equals(moveButton)) {
       move();
     } else if (e.getSource().equals(suggestionButton)) {
@@ -133,9 +140,19 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   }
 
   public void connect() {
-    
     connectFrame.setVisible( true );
     connectFrame.setState(JFrame.NORMAL);
+  }
+
+  public void start() {
+    Msg.StartGameRequest req = Msg.StartGameRequest.newBuilder()
+        .setHeader(Msg.Header.newBuilder()
+                   .setMsgType(Msg.StartGameRequest.getDescriptor().getFullName())
+                   .setSource(Instance.getId())
+                   .setDestination(Instance.getServerId())
+                   .build())
+        .build();
+    router.route(new Message(req.getHeader(), req));
   }
 
   public void move() {
