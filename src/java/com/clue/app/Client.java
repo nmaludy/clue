@@ -29,8 +29,12 @@ public class Client implements Runnable {
 				} catch (Exception e) {
 					System.out.println("Substance Graphite failed to initialize");
 				}
+
+        // initiallize the game state listener and connect to the server
+        com.clue.gui.ClientState.getInstance();
+
+        // create and show the GUI
 				JFrame f = com.clue.gui.GUI.getInstance();
-				// f.setIconImage(new ImageIcon(imageURL).getImage());
 			}
 		});
   }

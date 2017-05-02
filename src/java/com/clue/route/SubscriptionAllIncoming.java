@@ -9,6 +9,13 @@ public class SubscriptionAllIncoming implements Subscription {
 
   @Override
   public boolean matches(Message msg) {
-    return msg.getHeader().getDestination() == Instance.getId();
+    if (msg.getHeader().getDestination() == Instance.getId()) {
+      return true;
+    }
+    if (Instance.isClient() &&
+        msg.getHeader().getDestination() == Instance.getBroadcastId()) {
+      return true;
+    }
+    return false;
   }
 }
