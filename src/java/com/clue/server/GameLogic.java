@@ -146,21 +146,13 @@ public class GameLogic implements MessageHandler {
     } else if (msg_type.equals(Msg.GameStateRequest.getDescriptor().getFullName())) {
       sendCurrentGameState(msg.getHeader().getSource());
     } else if (msg_type.equals(Msg.PlayerMove.getDescriptor().getFullName())) {
-      
-    	Data.Location.Identity location = Msg.PlayerMove.getDefaultInstance().getDestination();
     	
+    	Data.Player.Builder player = getPlayerById(msg.getHeader().getSource());
+    	Msg.PlayerMove move_msg = (Msg.PlayerMove)msg.getMessage();
+    	player.setLocation(move_msg.getDestination());
     	
-        for (Data.Player player : state.getPlayersList())
-        {
-        	/* PSEUDOCODE
-        	if (player == Message Sender)
-        	{
-        		State.thisPlayer.Location = location (defined above as location within PlayerMove message)
-        	}
-        	*/
-        }
-    	
-    	
+    	// Send updated game state (player moved)
+    	sendCurrentGameState(Instance.getBroadcastId());
     
     } else {
       logger.debug("handleMessage() - got unhandled message type: " + msg_type);
