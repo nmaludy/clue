@@ -80,7 +80,7 @@ message DisproveRequest {
 
 message DisproveResponse {
   optional Header header          = 1;
-  optional data.Solution disproval = 2;
+  optional data.Solution solution = 2;
 }
 
 message GameEnd {

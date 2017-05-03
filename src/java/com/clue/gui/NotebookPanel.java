@@ -229,124 +229,147 @@ public class NotebookPanel extends JPanel implements MessageHandler
   }
 
 
+  public void addSolution(Data.Solution solution) {
+    if (solution.hasLocation()) {
+      addLocation(solution.getLocation());
+    }
+    if (solution.hasWeapon()) {
+      addWeapon(solution.getWeapon());
+    }
+    if (solution.hasSuspect()) {
+      addSuspect(solution.getSuspect());
+    }
+  }
+
   public void addClues(Data.Clues clues) {
     // Rooms
     for (Data.Location location : clues.getLocationsList()) {
       logger.debug("addClues() - revelaed location: " + location.name());
-      switch (location) {
-        case LOC_NONE:
-          break;
-        case LOC_STUDY:
-          StudyLabel.setEnabled(false);
-          StudyCheckBox.setSelected(true);
-          break;
-        case LOC_HALL:
-          HallLabel.setEnabled(false);
-          HallCheckBox.setSelected(true);
-          break;
-        case LOC_LOUNGE:
-          LoungeLabel.setEnabled(false);
-          LoungeCheckBox.setSelected(true);
-          break;
-        case LOC_LIBRARY:
-          LibraryLabel.setEnabled(false);
-          LibraryCheckBox.setSelected(true);
-          break;
-        case LOC_BILLIARD_ROOM:
-          BilliardRoomLabel.setEnabled(false);
-          BilliardRoomCheckBox.setSelected(true);
-          break;
-        case LOC_DINING_ROOM:
-          DiningRoomLabel.setEnabled(false);
-          DiningRoomCheckBox.setSelected(true);
-          break;
-        case LOC_CONSERVATORY:
-          ConservatoryLabel.setEnabled(false);
-          ConservatoryCheckBox.setSelected(true);
-          break;
-        case LOC_BALLROOM:
-          BallroomLabel.setEnabled(false);
-          BallroomCheckBox.setSelected(true);
-          break;
-        case LOC_KITCHEN:
-          KitchenLabel.setEnabled(false);
-          KitchenCheckBox.setSelected(true);
-          break;
-        default:
-          logger.error("addClues() - got invalid location clue revealed: "
-                       + location.name());
-          break;
-      }
+      addLocation(location);
     }
 
     // Weapons
     for (Data.Weapon weapon : clues.getWeaponsList()) {
       logger.debug("addClues() - revelaed weapon: " + weapon.name());
-      switch (weapon) {
-        case WPN_NONE:
-          break;
-        case WPN_CANDLESTICK:
-          CandlestickLabel.setEnabled(false);
-          CandlestickCheckBox.setSelected(true);
-          break;
-        case WPN_KNIFE:
-          KnifeLabel.setEnabled(false);
-          KnifeCheckBox.setSelected(true);
-          break;
-        case WPN_LEAD_PIPE:
-          LeadPipeLabel.setEnabled(false);
-          LeadPipeCheckBox.setSelected(true);
-          break;
-        case WPN_REVOLVER:
-          RevolverLabel.setEnabled(false);
-          RevolverCheckBox.setSelected(true);
-          break;
-        case WPN_ROPE:
-          RopeLabel.setEnabled(false);
-          RopeCheckBox.setSelected(true);
-          break;
-        case WPN_WRENCH:
-          WrenchLabel.setEnabled(false);
-          WrenchCheckBox.setSelected(true);
-          break;
-      }
+      addWeapon(weapon);
     }
 
     // Suspects
     for (Data.Suspect suspect : clues.getSuspectsList()) {
       logger.debug("addClues() - revelaed suspect: " + suspect.name());
-      switch (suspect) {
-        case SUS_NONE:
-          break;
-        case SUS_MISS_SCARLETT:
-          MissScarletLabel.setEnabled(false);
-          MissScarletCheckBox.setSelected(true);
-          break;
-        case SUS_COL_MUSTARD:
-          ColMustardLabel.setEnabled(false);
-          ColMustardCheckBox.setSelected(true);
-          break;
-        case SUS_MRS_WHITE:
-          MrsWhiteLabel.setEnabled(false);
-          MrsWhiteCheckBox.setSelected(true);
-          break;
-        case SUS_MR_GREEN:
-          MrGreenLabel.setEnabled(false);
-          MrGreenCheckBox.setSelected(true);
-          break;
-        case SUS_MRS_PEACOCK:
-          MrsPeacockLabel.setEnabled(false);
-          MrsPeacockCheckBox.setSelected(true);
-          break;
-        case SUS_PROF_PLUM:
-          ProfPlumLabel.setEnabled(false);
-          ProfPlumCheckBox.setSelected(true);
-          break;
-      }
+      addSuspect(suspect);
     }
   }
 
+  public void addLocation(Data.Location location) {
+    switch (location) {
+      case LOC_NONE:
+        break;
+      case LOC_STUDY:
+        StudyLabel.setEnabled(false);
+        StudyCheckBox.setSelected(true);
+        break;
+      case LOC_HALL:
+        HallLabel.setEnabled(false);
+        HallCheckBox.setSelected(true);
+        break;
+      case LOC_LOUNGE:
+        LoungeLabel.setEnabled(false);
+        LoungeCheckBox.setSelected(true);
+        break;
+      case LOC_LIBRARY:
+        LibraryLabel.setEnabled(false);
+        LibraryCheckBox.setSelected(true);
+        break;
+      case LOC_BILLIARD_ROOM:
+        BilliardRoomLabel.setEnabled(false);
+        BilliardRoomCheckBox.setSelected(true);
+        break;
+      case LOC_DINING_ROOM:
+        DiningRoomLabel.setEnabled(false);
+        DiningRoomCheckBox.setSelected(true);
+        break;
+      case LOC_CONSERVATORY:
+        ConservatoryLabel.setEnabled(false);
+        ConservatoryCheckBox.setSelected(true);
+        break;
+      case LOC_BALLROOM:
+        BallroomLabel.setEnabled(false);
+        BallroomCheckBox.setSelected(true);
+        break;
+      case LOC_KITCHEN:
+        KitchenLabel.setEnabled(false);
+        KitchenCheckBox.setSelected(true);
+        break;
+      default:
+        logger.error("addLocation() - got invalid location clue revealed: "
+                     + location.name());
+        break;
+    }
+  }
 
+  public void addWeapon(Data.Weapon weapon) {
+    switch (weapon) {
+      case WPN_NONE:
+        break;
+      case WPN_CANDLESTICK:
+        CandlestickLabel.setEnabled(false);
+        CandlestickCheckBox.setSelected(true);
+        break;
+      case WPN_KNIFE:
+        KnifeLabel.setEnabled(false);
+        KnifeCheckBox.setSelected(true);
+        break;
+      case WPN_LEAD_PIPE:
+        LeadPipeLabel.setEnabled(false);
+        LeadPipeCheckBox.setSelected(true);
+        break;
+      case WPN_REVOLVER:
+        RevolverLabel.setEnabled(false);
+        RevolverCheckBox.setSelected(true);
+        break;
+      case WPN_ROPE:
+        RopeLabel.setEnabled(false);
+        RopeCheckBox.setSelected(true);
+        break;
+      case WPN_WRENCH:
+        WrenchLabel.setEnabled(false);
+        WrenchCheckBox.setSelected(true);
+        break;
+    }
+  }
+
+  public void addSuspect(Data.Suspect suspect) { 
+    switch (suspect) {
+      case SUS_NONE:
+        break;
+      case SUS_MISS_SCARLETT:
+        MissScarletLabel.setEnabled(false);
+        MissScarletCheckBox.setSelected(true);
+        break;
+      case SUS_COL_MUSTARD:
+        ColMustardLabel.setEnabled(false);
+        ColMustardCheckBox.setSelected(true);
+        break;
+      case SUS_MRS_WHITE:
+        MrsWhiteLabel.setEnabled(false);
+        MrsWhiteCheckBox.setSelected(true);
+        break;
+      case SUS_MR_GREEN:
+        MrGreenLabel.setEnabled(false);
+        MrGreenCheckBox.setSelected(true);
+        break;
+      case SUS_MRS_PEACOCK:
+        MrsPeacockLabel.setEnabled(false);
+        MrsPeacockCheckBox.setSelected(true);
+        break;
+      case SUS_PROF_PLUM:
+        ProfPlumLabel.setEnabled(false);
+        ProfPlumCheckBox.setSelected(true);
+        break;
+    }
+  }
+  
   @Override
   public boolean shouldCallHandleOnGuiThread() {
     return true;
@@ -365,8 +388,8 @@ public class NotebookPanel extends JPanel implements MessageHandler
     else if (msg_type.equals(Msg.DisproveResponse.getDescriptor().getFullName())) {
       Msg.DisproveResponse disprove = (Msg.DisproveResponse)msg.getMessage();
       logger.debug("handleMessage() - got disprove respone: " + disprove.toString());
-      addClues(reveal.getDisproval());
-
+      addSolution(disprove.getSolution());
+      
       // @todo what if all are NONE? should show GUI to make accusation
     }
   }
