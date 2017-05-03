@@ -160,6 +160,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 
   public void suggestion() {
     SuggestionFrame.setVisible( true );
+    SuggestionFrame.setState(JFrame.NORMAL);
   }
 
   @Override

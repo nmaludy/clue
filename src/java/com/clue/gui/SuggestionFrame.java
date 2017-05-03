@@ -12,7 +12,7 @@ public class SuggestionFrame extends JFrame
     {
         setTitle( "Suggestion" );
         setSize( 850, 350 );
-        setDefaultCloseOperation( MoveFrame.HIDE_ON_CLOSE );
+        setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
         centerFrame(this);
         JPanel panel = new SuggestionPanel( router );
         this.add( panel );
