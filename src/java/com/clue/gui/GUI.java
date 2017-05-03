@@ -87,8 +87,6 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
               .addComponent(cluesPanel))));
 
     layout.linkSize(SwingConstants.VERTICAL, connectButton, moveButton, suggestionButton);
-
-    notebook.strikeThrough();
     
     connectButton.addActionListener(this);
     startButton.addActionListener(this);
