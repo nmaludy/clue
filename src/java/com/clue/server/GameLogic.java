@@ -248,26 +248,57 @@ public class GameLogic implements MessageHandler {
    * 1. ask nick about PlayerAccusation vs Guess
    * 
    */
-  public void handleAccusationRequest(Msg.PlayerAccusation req){
+  public void handlePlayerAccusationRequest(Msg.PlayerAccusation req){
 	  int client_id = req.getHeader().getSource();
 	  
-	  logger.debug("handleAccusationRequest() - received request from: "
+	  logger.debug("handleAccusationRequest() - received accusation request from: "
                 + Integer.toString(client_id));
-//	  logger.debug("handleAccusationRequest() - client trying to make accusation: "
-//                + req.getSuspect().name());
 	  
-	  /* Read in the room, weapon, suspect from the player accusation message */
-	  int room = req.data.guess.get req.getLocation().name();
-	  int weapon = req.getWeapon().name();
-	  int suspect = req.getSuspect().name();
-	  
-	  logger.debug("handleAccusationRequest()  - client's guess: " + req.getSuspect().name(), ", " +
-			  		req.getLocation().name() + ", " + req.getWeapon().name());
-	  
-	  /* check solution message to see if room, weapon, and/or suspect matches ? */
+	  logger.debug("handleAccusationRequest()  - client's guess: " + req.getGuess().getSolution().getSuspect().name() + ", " +
+		  		req.getGuess().getSolution().getLocation().name() + ", " + req.getGuess().getSolution().getWeapon().name() ); 
 	  
 	  
+	  if (req.getGuess().getSolution().equals(this.solution))
+	  {
+		  // build gameEnd message
+		  Msg.GameEnd.Builder response = Msg.GameEnd.newBuilder()
+		   .setHeader(Msg.Header.newBuilder()
+		              .setMsgType(Msg.GameEnd.getDescriptor().getFullName())
+		              .setSource(Instance.getId())
+		              .setDestination(Instance.getBroadcastId())
+		              .build());
+		  
+		  // send response to back to all clients
+		  Msg.GameEnd msg = response.build();
+		  router.route(new Message(msg.getHeader(), msg));            
+	  }
+	  else
+	  {
+		  // build PlayerAccusationFailed msg 
+		  
+		   Msg.PlayerAccusationFailed.Builder response = Msg.PlayerAccusationFailed.newBuilder()
+	        .setHeader(Msg.Header.newBuilder()
+	                   .setMsgType(Msg.PlayerAccusationFailed.getDescriptor().getFullName())
+	                   .setSource(Instance.getId())
+	                   .setDestination(req.getHeader().getSource())
+	                   .build());
+		  
+		    // Send response back to client from the (playerAccusationRequest req)
+		    Msg.PlayerAccusationFailed msg = response.build();
+		    router.route(new Message(msg.getHeader(), msg));
+		  
+	  }
 	  
+	  
+	  /* check solution message to see if room, weapon, and/or suspect matches and make the player reveal ??? */
+	  // Read in the room, weapon, suspect from the player accusation message and prompt reveal */
+	  Data.Location room = req.getGuess().getSolution().getLocation();
+	  Data.Weapon weapon = req.getGuess().getSolution().getWeapon();
+	  Data.Suspect suspect = req.getGuess().getSolution().getSuspect();
+	  
+	  System.out.println(room + " " + weapon + " " + suspect);
+	  
+	   
 	  
   }
   
@@ -294,6 +325,8 @@ public class GameLogic implements MessageHandler {
     } else if (msg_type.equals(Msg.StartGameRequest.getDescriptor().getFullName())) {
       handleStartGameRequest((Msg.StartGameRequest)msg.getMessage());
       
+    } else if (msg_type.equals(Msg.PlayerAccusation.getDescriptor().getFullName())) {
+    	handlePlayerAccusationRequest((Msg.PlayerAccusation)msg.getMessage());
     } else {
       logger.debug("handleMessage() - got unhandled message type: " + msg_type);
     }
@@ -318,4 +351,6 @@ public class GameLogic implements MessageHandler {
   //   logger.debug("proto   =  " + proto.toString());
   //   router.route(new Message(hdr, proto));
   // }
-}
+    
+}   
+  

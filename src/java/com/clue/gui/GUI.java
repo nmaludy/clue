@@ -30,6 +30,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.JOptionPane;
 
 public class GUI extends JFrame implements ActionListener, MessageHandler {
 
@@ -164,6 +165,15 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     SuggestionFrame.setVisible( true );
   }
 
+  
+  public void handleGameEnd(Msg.GameEnd req) {
+	  
+	  JOptionPane.showMessageDialog(null, "You have solved the mystery. Game Over", "Surprise Surprise: Game Overrrr", JOptionPane.INFORMATION_MESSAGE);
+ 
+  }
+  
+  
+  
   @Override
   public boolean shouldCallHandleOnGuiThread() {
     return true;
@@ -182,6 +192,10 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     String msg_type = msg.getHeader().getMsgType();
     if (msg_type.equals(Msg.ConnectRequest.getDescriptor().getFullName())) {
       logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+      
+    } else if (msg_type.equals(Msg.GameEnd.getDescriptor().getFullName())){
+    	handleGameEnd((Msg.GameEnd)msg.getMessage());
+    	
     } else {
       logger.debug("handleMessage() - got unhandled message type: " + msg_type);
     }
