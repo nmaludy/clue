@@ -178,10 +178,25 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 
     // Here is how to handle messages of a specific type
     String msg_type = msg.getHeader().getMsgType();
-    if (msg_type.equals(Msg.ConnectRequest.getDescriptor().getFullName())) {
-      logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
-    } else {
-      logger.debug("handleMessage() - got unhandled message type: " + msg_type);
+    if (msg_type.equals(Msg.ConnectRequest.getDescriptor().getFullName())) 
+    {
+    	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+    } 
+    else if (msg_type.equals(Msg.GameState.getDescriptor().getFullName())) 
+    {
+        logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+
+        Msg.GameState state = (Msg.GameState)msg.getMessage();
+        
+        for (Data.Player player : state.getPlayersList())
+        {
+        	panel.movePlayer(player.getSuspect(), player.getLocation());
+        }
+        
+    } 
+    else 
+    {
+    	logger.debug("handleMessage() - got unhandled message type: " + msg_type);
     }
   }
 
