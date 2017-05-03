@@ -192,6 +192,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
         {
         	panel.movePlayer(player.getSuspect(), player.getLocation());
         }
+        
     } 
     else 
     {

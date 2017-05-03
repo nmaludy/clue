@@ -1,12 +1,19 @@
 package com.clue.gui;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 import com.clue.proto.Data;
 
-public class GUIpanel extends JPanel 
+public class GUIpanel extends JPanel implements ActionListener
 {
+
+	// Timer to trigger repainting the game grid 
+    Timer timer=new Timer(1000, this);
+    
 	public static final Color cRoom = new Color(214,217,223);
 	public static final Color cHallway = new Color(176,196,222);
 	public static final Color cBlack = new Color(0,0,0);
@@ -55,9 +62,13 @@ public class GUIpanel extends JPanel
     private JLabel Hallway9Label;
     private JLabel Hallway10Label;
     private JLabel Hallway11Label;
+    
 	
 	public GUIpanel()
 	{
+		// Timer to trigger repainting the game grid 
+		timer.start();// Start the timer here.
+		
 		// Set layout to 5 by 5 for 9 rooms with hallways between
 		setLayout(new GridLayout(5,5));
 
@@ -125,38 +136,38 @@ public class GUIpanel extends JPanel
 		
 	}
 	
-	public void movePlayer(Data.Suspect.Identity suspect, Data.Location.Identity location)
+	public void movePlayer(Data.Suspect suspect, Data.Location location)
 	{
 		// Suspects
-		Data.Suspect.Identity dataMsScarlett = Data.Suspect.Identity.SUS_MISS_SCARLETT;
-		Data.Suspect.Identity dataColMustard = Data.Suspect.Identity.SUS_COL_MUSTARD;
-		Data.Suspect.Identity dataMrsWhite = Data.Suspect.Identity.SUS_MRS_WHITE;
-		Data.Suspect.Identity dataMrGreen = Data.Suspect.Identity.SUS_MR_GREEN;
-		Data.Suspect.Identity dataMrsPeacock = Data.Suspect.Identity.SUS_MRS_PEACOCK;
-		Data.Suspect.Identity dataProfPlum = Data.Suspect.Identity.SUS_PROF_PLUM;
+		Data.Suspect dataMsScarlett = Data.Suspect.SUS_MISS_SCARLETT;
+		Data.Suspect dataColMustard = Data.Suspect.SUS_COL_MUSTARD;
+		Data.Suspect dataMrsWhite = Data.Suspect.SUS_MRS_WHITE;
+		Data.Suspect dataMrGreen = Data.Suspect.SUS_MR_GREEN;
+		Data.Suspect dataMrsPeacock = Data.Suspect.SUS_MRS_PEACOCK;
+		Data.Suspect dataProfPlum = Data.Suspect.SUS_PROF_PLUM;
 		
 		// Rooms
-		Data.Location.Identity dataBallroom = Data.Location.Identity.LOC_BALLROOM;
-		Data.Location.Identity dataBilliardRoom = Data.Location.Identity.LOC_BILLIARD_ROOM;
-		Data.Location.Identity dataConservatory = Data.Location.Identity.LOC_CONSERVATORY;
-		Data.Location.Identity dataDiningRoom = Data.Location.Identity.LOC_DINING_ROOM;
-		Data.Location.Identity dataHall = Data.Location.Identity.LOC_HALL;
-		Data.Location.Identity dataKitchen = Data.Location.Identity.LOC_KITCHEN;
-		Data.Location.Identity dataLibrary = Data.Location.Identity.LOC_LIBRARY;
-		Data.Location.Identity dataLounge = Data.Location.Identity.LOC_LOUNGE;
-		Data.Location.Identity dataStudy = Data.Location.Identity.LOC_STUDY;
-		Data.Location.Identity dataHallway0 = Data.Location.Identity.LOC_HALLWAY_0;
-		Data.Location.Identity dataHallway1 = Data.Location.Identity.LOC_HALLWAY_1;
-		Data.Location.Identity dataHallway2 = Data.Location.Identity.LOC_HALLWAY_2;
-		Data.Location.Identity dataHallway3 = Data.Location.Identity.LOC_HALLWAY_3;
-		Data.Location.Identity dataHallway4 = Data.Location.Identity.LOC_HALLWAY_4;
-		Data.Location.Identity dataHallway5 = Data.Location.Identity.LOC_HALLWAY_5;
-		Data.Location.Identity dataHallway6 = Data.Location.Identity.LOC_HALLWAY_6;
-		Data.Location.Identity dataHallway7 = Data.Location.Identity.LOC_HALLWAY_7;
-		Data.Location.Identity dataHallway8 = Data.Location.Identity.LOC_HALLWAY_8;
-		Data.Location.Identity dataHallway9 = Data.Location.Identity.LOC_HALLWAY_9;
-		Data.Location.Identity dataHallway10 = Data.Location.Identity.LOC_HALLWAY_10;
-		Data.Location.Identity dataHallway11 = Data.Location.Identity.LOC_HALLWAY_11;
+		Data.Location dataBallroom = Data.Location.LOC_BALLROOM;
+		Data.Location dataBilliardRoom = Data.Location.LOC_BILLIARD_ROOM;
+		Data.Location dataConservatory = Data.Location.LOC_CONSERVATORY;
+		Data.Location dataDiningRoom = Data.Location.LOC_DINING_ROOM;
+		Data.Location dataHall = Data.Location.LOC_HALL;
+		Data.Location dataKitchen = Data.Location.LOC_KITCHEN;
+		Data.Location dataLibrary = Data.Location.LOC_LIBRARY;
+		Data.Location dataLounge = Data.Location.LOC_LOUNGE;
+		Data.Location dataStudy = Data.Location.LOC_STUDY;
+		Data.Location dataHallway0 = Data.Location.LOC_HALLWAY_0;
+		Data.Location dataHallway1 = Data.Location.LOC_HALLWAY_1;
+		Data.Location dataHallway2 = Data.Location.LOC_HALLWAY_2;
+		Data.Location dataHallway3 = Data.Location.LOC_HALLWAY_3;
+		Data.Location dataHallway4 = Data.Location.LOC_HALLWAY_4;
+		Data.Location dataHallway5 = Data.Location.LOC_HALLWAY_5;
+		Data.Location dataHallway6 = Data.Location.LOC_HALLWAY_6;
+		Data.Location dataHallway7 = Data.Location.LOC_HALLWAY_7;
+		Data.Location dataHallway8 = Data.Location.LOC_HALLWAY_8;
+		Data.Location dataHallway9 = Data.Location.LOC_HALLWAY_9;
+		Data.Location dataHallway10 = Data.Location.LOC_HALLWAY_10;
+		Data.Location dataHallway11 = Data.Location.LOC_HALLWAY_11;
 		
 		// Place Ms. Scarlett in Upper Left Corner of Room Or Center of Hallway
 		if (suspect == dataMsScarlett)
@@ -310,22 +321,18 @@ public class GUIpanel extends JPanel
 		}
 	}
 	
-	
-	// Initialize player locations to center room for now
-	private void initializePlayerColors()
+	// Listen for timer to repaint the game grid 
+	public void actionPerformed(ActionEvent ev)
 	{
-		/*
-		this.gameGrid[6][6]=cMsScarlett;
-		this.gameGrid[6][7]=cColMustard;
-		this.gameGrid[6][8]=cMrsWhite;
-		this.gameGrid[8][6]=cMrGreen;
-		this.gameGrid[8][7]=cMrsPeacock;
-		this.gameGrid[8][8]=cProfPlum;
-		*/
+	    if ( ev.getSource()==timer )
+	    { 
+	    	// this will call at every 1 second
+	    	repaint();
+	    }
 	}
 	
 	// Set board colors based on room vs. hallway
-	private void redrawBoardColor()
+	public void redrawBoardColor()
 	{
 
 		for (int i=0; i<NUM_ROWS; i++)
