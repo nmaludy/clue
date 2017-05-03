@@ -43,7 +43,9 @@ public class ConnectFrame extends JFrame implements ActionListener, MessageHandl
 
     // Create suspect radio buttons panel
     suspectButtons = new SuspectButtonPanel();
-
+    // disable any suspect buttons that are already taken
+    handleGameState(ClientState.getInstance().gameState());
+    
     // Create ok & cancel buttons
     okButton = new JButton("OK");
     cancelButton = new JButton("Cancel");
@@ -57,7 +59,7 @@ public class ConnectFrame extends JFrame implements ActionListener, MessageHandl
     buttonPanel.setLayout( new FlowLayout( FlowLayout.CENTER ) );
     buttonPanel.add( okButton );
     buttonPanel.add( cancelButton );
-
+    
     // create labels for errors
     errorLabel = new JLabel();
     errorLabel.setForeground(Color.RED);
@@ -71,18 +73,9 @@ public class ConnectFrame extends JFrame implements ActionListener, MessageHandl
     this.add( suspectButtons, BorderLayout.NORTH );
     this.add( errorPanel, BorderLayout.CENTER );
     this.add( buttonPanel, BorderLayout.SOUTH );
-
+        
     router = Router.getInstance();
     router.register(new SubscriptionAllIncoming(), this);
-    
-    Msg.GameStateRequest req = Msg.GameStateRequest.newBuilder()
-        .setHeader(Msg.Header.newBuilder()
-                   .setMsgType(Msg.GameStateRequest.getDescriptor().getFullName())
-                   .setSource(Instance.getId())
-                   .setDestination(Instance.getServerId())
-                   .build())
-        .build();
-    router.route(new Message(req.getHeader(), req));
   }
 
   public void ok() {
@@ -92,18 +85,20 @@ public class ConnectFrame extends JFrame implements ActionListener, MessageHandl
       return;
     }
 
-    if (!isConnected) {
-      String name = config.getProperty("instance.name", String.class);
-      Msg.ConnectRequest req = Msg.ConnectRequest.newBuilder()
+    if (ClientState.getInstance().isConnected()) {
+      Msg.SuspectClaimRequest req = Msg.SuspectClaimRequest.newBuilder()
           .setHeader(Msg.Header.newBuilder()
-                     .setMsgType(Msg.ConnectRequest.getDescriptor().getFullName())
+                     .setMsgType(Msg.SuspectClaimRequest.getDescriptor().getFullName())
                      .setSource(Instance.getId())
                      .setDestination(Instance.getServerId())
                      .build())
-          .setClientId(Instance.getId())
-          .setName(name)
+          .setSuspect(suspectButtons.getSuspect())
           .build();
       router.route(new Message(req.getHeader(), req));
+    } else {
+      errorLabel.setText("ERROR: Client ID already in use: "
+                         + Integer.toString(Instance.getId()));
+      errorLabel.setVisible(true);
     }
   }
 
@@ -150,9 +145,6 @@ public class ConnectFrame extends JFrame implements ActionListener, MessageHandl
     if (msg_type.equals(Msg.GameState.getDescriptor().getFullName())) {
       handleGameState((Msg.GameState)msg.getMessage());
     }
-    else if (msg_type.equals(Msg.ConnectResponse.getDescriptor().getFullName())) {
-      handleConnection((Msg.ConnectResponse)msg.getMessage());
-    }
     else if (msg_type.equals(Msg.SuspectClaimResponse.getDescriptor().getFullName())) {
       handleSuspectClaim((Msg.SuspectClaimResponse)msg.getMessage());
     }
@@ -161,28 +153,7 @@ public class ConnectFrame extends JFrame implements ActionListener, MessageHandl
   public void handleGameState(Msg.GameState state) {
     suspectButtons.disableClaimedSuspects(state);
   }
-    
-  public void handleConnection(Msg.ConnectResponse response) {
-    if (response.getGoodConnection()) {
-      isConnected = true;
-      logger.debug("handleMessage() - connection = GOOD");
-      Msg.SuspectClaimRequest req = Msg.SuspectClaimRequest.newBuilder()
-          .setHeader(Msg.Header.newBuilder()
-                     .setMsgType(Msg.SuspectClaimRequest.getDescriptor().getFullName())
-                     .setSource(Instance.getId())
-                     .setDestination(Instance.getServerId())
-                     .build())
-          .setSuspect(suspectButtons.getSuspect())
-          .build();
-      router.route(new Message(req.getHeader(), req));
-    } else {
-      errorLabel.setText("ERROR: Client ID already in use: "
-                         + Integer.toString(Instance.getId()));
-      errorLabel.setVisible(true);
-      logger.debug("handleMessage() - connection = BAD");
-    }
-  }
-
+  
   public void handleSuspectClaim(Msg.SuspectClaimResponse  response) {
     if (response.getClaimSuccess()) {
       logger.debug("handleMessage() - suspect claim = GOOD");

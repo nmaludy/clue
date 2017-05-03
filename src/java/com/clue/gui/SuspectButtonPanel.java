@@ -6,12 +6,16 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import com.clue.app.Logger;
 import com.clue.app.Instance;
+
 import com.clue.proto.Data;
 import com.clue.proto.Msg;
 
 public class SuspectButtonPanel extends JPanel
-{  
+{
+  private static Logger logger = new Logger(SuspectButtonPanel.class);
+
   // Suspect Buttons
   private JRadioButton MsScarlettButton;
   private JRadioButton ColMustardButton;
@@ -62,40 +66,43 @@ public class SuspectButtonPanel extends JPanel
     this.add( buttonSuspectPanel, BorderLayout.CENTER );
   }
 
-  public Data.Suspect.Identity getSuspect()
+  public Data.Suspect getSuspect()
   {
-    Data.Suspect.Identity suspect = null;
+    Data.Suspect suspect = null;
     if (MsScarlettButton.isSelected() )
     {
-      suspect = Data.Suspect.Identity.SUS_MISS_SCARLETT;
+      suspect = Data.Suspect.SUS_MISS_SCARLETT;
     }
     if (ColMustardButton.isSelected() )
     {
-      suspect = Data.Suspect.Identity.SUS_COL_MUSTARD;
+      suspect = Data.Suspect.SUS_COL_MUSTARD;
     }   
     if (MrsWhiteButton.isSelected() )
     {
-      suspect = Data.Suspect.Identity.SUS_MRS_WHITE;
+      suspect = Data.Suspect.SUS_MRS_WHITE;
     }
     if (MrGreenButton.isSelected() )
     {
-      suspect = Data.Suspect.Identity.SUS_MR_GREEN;
+      suspect = Data.Suspect.SUS_MR_GREEN;
     }   
     if (MrsPeacockButton.isSelected() )
     {
-      suspect = Data.Suspect.Identity.SUS_MRS_PEACOCK;
+      suspect = Data.Suspect.SUS_MRS_PEACOCK;
     }   
     if (ProfPlumButton.isSelected() )
     {
-      suspect = Data.Suspect.Identity.SUS_PROF_PLUM;
+      suspect = Data.Suspect.SUS_PROF_PLUM;
     }
     return suspect;
   }
 
   public void disableClaimedSuspects(Msg.GameState state)
   {
+    logger.debug("disableClaimedSuspects() - disabling based on received state");
     for (Data.Player player : state.getPlayersList())
     {
+      logger.debug("disableClaimedSuspects() - disabling suspect: "
+                   + player.getSuspect().name());
       switch (player.getSuspect())
       {
         case SUS_MISS_SCARLETT:
