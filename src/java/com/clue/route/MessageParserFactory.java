@@ -21,6 +21,7 @@ public class MessageParserFactory {
     register(Msg.SuspectClaimRequest.getDefaultInstance());
     register(Msg.SuspectClaimResponse.getDefaultInstance());
     register(Msg.PlayerMove.getDefaultInstance());
+    register(Msg.InvalidMove.getDefaultInstance());
     register(Msg.PlayerSuggestion.getDefaultInstance());
     register(Msg.PlayerAccusation.getDefaultInstance());
     register(Msg.PlayerAccusationFailed.getDefaultInstance());

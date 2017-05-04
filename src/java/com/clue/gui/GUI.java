@@ -228,7 +228,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
         logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
     	logger.debug("[************DEBUG**********] - invalid destination in move message.");
 
-    	InvalidMoveFrame.setVisible(true);
+    	InvalidMoveFrame.setVisible( true );
+    	InvalidMoveFrame.setState(JFrame.NORMAL);
     }
     else if (msg_type.equals(Msg.DisproveRequest.getDescriptor().getFullName())) 
     {
