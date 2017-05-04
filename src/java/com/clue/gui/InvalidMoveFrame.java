@@ -13,7 +13,7 @@ public class InvalidMoveFrame extends JFrame implements ComponentListener
   {
 	    this.parent = parent;
 	    setTitle( "Invalid Move" );
-	    setSize( 1250, 200 );
+	    setSize( 325, 200 );
 	    setDefaultCloseOperation( MoveFrame.HIDE_ON_CLOSE );
 	    JPanel panel = new InvalidMovePanel( this );
 	    this.add( panel );
