@@ -26,6 +26,8 @@ public class MovePanel extends JPanel implements ActionListener, ComponentListen
   private MoveFrame frame = null;
   private Data.Location location = null;
 
+  private ButtonGroup roomButtonGroup;
+  
   // Room buttons
   private JRadioButton StudyButton;
   private JRadioButton HallButton;
@@ -84,29 +86,29 @@ public class MovePanel extends JPanel implements ActionListener, ComponentListen
     Hallway11Button = new JRadioButton( "Hallway 11" );
 
 
-    ButtonGroup sizeGroup1 = new ButtonGroup();
-    sizeGroup1.add( StudyButton );
-    sizeGroup1.add( HallButton );
-    sizeGroup1.add( LoungeButton );
-    sizeGroup1.add( LibraryButton );
-    sizeGroup1.add( BilliardRoomButton );
-    sizeGroup1.add( DiningRoomButton );
-    sizeGroup1.add( ConservatoryButton );
-    sizeGroup1.add( BallroomButton );
-    sizeGroup1.add( KitchenButton );
+    roomButtonGroup = new ButtonGroup();
+    roomButtonGroup.add( StudyButton );
+    roomButtonGroup.add( HallButton );
+    roomButtonGroup.add( LoungeButton );
+    roomButtonGroup.add( LibraryButton );
+    roomButtonGroup.add( BilliardRoomButton );
+    roomButtonGroup.add( DiningRoomButton );
+    roomButtonGroup.add( ConservatoryButton );
+    roomButtonGroup.add( BallroomButton );
+    roomButtonGroup.add( KitchenButton );
 
-    sizeGroup1.add( Hallway0Button );
-    sizeGroup1.add( Hallway1Button );
-    sizeGroup1.add( Hallway2Button );
-    sizeGroup1.add( Hallway3Button );
-    sizeGroup1.add( Hallway4Button );
-    sizeGroup1.add( Hallway5Button );
-    sizeGroup1.add( Hallway6Button );
-    sizeGroup1.add( Hallway7Button );
-    sizeGroup1.add( Hallway8Button );
-    sizeGroup1.add( Hallway9Button );
-    sizeGroup1.add( Hallway10Button );
-    sizeGroup1.add( Hallway11Button );
+    roomButtonGroup.add( Hallway0Button );
+    roomButtonGroup.add( Hallway1Button );
+    roomButtonGroup.add( Hallway2Button );
+    roomButtonGroup.add( Hallway3Button );
+    roomButtonGroup.add( Hallway4Button );
+    roomButtonGroup.add( Hallway5Button );
+    roomButtonGroup.add( Hallway6Button );
+    roomButtonGroup.add( Hallway7Button );
+    roomButtonGroup.add( Hallway8Button );
+    roomButtonGroup.add( Hallway9Button );
+    roomButtonGroup.add( Hallway10Button );
+    roomButtonGroup.add( Hallway11Button );
 
     // Add ActionListeners for each radio button
     StudyButton.addActionListener(this);
@@ -273,16 +275,14 @@ public class MovePanel extends JPanel implements ActionListener, ComponentListen
 
       frame.setVisible(false);
     }
-
-    
-    // // @todo remove this (testing)
-    // setLocation(moveTo);
   }
 
 
   @Override
   public void componentHidden(ComponentEvent event) {
     logger.debug("Component hidden");
+    roomButtonGroup.clearSelection();
+    submitButton.setEnabled(false);
   }
 
   @Override
@@ -333,30 +333,6 @@ public class MovePanel extends JPanel implements ActionListener, ComponentListen
     Hallway9Button.setEnabled(false);
     Hallway10Button.setEnabled(false);
     Hallway11Button.setEnabled(false);
-
-    // @todo remove testing    
-    // StudyButton.setForeground(Color.BLACK);
-    // HallButton.setForeground(Color.BLACK);
-    // LoungeButton.setForeground(Color.BLACK);
-    // LibraryButton.setForeground(Color.BLACK);
-    // BilliardRoomButton.setForeground(Color.BLACK);
-    // DiningRoomButton.setForeground(Color.BLACK);
-    // ConservatoryButton.setForeground(Color.BLACK);
-    // BallroomButton.setForeground(Color.BLACK);
-    // KitchenButton.setForeground(Color.BLACK);
-
-    // Hallway0Button.setForeground(Color.BLACK);
-    // Hallway1Button.setForeground(Color.BLACK);
-    // Hallway2Button.setForeground(Color.BLACK);
-    // Hallway3Button.setForeground(Color.BLACK);
-    // Hallway4Button.setForeground(Color.BLACK);
-    // Hallway5Button.setForeground(Color.BLACK);
-    // Hallway6Button.setForeground(Color.BLACK);
-    // Hallway7Button.setForeground(Color.BLACK);
-    // Hallway8Button.setForeground(Color.BLACK);
-    // Hallway9Button.setForeground(Color.BLACK);
-    // Hallway10Button.setForeground(Color.BLACK);
-    // Hallway11Button.setForeground(Color.BLACK);
 
     JRadioButton current_button = null;
     ArrayList<JRadioButton> buttons = new ArrayList<JRadioButton>();
@@ -490,11 +466,59 @@ public class MovePanel extends JPanel implements ActionListener, ComponentListen
       button.setEnabled(true);
     }
 
+    // disable all hallways that are currently occupied
+    Msg.GameState state = ClientState.getInstance().gameState();
+    for (Data.Player player : state.getPlayersList()) {
+      JRadioButton hallway_button = null;
+      switch (player.getLocation()) {
+        case LOC_NONE:
+          logger.error("enableValidMoves() - Unable to choose a valid move because"
+                       + " the location is set to LOC_NONE!");
+          break;
+        case LOC_HALLWAY_0:
+          hallway_button = Hallway0Button;
+          break;
+        case LOC_HALLWAY_1:
+          hallway_button = Hallway1Button;
+          break;
+        case LOC_HALLWAY_2:
+          hallway_button = Hallway2Button;
+          break;
+        case LOC_HALLWAY_3:
+          hallway_button = Hallway3Button;
+          break;
+        case LOC_HALLWAY_4:
+          hallway_button = Hallway4Button;
+          break;
+        case LOC_HALLWAY_5:
+          hallway_button = Hallway5Button;
+          break;
+        case LOC_HALLWAY_6:
+          hallway_button = Hallway6Button;
+          break;
+        case LOC_HALLWAY_7:
+          hallway_button = Hallway7Button;
+          break;
+        case LOC_HALLWAY_8:
+          hallway_button = Hallway8Button;
+          break;
+        case LOC_HALLWAY_9:
+          hallway_button = Hallway9Button;
+          break;
+        case LOC_HALLWAY_10:
+          hallway_button = Hallway10Button;
+          break;
+        case LOC_HALLWAY_11:
+          hallway_button = Hallway11Button;
+          break;
+        default:
+          break;
+      }
+      
+      if (hallway_button != null) {
+        hallway_button.setEnabled(false);
+      }
+    }
 
-    // @todo remove testing
-    // current_button.setForeground(Color.RED);
-    // for (JRadioButton button : buttons) {
-    //   button.setForeground(Color.BLUE);
-    // }
   }
 }
