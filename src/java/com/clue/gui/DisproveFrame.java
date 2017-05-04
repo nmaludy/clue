@@ -4,21 +4,34 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.clue.app.Config;
+import com.clue.app.Logger;
+import com.clue.app.Instance;
+
+import com.clue.proto.Msg;
+
 import com.clue.route.Router;
 
-public class SuggestionFrame extends JFrame implements ComponentListener
-{
-  private JFrame parent;
+public class DisproveFrame extends JFrame implements ComponentListener {
 
-  public SuggestionFrame(JFrame parent, Router router)
-  {
+  private static Logger logger = new Logger(DisproveFrame.class);
+  private static Config config = Config.getInstance();
+  
+  private JFrame parent;
+  private DisprovePanel panel;
+  
+  public DisproveFrame(JFrame parent, Router router) {
     this.parent = parent;
-    setTitle( "Suggestion" );
+    setTitle( "Disprove" );
     setSize( 850, 300 );
     setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
-    JPanel panel = new SuggestionPanel( this, router  );
+    panel = new DisprovePanel( this, router  );
     this.add( panel );
     this.addComponentListener(this);
+  }
+
+  public void setDisproveRequest(Msg.DisproveRequest req) {
+    panel.setDisproveRequest(req);
   }
 
   @Override

@@ -19,7 +19,6 @@ public class NotebookPanel extends JPanel implements MessageHandler
   private static Logger logger = new Logger(NotebookPanel.class);
   private static Config config = Config.getInstance();
 
-
   // Heading Labels
   private JLabel NotebookLabel;
   private JLabel SuspectsLabel;
@@ -388,7 +387,7 @@ public class NotebookPanel extends JPanel implements MessageHandler
     else if (msg_type.equals(Msg.DisproveResponse.getDescriptor().getFullName())) {
       Msg.DisproveResponse disprove = (Msg.DisproveResponse)msg.getMessage();
       logger.debug("handleMessage() - got disprove respone: " + disprove.toString());
-      addSolution(disprove.getSolution());
+      addSolution(disprove.getResponse());
       
       // @todo what if all are NONE? should show GUI to make accusation
     }

@@ -16,19 +16,17 @@ import com.clue.proto.Msg;
 import com.clue.route.Message;
 import com.clue.route.Router;
 
-public class SuggestionPanel extends JPanel implements ActionListener, ComponentListener {
+public class DisprovePanel extends JPanel implements ActionListener, ComponentListener {
 
-  private static Logger logger = new Logger(SuggestionPanel.class);
+  private static Logger logger = new Logger(DisprovePanel.class);
   private static Config config = Config.getInstance();
 
   private JFrame parent = null;
   private Router router = null;
 
   // Button groups
-  private ButtonGroup SuspectGroup;
-  private ButtonGroup WeaponGroup;
-  private ButtonGroup RoomGroup;
-  
+  private ButtonGroup ButtonGroup;
+
   // Suspect Buttons
   private JRadioButton MsScarlettButton;
   private JRadioButton ColMustardButton;
@@ -36,16 +34,16 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
   private JRadioButton MrGreenButton;
   private JRadioButton MrsPeacockButton;
   private JRadioButton ProfPlumButton;
-  
-  // Weapon buttons    
+
+  // Weapon buttons
   private JRadioButton CandlestickButton;
   private JRadioButton KnifeButton;
   private JRadioButton LeadPipeButton;
   private JRadioButton RevolverButton;
   private JRadioButton RopeButton;
   private JRadioButton WrenchButton;
-  
-  // Room buttons    
+
+  // Room buttons
   private JRadioButton StudyButton;
   private JRadioButton HallButton;
   private JRadioButton LoungeButton;
@@ -55,17 +53,20 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
   private JRadioButton ConservatoryButton;
   private JRadioButton BallroomButton;
   private JRadioButton KitchenButton;
-    
+
   // Submit Buttons
-  private JButton suggestionButton = new JButton("Submit Suggestion");
-  private JButton accusationButton = new JButton("Submit Accusation");
+  private JButton disproveButton = new JButton("Disprove");
+  private JButton passButton = new JButton("Pass");
+
+  private Msg.DisproveRequest request;
 
   // Panel Constructor
-  public SuggestionPanel( JFrame parent, Router routerIn )
+  public DisprovePanel( JFrame parent, Router routerIn )
   {
     this.parent = parent;
     this.router = routerIn;
-    
+    this.request = null;
+
     // Create Suspect buttons
     MsScarlettButton = new JRadioButton( "Ms. Scarlett" );
     ColMustardButton = new JRadioButton( "Col. Mustard" );
@@ -73,14 +74,14 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
     MrGreenButton    = new JRadioButton( "Mr. Green" );
     MrsPeacockButton = new JRadioButton( "Mrs. Peacock" );
     ProfPlumButton   = new JRadioButton( "Prof. Plum" );
-    
+
     // Create Weapon buttons
     CandlestickButton = new JRadioButton( "Candlestick" );
     KnifeButton       = new JRadioButton( "Knife" );
     LeadPipeButton    = new JRadioButton( "Lead Pipe" );
     RevolverButton    = new JRadioButton( "Revolver" );
     RopeButton        = new JRadioButton( "Rope" );
-    WrenchButton      = new JRadioButton( "Wrench" );      
+    WrenchButton      = new JRadioButton( "Wrench" );
 
     // Create Room buttons
     StudyButton        = new JRadioButton( "Study" );
@@ -94,43 +95,41 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
     KitchenButton      = new JRadioButton( "Kitchen" );
 
     // Create a button group & add buttons
-    SuspectGroup = new ButtonGroup();
-    SuspectGroup.add( MsScarlettButton );
-    SuspectGroup.add( ColMustardButton );
-    SuspectGroup.add( MrsWhiteButton );
-    SuspectGroup.add( MrGreenButton );
-    SuspectGroup.add( MrsPeacockButton );
-    SuspectGroup.add( ProfPlumButton );
-    
-    WeaponGroup = new ButtonGroup();
-    WeaponGroup.add( CandlestickButton );
-    WeaponGroup.add( KnifeButton );
-    WeaponGroup.add( LeadPipeButton );
-    WeaponGroup.add( RevolverButton );
-    WeaponGroup.add( RopeButton );
-    WeaponGroup.add( WrenchButton );
-    
-    RoomGroup = new ButtonGroup();
-    RoomGroup.add( StudyButton );
-    RoomGroup.add( HallButton );
-    RoomGroup.add( LoungeButton );
-    RoomGroup.add( LibraryButton );
-    RoomGroup.add( BilliardRoomButton );
-    RoomGroup.add( DiningRoomButton );
-    RoomGroup.add( ConservatoryButton );
-    RoomGroup.add( BallroomButton );
-    RoomGroup.add( KitchenButton );
+    ButtonGroup = new ButtonGroup();
+    ButtonGroup.add( MsScarlettButton );
+    ButtonGroup.add( ColMustardButton );
+    ButtonGroup.add( MrsWhiteButton );
+    ButtonGroup.add( MrGreenButton );
+    ButtonGroup.add( MrsPeacockButton );
+    ButtonGroup.add( ProfPlumButton );
+
+    ButtonGroup.add( CandlestickButton );
+    ButtonGroup.add( KnifeButton );
+    ButtonGroup.add( LeadPipeButton );
+    ButtonGroup.add( RevolverButton );
+    ButtonGroup.add( RopeButton );
+    ButtonGroup.add( WrenchButton );
+
+    ButtonGroup.add( StudyButton );
+    ButtonGroup.add( HallButton );
+    ButtonGroup.add( LoungeButton );
+    ButtonGroup.add( LibraryButton );
+    ButtonGroup.add( BilliardRoomButton );
+    ButtonGroup.add( DiningRoomButton );
+    ButtonGroup.add( ConservatoryButton );
+    ButtonGroup.add( BallroomButton );
+    ButtonGroup.add( KitchenButton );
 
     // Create the button border
     Border buttonSuspectBorder = BorderFactory.createEtchedBorder();
     buttonSuspectBorder = BorderFactory.createTitledBorder( buttonSuspectBorder, "Suspect" );
-    
+
     Border buttonWeaponBorder = BorderFactory.createEtchedBorder();
     buttonWeaponBorder = BorderFactory.createTitledBorder( buttonWeaponBorder, "Weapon" );
-    
+
     Border buttonRoomBorder = BorderFactory.createEtchedBorder();
     buttonRoomBorder = BorderFactory.createTitledBorder( buttonRoomBorder, "Room" );
-    
+
 
     // Create a button panel & add buttons
     JPanel buttonSuspectPanel = new JPanel();
@@ -142,7 +141,7 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
     buttonSuspectPanel.add( MrsPeacockButton );
     buttonSuspectPanel.add( ProfPlumButton );
     buttonSuspectPanel.setBorder( buttonSuspectBorder );
-    
+
     JPanel buttonWeaponPanel = new JPanel();
     buttonWeaponPanel.setLayout( new FlowLayout( FlowLayout.LEFT ) );
     buttonWeaponPanel.add( KnifeButton );
@@ -168,9 +167,9 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
 
     JPanel submitButtonPanel = new JPanel();
     submitButtonPanel.setLayout( new FlowLayout( FlowLayout.CENTER ) );
-    submitButtonPanel.add( suggestionButton );
-    submitButtonPanel.add( accusationButton );
-    
+    submitButtonPanel.add( disproveButton );
+    submitButtonPanel.add( passButton );
+
     // Add ActionListeners for each radio button
     MsScarlettButton.addActionListener(this);
     ColMustardButton.addActionListener(this);
@@ -178,14 +177,14 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
     MrGreenButton.addActionListener(this);
     MrsPeacockButton.addActionListener(this);
     ProfPlumButton.addActionListener(this);
-    
+
     CandlestickButton.addActionListener(this);
     KnifeButton.addActionListener(this);
     LeadPipeButton.addActionListener(this);
     RevolverButton.addActionListener(this);
     RopeButton.addActionListener(this);
     WrenchButton.addActionListener(this);
-    
+
     StudyButton.addActionListener(this);
     HallButton.addActionListener(this);
     LoungeButton.addActionListener(this);
@@ -196,13 +195,13 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
     BallroomButton.addActionListener(this);
     KitchenButton.addActionListener(this);
 
-    suggestionButton.addActionListener(this);
-    accusationButton.addActionListener(this);
-        
+    disproveButton.addActionListener(this);
+    passButton.addActionListener(this);
+
     //Default Submit Buttons to disabled
-    suggestionButton.setEnabled(false);
-    accusationButton.setEnabled(false);
-    
+    disproveButton.setEnabled(false);
+    passButton.setEnabled(false);
+
     // Add panels to the main panel and arrange layout
     this.setLayout(new GridLayout(4,1));
     //this.setLayout( new BorderLayout() );
@@ -210,216 +209,277 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
     this.add( buttonWeaponPanel );
     this.add( buttonRoomPanel );
     this.add( submitButtonPanel );
-    
+
     parent.addComponentListener(this);
   }
-    
+
 
   /**
    * This method handles events caused by the user
    * selecting or deselecting radio buttons or
    * checkboxes
-   * 
+   *
    * @param e is an ActionEvent caused generated by an action listener
    */
   public void actionPerformed(ActionEvent e)
   {
-    boolean selectedRoom    = false;
-    boolean selectedWeapon  = false;
-    boolean selectedSuspect = false;
-      
-    com.clue.proto.Data.Location sRoom    = null;
-    com.clue.proto.Data.Weapon   sWeapon  = null;
-    com.clue.proto.Data.Suspect  sSuspect = null;
-        
+    Data.Location sRoom    = Data.Location.LOC_NONE;
+    Data.Weapon   sWeapon  = Data.Weapon.WPN_NONE;
+    Data.Suspect  sSuspect = Data.Suspect.SUS_NONE;
+
     // Determine message based on selection
-      
+
     // Rooms
-    if (StudyButton.isSelected() )
-    {
+    if (StudyButton.isSelected()) {
       sRoom = Data.Location.LOC_STUDY;
-      selectedRoom = true;
     }
-        
-    if (HallButton.isSelected() )
-    {
+    if (HallButton.isSelected()) {
       sRoom = Data.Location.LOC_HALL;
-      selectedRoom = true;
     }
-        
-    if (LoungeButton.isSelected() )
-    {
+    if (LoungeButton.isSelected()) {
       sRoom = Data.Location.LOC_LOUNGE;
-      selectedRoom = true;
     }
-
-    if (LibraryButton.isSelected() )
-    {
+    if (LibraryButton.isSelected()) {
       sRoom = Data.Location.LOC_LIBRARY;
-      selectedRoom = true;
     }
-        
-    if (BilliardRoomButton.isSelected() )
-    {
+    if (BilliardRoomButton.isSelected()) {
       sRoom = Data.Location.LOC_BILLIARD_ROOM;
-      selectedRoom = true;
     }
-        
-    if (DiningRoomButton.isSelected() )
-    {
+    if (DiningRoomButton.isSelected()) {
       sRoom = Data.Location.LOC_DINING_ROOM;
-      selectedRoom = true;
     }
-
-    if (ConservatoryButton.isSelected() )
-    {
+    if (ConservatoryButton.isSelected()) {
       sRoom = Data.Location.LOC_CONSERVATORY;
-      selectedRoom = true;
     }
-        
-    if (BallroomButton.isSelected() )
-    {
+    if (BallroomButton.isSelected()) {
       sRoom = Data.Location.LOC_BALLROOM;
-      selectedRoom = true;
     }
-        
-    if (KitchenButton.isSelected() )
-    {
+    if (KitchenButton.isSelected()) {
       sRoom = Data.Location.LOC_KITCHEN;
-      selectedRoom = true;
     }
-        
+
     // Weapons
-    if (CandlestickButton.isSelected() )
-    {
+    if (CandlestickButton.isSelected()) {
       sWeapon = Data.Weapon.WPN_CANDLESTICK;
-      selectedWeapon = true;
     }
-        
-    if (KnifeButton.isSelected() )
-    {
+    if (KnifeButton.isSelected()) {
       sWeapon = Data.Weapon.WPN_KNIFE;
-      selectedWeapon = true;
     }
-        
-    if (LeadPipeButton.isSelected() )
-    {
+    if (LeadPipeButton.isSelected()) {
       sWeapon = Data.Weapon.WPN_LEAD_PIPE;
-      selectedWeapon = true;
     }
-        
-    if (RevolverButton.isSelected() )
-    {
+    if (RevolverButton.isSelected()) {
       sWeapon = Data.Weapon.WPN_REVOLVER;
-      selectedWeapon = true;
     }
-
-    if (RopeButton.isSelected() )
-    {
+    if (RopeButton.isSelected()) {
       sWeapon = Data.Weapon.WPN_ROPE;
-      selectedWeapon = true;
     }
-        
-    if (WrenchButton.isSelected() )
-    {
+    if (WrenchButton.isSelected()) {
       sWeapon = Data.Weapon.WPN_WRENCH;
-      selectedWeapon = true;
     }
-        
+
     // Suspects
-    if (MsScarlettButton.isSelected() )
-    {
+    if (MsScarlettButton.isSelected()) {
       sSuspect = Data.Suspect.SUS_MISS_SCARLETT;
-      selectedSuspect = true;
     }
-        
-    if (ColMustardButton.isSelected() )
-    {
+    if (ColMustardButton.isSelected()) {
       sSuspect = Data.Suspect.SUS_COL_MUSTARD;
-      selectedSuspect = true;
     }
-        
-    if (MrsWhiteButton.isSelected() )
-    {
+    if (MrsWhiteButton.isSelected()) {
       sSuspect = Data.Suspect.SUS_MRS_WHITE;
-      selectedSuspect = true;
     }
-
-    if (MrGreenButton.isSelected() )
-    {
+    if (MrGreenButton.isSelected()) {
       sSuspect = Data.Suspect.SUS_MR_GREEN;
-      selectedSuspect = true;
     }
-        
-    if (MrsPeacockButton.isSelected() )
-    {
+    if (MrsPeacockButton.isSelected()) {
       sSuspect = Data.Suspect.SUS_MRS_PEACOCK;
-      selectedSuspect = true;
     }
-        
-    if (ProfPlumButton.isSelected() )
-    {
+    if (ProfPlumButton.isSelected()) {
       sSuspect = Data.Suspect.SUS_PROF_PLUM;
-      selectedSuspect = true;
-    }
-        
-    // If each type of clue is selected
-    if (selectedRoom && selectedWeapon && selectedSuspect)
-    {
-      suggestionButton.setEnabled(true);
-      accusationButton.setEnabled(true);
     }
 
-    // Send Suggestion
-    if ( e.getSource().equals(suggestionButton) )
-    {
-      Msg.PlayerSuggestion sg = Msg.PlayerSuggestion.newBuilder()
+    // If each type of clue is selected
+    if (sRoom    != Data.Location.LOC_NONE ||
+        sWeapon  != Data.Weapon.WPN_NONE ||
+        sSuspect != Data.Suspect.SUS_NONE) {
+      disproveButton.setEnabled(true);
+    }
+
+    // Send Disprove
+    if ( e.getSource().equals(disproveButton) ||
+         e.getSource().equals(passButton) ) {
+      Msg.DisproveResponse msg = Msg.DisproveResponse.newBuilder()
           .setHeader(Msg.Header.newBuilder()
-                     .setMsgType(Msg.PlayerSuggestion.getDescriptor().getFullName())
+                     .setMsgType(Msg.DisproveResponse.getDescriptor().getFullName())
                      .setSource(Instance.getId())
                      .setDestination(Instance.getServerId())
                      .build())
-          .setSolution(Data.Solution.newBuilder()
+          .setGuess(request.getGuess().toBuilder().build())
+          .setResponse(Data.Solution.newBuilder()
                        .setClientId(Instance.getId())
                        .setWeapon(sWeapon)
                        .setSuspect(sSuspect)
                        .setLocation(sRoom)
                        .build())
           .build();
-      router.route(new Message(sg.getHeader(), sg));
+      router.route(new Message(msg.getHeader(), msg));
       parent.setVisible(false);
     }
-        
-    // Send Accusation
-    if ( e.getSource().equals(accusationButton) )
-    {
-      Msg.PlayerAccusation sg = Msg.PlayerAccusation.newBuilder()
-          .setHeader(Msg.Header.newBuilder()
-                     .setMsgType(Msg.PlayerAccusation.getDescriptor().getFullName())
-                     .setSource(Instance.getId())
-                     .setDestination(Instance.getServerId())
-                     .build())
-          .setSolution(Data.Solution.newBuilder()
-                       .setClientId(Instance.getId())
-                       .setWeapon(sWeapon)
-                       .setSuspect(sSuspect)
-                       .setLocation(sRoom)
-                       .build())
-          .build();
-      router.route(new Message(sg.getHeader(), sg));
-      parent.setVisible(false);
+  }
+
+  public void setDisproveRequest(Msg.DisproveRequest req) {
+    this.request = req;
+    // @todo show suggestion
+
+    MsScarlettButton.setEnabled(false);
+    ColMustardButton.setEnabled(false);
+    MrsWhiteButton.setEnabled(false);
+    MrGreenButton.setEnabled(false);
+    MrsPeacockButton.setEnabled(false);
+    ProfPlumButton.setEnabled(false);
+
+    CandlestickButton.setEnabled(false);
+    KnifeButton.setEnabled(false);
+    LeadPipeButton.setEnabled(false);
+    RevolverButton.setEnabled(false);
+    RopeButton.setEnabled(false);
+    WrenchButton.setEnabled(false);
+
+    StudyButton.setEnabled(false);
+    HallButton.setEnabled(false);
+    LoungeButton.setEnabled(false);
+    LibraryButton.setEnabled(false);
+    BilliardRoomButton.setEnabled(false);
+    DiningRoomButton.setEnabled(false);
+    ConservatoryButton.setEnabled(false);
+    BallroomButton.setEnabled(false);
+    KitchenButton.setEnabled(false);
+
+    boolean b_can_disprove = false;
+    
+    Data.Location location = req.getGuess().getLocation();
+    if (ClientState.getInstance().myLocationClues().contains(location)) {
+      switch (location) {
+        case LOC_NONE:
+          break;
+        case LOC_STUDY:
+          StudyButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case LOC_HALL:
+          HallButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case LOC_LOUNGE:
+          LoungeButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case LOC_LIBRARY:
+          LibraryButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case LOC_BILLIARD_ROOM:
+          BilliardRoomButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case LOC_DINING_ROOM:
+          DiningRoomButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case LOC_CONSERVATORY:
+          ConservatoryButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case LOC_BALLROOM:
+          BallroomButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case LOC_KITCHEN:
+          KitchenButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        default:
+          logger.error("componentShown() - got invalid location clue revealed: "
+                       + location.name());
+          break;
+      }
     }
-        
+
+    Data.Weapon weapon = req.getGuess().getWeapon();
+    if (ClientState.getInstance().myWeaponClues().contains(weapon)) {
+      switch (weapon) {
+        case WPN_NONE:
+          break;
+        case WPN_CANDLESTICK:
+          CandlestickButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case WPN_KNIFE:
+          KnifeButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case WPN_LEAD_PIPE:
+          LeadPipeButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case WPN_REVOLVER:
+          RevolverButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case WPN_ROPE:
+          RopeButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case WPN_WRENCH:
+          WrenchButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+      }
+    }
+
+    Data.Suspect suspect = req.getGuess().getSuspect();
+    if (ClientState.getInstance().mySuspectClues().contains(suspect)) {
+      switch (suspect) {
+        case SUS_NONE:
+          break;
+        case SUS_MISS_SCARLETT:
+          MsScarlettButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case SUS_COL_MUSTARD:
+          ColMustardButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case SUS_MRS_WHITE:
+          MrsWhiteButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case SUS_MR_GREEN:
+          MrGreenButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case SUS_MRS_PEACOCK:
+          MrsPeacockButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+        case SUS_PROF_PLUM:
+          ProfPlumButton.setEnabled(true);
+          b_can_disprove = true;
+          break;
+      }
+    }
+
+    if (!b_can_disprove) {
+      passButton.setEnabled(false);
+    }
   }
 
   @Override
   public void componentHidden(ComponentEvent event) {
     logger.debug("Component hidden");
-    SuspectGroup.clearSelection();
-    WeaponGroup.clearSelection();
-    RoomGroup.clearSelection();
-    suggestionButton.setEnabled(false);
-    accusationButton.setEnabled(false);
+    ButtonGroup.clearSelection();
+    disproveButton.setEnabled(false);
+    passButton.setEnabled(false);
   }
 
   @Override
@@ -433,93 +493,6 @@ public class SuggestionPanel extends JPanel implements ActionListener, Component
   @Override
   public void componentShown(ComponentEvent event) {
     logger.debug("Component shown");
-    for (Data.Location location : ClientState.getInstance().notebookLocationClues()) {
-      switch (location) {
-        case LOC_NONE:
-          break;
-        case LOC_STUDY:
-          StudyButton.setEnabled(false);
-          break;
-        case LOC_HALL:
-          HallButton.setEnabled(false);
-          break;
-        case LOC_LOUNGE:
-          LoungeButton.setEnabled(false);
-          break;
-        case LOC_LIBRARY:
-          LibraryButton.setEnabled(false);
-          break;
-        case LOC_BILLIARD_ROOM:
-          BilliardRoomButton.setEnabled(false);
-          break;
-        case LOC_DINING_ROOM:
-          DiningRoomButton.setEnabled(false);
-          break;
-        case LOC_CONSERVATORY:
-          ConservatoryButton.setEnabled(false);
-          break;
-        case LOC_BALLROOM:
-          BallroomButton.setEnabled(false);
-          break;
-        case LOC_KITCHEN:
-          KitchenButton.setEnabled(false);
-          break;
-        default:
-          logger.error("componentShown() - got invalid location clue revealed: "
-                       + location.name());
-          break;
-      }
-    }
-    
-    for (Data.Weapon weapon : ClientState.getInstance().notebookWeaponClues()) {
-      switch (weapon) {
-        case WPN_NONE:
-          break;
-        case WPN_CANDLESTICK:
-          CandlestickButton.setEnabled(false);
-          break;
-        case WPN_KNIFE:
-          KnifeButton.setEnabled(false);
-          break;
-        case WPN_LEAD_PIPE:
-          LeadPipeButton.setEnabled(false);
-          break;
-        case WPN_REVOLVER:
-          RevolverButton.setEnabled(false);
-          break;
-        case WPN_ROPE:
-          RopeButton.setEnabled(false);
-          break;
-        case WPN_WRENCH:
-          WrenchButton.setEnabled(false);
-          break;
-      }
-    }
-    
-    for (Data.Suspect suspect : ClientState.getInstance().notebookSuspectClues()) {
-      switch (suspect) {
-        case SUS_NONE:
-          break;
-        case SUS_MISS_SCARLETT:
-          MsScarlettButton.setEnabled(false);
-          break;
-        case SUS_COL_MUSTARD:
-          ColMustardButton.setEnabled(false);
-          break;
-        case SUS_MRS_WHITE:
-          MrsWhiteButton.setEnabled(false);
-          break;
-        case SUS_MR_GREEN:
-          MrGreenButton.setEnabled(false);
-          break;
-        case SUS_MRS_PEACOCK:
-          MrsPeacockButton.setEnabled(false);
-          break;
-        case SUS_PROF_PLUM:
-          ProfPlumButton.setEnabled(false);
-          break;
-      }
-    }
   }
 
 }

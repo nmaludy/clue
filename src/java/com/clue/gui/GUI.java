@@ -44,9 +44,10 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private NotebookPanel notebook = new NotebookPanel();
   private CluesPanel cluesPanel = new CluesPanel();
   private Router router = Router.getInstance();
-  private ConnectFrame connectFrame = new ConnectFrame();
-  private MoveFrame MoveFrame = new MoveFrame( router );
-  private SuggestionFrame SuggestionFrame = new SuggestionFrame( router );
+  private ConnectFrame connectFrame = new ConnectFrame(this);
+  private MoveFrame MoveFrame = new MoveFrame(this, router );
+  private SuggestionFrame SuggestionFrame = new SuggestionFrame(this, router );
+  private DisproveFrame DisproveFrame = new DisproveFrame(this, router );
 
   /*
    * Initialze and layout all GUI components.
@@ -107,6 +108,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     MoveFrame.setVisible(false);
     SuggestionFrame.setState(JFrame.ICONIFIED);
     SuggestionFrame.setVisible(false);
+    DisproveFrame.setState(JFrame.ICONIFIED);
+    DisproveFrame.setVisible(false);
 
     URL imageURL = this.getClass().getResource("/images/clue_icon.png");
     setIconImage(new ImageIcon(imageURL).getImage());
@@ -163,6 +166,33 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     SuggestionFrame.setState(JFrame.NORMAL);
   }
 
+  public void disprove(Msg.DisproveRequest disprove) {
+    DisproveFrame.setVisible( true );
+    DisproveFrame.setState(JFrame.NORMAL);
+    DisproveFrame.setDisproveRequest(disprove);
+  }
+
+  public void disproveResponse(Msg.DisproveResponse resp) {
+    if (resp.getResponse().getLocation() != Data.Location.LOC_NONE) {
+      // make an accusation or passs
+      logger.debug("disproveResponse() - location disproven = "
+                   + resp.getResponse().getLocation().name());
+    } else if (resp.getResponse().getWeapon() != Data.Weapon.WPN_NONE) {
+      // make an accusation or passs
+      logger.debug("disproveResponse() - weapon disproven = "
+                   + resp.getResponse().getWeapon().name());
+    } else if (resp.getResponse().getSuspect() != Data.Suspect.SUS_NONE) {
+      // make an accusation or passs
+      logger.debug("disproveResponse() - suspect disproven = "
+                   + resp.getResponse().getSuspect().name());
+    } else {
+      // nothing was disproven so make an accusation ?
+      logger.debug("disproveResponse() - Nothing was disproven!");
+    }
+
+    
+  }
+
   @Override
   public boolean shouldCallHandleOnGuiThread() {
     return true;
@@ -185,15 +215,22 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     } 
     else if (msg_type.equals(Msg.GameState.getDescriptor().getFullName())) 
     {
-        logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
-
-        Msg.GameState state = (Msg.GameState)msg.getMessage();
-        
-        for (Data.Player player : state.getPlayersList())
-        {
-        	panel.movePlayer(player.getSuspect(), player.getLocation());
-        }
-        
+      logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+      Msg.GameState state = (Msg.GameState)msg.getMessage();
+      for (Data.Player player : state.getPlayersList())
+      {
+        panel.movePlayer(player.getSuspect(), player.getLocation());
+      }        
+    }
+    else if (msg_type.equals(Msg.DisproveRequest.getDescriptor().getFullName())) 
+    {
+    	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+      disprove((Msg.DisproveRequest)msg.getMessage());
+    }
+    else if (msg_type.equals(Msg.DisproveResponse.getDescriptor().getFullName())) 
+    {
+    	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+      disproveResponse((Msg.DisproveResponse)msg.getMessage());
     } 
     else 
     {
