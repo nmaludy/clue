@@ -390,9 +390,223 @@ public class GameLogic implements MessageHandler {
       
     } else if (msg_type.equals(Msg.PlayerMove.getDescriptor().getFullName())) {
     	
-    	Data.Player.Builder player = getPlayerById(msg.getHeader().getSource());
+    	Data.Player.Builder playerMove = getPlayerById(msg.getHeader().getSource());
     	Msg.PlayerMove move_msg = (Msg.PlayerMove)msg.getMessage();
-    	player.setLocation(move_msg.getDestination());
+    	
+    	/*********DETERMINE VALID MOVES*********/
+    	boolean validMove = true;
+
+    	// Check for valid moves based on current location
+    	// Current location is the Study
+		if (( playerMove.getLocation() == Data.Location.LOC_STUDY ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_0 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_2 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_KITCHEN   )    ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 0
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_0 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_STUDY ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_LIBRARY )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Library
+		else if (( playerMove.getLocation() == Data.Location.LOC_LIBRARY ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_0 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_1 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_3 )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 1
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_1 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_LIBRARY ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALL )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hall
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALL ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_1 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_4 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_CONSERVATORY )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 2
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_2 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_STUDY ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_LOUNGE )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 3
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_3 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_LIBRARY ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_BILLIARD_ROOM )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 4
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_4 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALL ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_DINING_ROOM )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Lounge
+		else if (( playerMove.getLocation() == Data.Location.LOC_LOUNGE ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_2 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_5 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_7 )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 5
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_5 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_LOUNGE ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_BILLIARD_ROOM )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Billiard Room
+		else if (( playerMove.getLocation() == Data.Location.LOC_BILLIARD_ROOM ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_3 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_5 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_6 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_8 )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 6
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_6 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_DINING_ROOM ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_BILLIARD_ROOM )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Dining Room
+		else if (( playerMove.getLocation() == Data.Location.LOC_DINING_ROOM ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_4 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_6 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_9 )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 7
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_7 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_CONSERVATORY ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_LOUNGE )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 8
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_8 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_BALLROOM ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_BILLIARD_ROOM )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 9
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_9 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_KITCHEN ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_DINING_ROOM )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Conservatory
+		else if (( playerMove.getLocation() == Data.Location.LOC_CONSERVATORY ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_7 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_10 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALL )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 10
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_10 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_CONSERVATORY ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_BALLROOM )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Ballroom
+		else if (( playerMove.getLocation() == Data.Location.LOC_BALLROOM ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_10 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_8 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_11 )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Hallway 11
+		else if (( playerMove.getLocation() == Data.Location.LOC_HALLWAY_11 ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_KITCHEN ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_BALLROOM )   ) )
+		{
+			validMove = true;
+		}
+    	// Current location is the Kitchen
+		else if (( playerMove.getLocation() == Data.Location.LOC_KITCHEN ) && 
+				( ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_11 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_HALLWAY_9 ) ||
+				  ( move_msg.getDestination() == Data.Location.LOC_STUDY )   ) )
+		{
+			validMove = true;
+		}
+		else if ( playerMove.getLocation() == Data.Location.LOC_NONE )
+		{
+			validMove = true;
+		}
+    	/*********DETERMINE INVALID MOVES*********/
+		else
+		{
+			validMove = false;
+		}
+		
+		// Then check if the desired destination is a hallway && that hallway is occupied
+		// then trigger invalid move
+    	for (Data.Player player : state.getPlayersList())
+        {
+    		if (( player.getLocation() == Data.Location.LOC_HALLWAY_0 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_1 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_2 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_3 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_4 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_5 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_6 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_7 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_8 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_9 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_10 || 
+    				player.getLocation() == Data.Location.LOC_HALLWAY_11 ) &&
+    				( move_msg.getDestination() == player.getLocation() ) )
+    		{
+	          	validMove = false;
+	        }
+        }
+
+    	/*********IF VALID, THEN MOVE*********/
+    	if (validMove)
+    	{
+    		playerMove.setLocation(move_msg.getDestination());
+    	}
+    	/*********ELSE SEND INVALID MOVE MESSAGE*********/
+    	else
+    	{
+    		// Send invalid move message?
+    	    logger.debug("[************DEBUG**********] - invalid destination in move message.");
+
+            Msg.InvalidMove invMv = Msg.InvalidMove.newBuilder()
+                    .setHeader(Msg.Header.newBuilder()
+                               .setMsgType(Msg.InvalidMove.getDescriptor().getFullName())
+                               .setSource(Instance.getId())
+                               .setDestination(Instance.getServerId())
+                               .build())
+                    .setDestination(Data.Location.LOC_NONE)
+                    .build();
+                router.route(new Message(invMv.getHeader(), invMv));
+    	}
     	
     	// Send updated game state (player moved)
     	sendCurrentGameState(Instance.getBroadcastId());

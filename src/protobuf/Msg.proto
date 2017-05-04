@@ -59,6 +59,10 @@ message PlayerMove {
   optional data.Location destination = 2;
 }
 
+message InvalidMove {
+  optional Header header = 1;
+  optional data.Location destination = 2;
+}
 message PlayerSuggestion {
   optional Header header          = 1;
   optional data.Solution solution = 2;

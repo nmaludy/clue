@@ -48,6 +48,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private MoveFrame MoveFrame = new MoveFrame(this, router );
   private SuggestionFrame SuggestionFrame = new SuggestionFrame(this, router );
   private DisproveFrame DisproveFrame = new DisproveFrame(this, router );
+  private InvalidMoveFrame InvalidMoveFrame = new InvalidMoveFrame(this );
 
   /*
    * Initialze and layout all GUI components.
@@ -221,6 +222,13 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
       {
         panel.movePlayer(player.getSuspect(), player.getLocation());
       }        
+    }
+    else if (msg_type.equals(Msg.InvalidMove.getDescriptor().getFullName())) 
+    {
+        logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+    	logger.debug("[************DEBUG**********] - invalid destination in move message.");
+
+    	InvalidMoveFrame.setVisible(true);
     }
     else if (msg_type.equals(Msg.DisproveRequest.getDescriptor().getFullName())) 
     {
