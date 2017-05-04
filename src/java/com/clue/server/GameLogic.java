@@ -106,6 +106,7 @@ public class GameLogic implements MessageHandler {
       Data.Player.Builder player = state.addPlayersBuilder();
       player.setClientId(req.getClientId());
       player.setName(req.getName());
+      player.setMadeFalseAccusation(false);
     }
 
     // Send response back to client
@@ -258,9 +259,16 @@ public class GameLogic implements MessageHandler {
   }
 
   private void advanceTurn(TurnType turnType) {
+    
     ArrayList<Integer> client_ids = new ArrayList<Integer>();
     for (Data.Player.Builder player : state.getPlayersBuilderList()) {
-      client_ids.add(player.getClientId());
+      // if player made a false accusation, they can no longer take
+      // a turn.
+      // @note: they are still kept in the list because they still
+      // need to be able to disprove suggestions
+      if ( !player.getMadeFalseAccusation() ) {
+        client_ids.add(player.getClientId());
+      }
     }
 
     // sort the list 0...n
@@ -275,7 +283,27 @@ public class GameLogic implements MessageHandler {
     // so add 1 to make it inclusive
     if (turnType == TurnType.START) {
       state.setStatus(Data.GameStatus.GAME_IN_PROGRESS);
-      next_index = ThreadLocalRandom.current().nextInt(0, state.getPlayersBuilderList().size());
+
+      // Determine if a player has chosen Miss Scarlett
+      int miss_scarlett_idx = -1;
+      for (int i = 0; i < state.getPlayersBuilderList().size(); ++i) {
+        Data.Player.Builder player = state.getPlayersBuilderList().get(i);
+        if (player.getSuspect() == Data.Suspect.SUS_MISS_SCARLETT) {
+          miss_scarlett_idx = i;
+          break;
+        }
+      }
+
+      // Miss Scarlett goes first, if she's playing
+      // otherwise a random player is chosen
+      if (miss_scarlett_idx >= 0) {
+        logger.debug("advanceTurn() - Miss Scarlett is playing, she goes first!");
+        next_index = miss_scarlett_idx;
+      } else {
+        logger.debug("advanceTurn() - Miss Scarlett is NOT playing picking at random!");
+        next_index = ThreadLocalRandom.current().nextInt(0, state.getPlayersBuilderList().size());
+      }
+      
     } else {
       int current_index = client_ids.indexOf(prev_client_id);
       next_index = ++current_index;
@@ -305,10 +333,6 @@ public class GameLogic implements MessageHandler {
         .setClientCurrentTurn(next_client_id)
         .build();
     router.route(new Message(msg.getHeader(), msg));
-
-    // @todo handle player accusation failure
-    // they are still in the game, but can't move, make suggestions, or make
-    // accusation *they still need to be able to disprove*
   }
 
   private void handlePlayerMove(Msg.PlayerMove move) {
@@ -376,10 +400,17 @@ public class GameLogic implements MessageHandler {
 		  
 		  // send response to back to all clients
 		  Msg.GameEnd msg = response.build();
-		  router.route(new Message(msg.getHeader(), msg));            
+		  router.route(new Message(msg.getHeader(), msg));
+
+      // @todo send game finished
+      
 	  }
 	  else
 	  {
+      // Mark the player as having made a false accusation
+      Data.Player.Builder player = getPlayerById(client_id);
+      player.setMadeFalseAccusation(true);
+      
 		  // build PlayerAccusationFailed msg
       Msg.PlayerAccusationFailed.Builder response = Msg.PlayerAccusationFailed.newBuilder()
 	        .setHeader(Msg.Header.newBuilder()
@@ -395,6 +426,9 @@ public class GameLogic implements MessageHandler {
       // Send response back to client from the (playerAccusationRequest req)
       Msg.PlayerAccusationFailed msg = response.build();
       router.route(new Message(msg.getHeader(), msg));
+
+      // go to next player
+      advanceTurn(TurnType.NEXT);
 	  }
   }
 
