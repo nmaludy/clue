@@ -167,8 +167,22 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 
   
   public void handleGameEnd(Msg.GameEnd req) {
+	  logger.debug("winner is : " + req.getClientWinner());
 	  
-	  JOptionPane.showMessageDialog(null, "You have solved the mystery. Game Over", "Surprise Surprise: Game Overrrr", JOptionPane.INFORMATION_MESSAGE);
+	  // if gameEnd.clientWinner equals your clientID print you win else print who won the game. 
+	  if (req.getClientWinner() == Instance.getId())
+	  {
+		  JOptionPane.showMessageDialog(null, "You have solved the mystery. Game Over", "Surprise Surprise: Game Overrrr",
+				  JOptionPane.INFORMATION_MESSAGE);
+		  
+	  }
+	  else{
+		  
+		  JOptionPane.showMessageDialog(null, "The mystery has been solved.. You Lose", "Surprise Surprise: Game Overrrr",
+				  JOptionPane.INFORMATION_MESSAGE);
+		  
+	  }
+	  
  
   }
   
