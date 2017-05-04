@@ -1,7 +1,10 @@
 package com.clue.gui;
 
 import java.awt.*;
+import java.awt.image.*;
 import javax.swing.*;
+
+import java.net.URL;
 
 import com.clue.app.Config;
 import com.clue.app.Logger;
@@ -100,6 +103,16 @@ public class NotebookPanel extends JPanel implements MessageHandler
     BallroomLabel     = new JLabel( "Ballroom" );
     KitchenLabel      = new JLabel( "Kitchen" );
 
+    setLabelIcon( StudyLabel, "/images/rooms/study.png" );
+    setLabelIcon( HallLabel, "/images/rooms/hall.png" );
+    setLabelIcon( LoungeLabel, "/images/rooms/lounge.png" );
+    setLabelIcon( LibraryLabel, "/images/rooms/library.png" );
+    setLabelIcon( BilliardRoomLabel, "/images/rooms/billiard_room.png" );
+    setLabelIcon( DiningRoomLabel, "/images/rooms/dining_room.png" );
+    setLabelIcon( ConservatoryLabel, "/images/rooms/conservatory.png" );
+    setLabelIcon( BallroomLabel, "/images/rooms/ballroom.png" );
+    setLabelIcon( KitchenLabel, "/images/rooms/kitchen.png" );
+
     StudyCheckBox        = new JCheckBox();
     HallCheckBox         = new JCheckBox();
     LoungeCheckBox       = new JCheckBox();
@@ -120,7 +133,6 @@ public class NotebookPanel extends JPanel implements MessageHandler
     BallroomCheckBox.setEnabled(false);
     KitchenCheckBox.setEnabled(false);
 
-
     // Weapons
     KnifeLabel       = new JLabel( "Knife" );
     CandlestickLabel = new JLabel( "Candlestick" );
@@ -128,6 +140,13 @@ public class NotebookPanel extends JPanel implements MessageHandler
     LeadPipeLabel    = new JLabel( "Lead Pipe" );
     RopeLabel        = new JLabel( "Rope" );
     WrenchLabel      = new JLabel( "Wrench" );
+
+    setLabelIcon( KnifeLabel, "/images/weapons/knife.png" );
+    setLabelIcon( CandlestickLabel, "/images/weapons/candlestick.png" );
+    setLabelIcon( RevolverLabel, "/images/weapons/revolver.png" );
+    setLabelIcon( LeadPipeLabel, "/images/weapons/lead_pipe.png" );
+    setLabelIcon( RopeLabel, "/images/weapons/rope.png" );
+    setLabelIcon( WrenchLabel, "/images/weapons/wrench.png" );
 
     KnifeCheckBox       = new JCheckBox();
     CandlestickCheckBox = new JCheckBox();
@@ -148,9 +167,16 @@ public class NotebookPanel extends JPanel implements MessageHandler
     MrGreenLabel     = new JLabel( "Mr. Green" );
     MrsWhiteLabel    = new JLabel( "Mrs. White" );
     ColMustardLabel  = new JLabel( "Col. Mustard" );
-    MissScarletLabel = new JLabel( "Miss. Scarlet" );
+    MissScarletLabel = new JLabel( "Miss. Scarlett" );
     MrsPeacockLabel  = new JLabel( "Mrs. Peacock" );
     ProfPlumLabel    = new JLabel( "Prof. Plum" );
+
+    setLabelIcon( MrGreenLabel, "/images/suspects/mr_green.png" );
+    setLabelIcon( MrsWhiteLabel, "/images/suspects/mrs_white.png" );
+    setLabelIcon( ColMustardLabel, "/images/suspects/col_mustard.png" );
+    setLabelIcon( MissScarletLabel, "/images/suspects/miss_scarlett.png" );
+    setLabelIcon( MrsPeacockLabel, "/images/suspects/mrs_peacock.png" );
+    setLabelIcon( ProfPlumLabel, "/images/suspects/prof_plum.png" );
 
     MrGreenCheckBox     = new JCheckBox();
     MrsWhiteCheckBox    = new JCheckBox();
@@ -206,6 +232,26 @@ public class NotebookPanel extends JPanel implements MessageHandler
     add( createCluePanel(KitchenCheckBox, KitchenLabel) );
 
     Router.getInstance().register(new SubscriptionAllIncoming(), this);
+  }
+
+  private void setLabelIcon(JLabel label, String iconPath) {
+    URL imageURL = this.getClass().getResource(iconPath);
+    ImageIcon icon = new ImageIcon(imageURL);
+    ImageIcon resized_icon = getScaledImageIcon(icon, 25, 25);
+    label.setIcon(resized_icon);
+  }
+
+  private ImageIcon getScaledImageIcon(ImageIcon srcIcon, int w, int h){
+    Image srcImg = srcIcon.getImage();
+    BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2 = resizedImg.createGraphics();
+
+    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    g2.drawImage(srcImg, 0, 0, w, h, null);
+    g2.dispose();
+
+    return new ImageIcon(resizedImg);
   }
 
   private JPanel createCluePanel(JCheckBox checkBox, JLabel label) {
@@ -338,7 +384,7 @@ public class NotebookPanel extends JPanel implements MessageHandler
     }
   }
 
-  public void addSuspect(Data.Suspect suspect) { 
+  public void addSuspect(Data.Suspect suspect) {
     switch (suspect) {
       case SUS_NONE:
         break;
@@ -368,7 +414,7 @@ public class NotebookPanel extends JPanel implements MessageHandler
         break;
     }
   }
-  
+
   @Override
   public boolean shouldCallHandleOnGuiThread() {
     return true;
@@ -378,7 +424,7 @@ public class NotebookPanel extends JPanel implements MessageHandler
   public void handleMessage(Message msg) {
     // Here is how to handle messages of a specific type
     String msg_type = msg.getHeader().getMsgType();
-    
+
     if (msg_type.equals(Msg.RevealClues.getDescriptor().getFullName())) {
       Msg.RevealClues reveal = (Msg.RevealClues)msg.getMessage();
       logger.debug("handleMessage() - got clue reveal: " + reveal.toString());
@@ -388,7 +434,7 @@ public class NotebookPanel extends JPanel implements MessageHandler
       Msg.DisproveResponse disprove = (Msg.DisproveResponse)msg.getMessage();
       logger.debug("handleMessage() - got disprove respone: " + disprove.toString());
       addSolution(disprove.getResponse());
-      
+
       // @todo what if all are NONE? should show GUI to make accusation
     }
   }
