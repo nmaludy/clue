@@ -61,10 +61,13 @@ public class ClientState implements MessageHandler {
   public boolean isConnected() {
     return bConnected;
   }
+
+  public String getName() {
+    return config.getProperty("instance.name", String.class);
+  }
   
   public void connect() {
     // @todo get name from a GUI
-    String name = config.getProperty("instance.name", String.class);
     Msg.ConnectRequest req = Msg.ConnectRequest.newBuilder()
         .setHeader(Msg.Header.newBuilder()
                    .setMsgType(Msg.ConnectRequest.getDescriptor().getFullName())
@@ -72,7 +75,7 @@ public class ClientState implements MessageHandler {
                    .setDestination(Instance.getServerId())
                    .build())
         .setClientId(Instance.getId())
-        .setName(name)
+        .setName(getName())
         .build();
     router.route(new Message(req.getHeader(), req));
   }
@@ -115,6 +118,60 @@ public class ClientState implements MessageHandler {
   }
   public Set<Data.Suspect> notebookSuspectClues() {
     return notebookSuspects;
+  }
+
+  public Data.Player getPlayerById(int clientId) {
+    for (Data.Player player : state.getPlayersList()) {
+      if (player.getClientId() == clientId) {
+        return player;
+      }
+    }
+    return null;
+  }
+
+  public static String locationToString(Data.Location location) {
+    switch (location) {
+      case LOC_NONE:          return "None";
+      case LOC_STUDY:         return "Study";
+      case LOC_HALL:          return "Hall";
+      case LOC_LOUNGE:        return "Lounge";
+      case LOC_LIBRARY:       return "Library";
+      case LOC_BILLIARD_ROOM: return "Billiard Room";
+      case LOC_DINING_ROOM:   return "Dining Room";
+      case LOC_CONSERVATORY:  return "Conservatory";
+      case LOC_BALLROOM:      return "Ballroom";
+      case LOC_KITCHEN:       return "Kitchen";
+      default:
+        logger.error("addLocation() - got invalid location clue revealed: "
+                     + location.name());
+        return "Invalid";
+    }
+  }
+
+  public static String weaponToString(Data.Weapon weapon) {
+    switch (weapon) {
+      case WPN_NONE:        return "None";
+      case WPN_CANDLESTICK: return "Candlestick";
+      case WPN_KNIFE:       return "Knife";
+      case WPN_LEAD_PIPE:   return "Lead Pipe";
+      case WPN_REVOLVER:    return "Revolver";
+      case WPN_ROPE:        return "Rope";
+      case WPN_WRENCH:      return "Wrench";
+    }
+    return "Invalid";
+  }
+  
+  public static String suspectToString(Data.Suspect suspect) {
+    switch (suspect) {
+      case SUS_NONE:          return "None";
+      case SUS_MISS_SCARLETT: return "Miss. Scarlett";
+      case SUS_COL_MUSTARD:   return "Col. Mustard";
+      case SUS_MRS_WHITE:     return "Mrs. White";
+      case SUS_MR_GREEN:      return "Mr. Green";
+      case SUS_MRS_PEACOCK:   return "Mrs. Peacock";
+      case SUS_PROF_PLUM:     return "Prof. Plum";
+    }
+    return "Invalid";
   }
   
     

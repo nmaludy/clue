@@ -235,8 +235,10 @@ public class GameLogic implements MessageHandler {
       // Randomly choose who goes first
       // nextInt is normally exclusive of the top value,
       // so add 1 to make it inclusive
-      int current_client_id =
+      int current_idx =
           ThreadLocalRandom.current().nextInt(0, state.getPlayersBuilderList().size());
+      Data.Player.Builder current_player =  state.getPlayersBuilderList().get(current_idx);
+      int current_client_id = current_player.getClientId();
       state.setStatus(Data.GameStatus.GAME_IN_PROGRESS);
       state.setClientCurrentTurn(current_client_id);
 
@@ -369,6 +371,52 @@ public class GameLogic implements MessageHandler {
       router.route(new Message(msg.getHeader(), msg));
     }
   }
+
+  public void handlePassTurn(Msg.PassTurn pass) {
+    if (pass.getClientId() != state.getClientCurrentTurn()) {
+      logger.error("handlePassTurn() - Received a Msg.PassTurn from a client " +
+                   "out of turn... state.clientCurrentTurn = " +
+                   Integer.toString(state.getClientCurrentTurn()) +
+                   "  pass.getClientId = " +
+                   Integer.toString(pass.getClientId()));
+      return;
+    }
+    
+    ArrayList<Integer> client_ids = new ArrayList<Integer>();
+    for (Data.Player.Builder player : state.getPlayersBuilderList()) {
+      client_ids.add(player.getClientId());
+    }
+
+    // sort the list 0...n
+    Collections.sort(client_ids);
+
+    // find the current client's turn
+    int current_index = client_ids.indexOf(pass.getClientId());
+    int next_index = ++current_index;
+    if (next_index >= client_ids.size()) {
+      next_index = 0;
+    }
+
+    int next_client_id = client_ids.get(next_index);
+    int prev_client_id = state.getClientCurrentTurn();
+    state.setClientPreviousTurn(prev_client_id);
+    state.setClientCurrentTurn(next_client_id);
+
+    // Send updated gate state (next player's turn)
+    sendCurrentGameState(Instance.getBroadcastId());
+    
+    // send a message directly to the player whose turn it is
+    Msg.PlayerTurn msg = Msg.PlayerTurn.newBuilder()
+        .setHeader(Msg.Header.newBuilder()
+                   .setMsgType(Msg.PlayerTurn.getDescriptor().getFullName())
+                   .setSource(Instance.getId())
+                   .setDestination(next_client_id)
+                   .build())
+        .setClientPreviousTurn(prev_client_id)
+        .setClientCurrentTurn(next_client_id)
+        .build();
+    router.route(new Message(msg.getHeader(), msg));
+  }
   
   @Override
   public void handleMessage(Message msg) {
@@ -402,6 +450,9 @@ public class GameLogic implements MessageHandler {
 
     } else if (msg_type.equals(Msg.DisproveResponse.getDescriptor().getFullName())) {
       handleDisproveResponse((Msg.DisproveResponse)msg.getMessage());
+
+    } else if (msg_type.equals(Msg.PassTurn.getDescriptor().getFullName())) {
+      handlePassTurn((Msg.PassTurn)msg.getMessage());
 
     } else {
       logger.debug("handleMessage() - got unhandled message type: " + msg_type);

@@ -17,6 +17,7 @@ public class MessageParserFactory {
     register(Msg.StartGameRequest.getDefaultInstance());
     register(Msg.GameStateRequest.getDefaultInstance());
     register(Msg.GameState.getDefaultInstance());
+    register(Msg.PlayerTurn.getDefaultInstance());
     register(Msg.RevealClues.getDefaultInstance());
     register(Msg.SuspectClaimRequest.getDefaultInstance());
     register(Msg.SuspectClaimResponse.getDefaultInstance());
@@ -26,6 +27,7 @@ public class MessageParserFactory {
     register(Msg.PlayerAccusationFailed.getDefaultInstance());
     register(Msg.DisproveRequest.getDefaultInstance());
     register(Msg.DisproveResponse.getDefaultInstance());
+    register(Msg.PassTurn.getDefaultInstance());
     register(Msg.GameEnd.getDefaultInstance());
   }
 

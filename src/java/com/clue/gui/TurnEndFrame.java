@@ -12,29 +12,29 @@ import com.clue.proto.Msg;
 
 import com.clue.route.Router;
 
-public class DisproveFrame extends JFrame implements ComponentListener {
+public class TurnEndFrame extends JFrame implements ComponentListener {
 
   private static Logger logger = new Logger(DisproveFrame.class);
   private static Config config = Config.getInstance();
   
   private JFrame parent;
-  private DisprovePanel panel;
+  private TurnEndPanel panel;
   
-  public DisproveFrame(JFrame parent, Router router) {
+  public TurnEndFrame(JFrame parent, Router router) {
     this.parent = parent;
-    setTitle( "Disprove" );
-    setSize( 850, 380 );
+    setTitle( "Turn End" );
+    setSize( 400, 380 );
     setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
-    panel = new DisprovePanel( this, router  );
+    panel = new TurnEndPanel( this, router  );
     this.add( panel );
     this.addComponentListener(this);
 
     java.net.URL imageURL = this.getClass().getResource("/images/clue_icon.png");
-    setIconImage(new ImageIcon(imageURL).getImage());
+    setIconImage(new ImageIcon(imageURL).getImage());    
   }
 
-  public void setDisproveRequest(Msg.DisproveRequest req) {
-    panel.setDisproveRequest(req);
+  public void setDisproveResponse(Msg.DisproveResponse resp) {
+    panel.setDisproveResponse(resp);
   }
 
   @Override
