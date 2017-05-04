@@ -227,31 +227,29 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 
     // Here is how to handle messages of a specific type
     String msg_type = msg.getHeader().getMsgType();
-    if (msg_type.equals(Msg.ConnectRequest.getDescriptor().getFullName())) 
-    {
+    if (msg_type.equals(Msg.ConnectRequest.getDescriptor().getFullName())) {
     	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
-    } 
-    else if (msg_type.equals(Msg.GameState.getDescriptor().getFullName())) 
-    {
+      
+    } else if (msg_type.equals(Msg.GameState.getDescriptor().getFullName())) {
       logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
       Msg.GameState state = (Msg.GameState)msg.getMessage();
       for (Data.Player player : state.getPlayersList())
       {
         panel.movePlayer(player.getSuspect(), player.getLocation());
-      }        
-    }
-    else if (msg_type.equals(Msg.DisproveRequest.getDescriptor().getFullName())) 
-    {
+      }
+      
+    } else if (msg_type.equals(Msg.DisproveRequest.getDescriptor().getFullName()))  {
     	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
       disprove((Msg.DisproveRequest)msg.getMessage());
-    }
-    else if (msg_type.equals(Msg.DisproveResponse.getDescriptor().getFullName())) 
-    {
+      
+    } else if (msg_type.equals(Msg.DisproveResponse.getDescriptor().getFullName()))  {
     	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
       turnEnd((Msg.DisproveResponse)msg.getMessage());
-    } 
-    else 
-    {
+
+    } else if (msg_type.equals(Msg.GameEnd.getDescriptor().getFullName()))  {
+    	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+      handleGameEnd((Msg.GameEnd)msg.getMessage());
+    } else {
     	logger.debug("handleMessage() - got unhandled message type: " + msg_type);
     }
   }
