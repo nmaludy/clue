@@ -14,7 +14,7 @@ public class MoveFrame extends JFrame implements ComponentListener
   {
     this.parent = parent;
     setTitle( "Move" );
-    setSize( 1250, 200 );
+    setSize( 850, 200 );
     setDefaultCloseOperation( MoveFrame.HIDE_ON_CLOSE );
     JPanel panel = new MovePanel( router, this );
     this.add( panel );

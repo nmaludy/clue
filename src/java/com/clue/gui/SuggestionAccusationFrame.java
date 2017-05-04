@@ -55,6 +55,10 @@ public class SuggestionAccusationFrame extends JFrame implements ComponentListen
     panel.setSolution(solution);
   }
 
+  public void setLocation(Data.Location location) {
+    panel.setLocation(location);
+  }
+
   @Override
   public void componentHidden(ComponentEvent event) {
   }

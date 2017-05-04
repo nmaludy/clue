@@ -6,400 +6,495 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import java.util.ArrayList;
+
+import com.clue.app.Config;
+import com.clue.app.Logger;
 import com.clue.app.Instance;
+
 import com.clue.proto.Data;
 import com.clue.proto.Msg;
 import com.clue.route.Message;
 import com.clue.route.Router;
 
-public class MovePanel extends JPanel implements ActionListener {
+public class MovePanel extends JPanel implements ActionListener, ComponentListener {
 
-	private Router router = null;
-	
-	private MoveFrame frame = null;
-	  
-    // Room buttons    
-    private JRadioButton StudyButton;
-    private JRadioButton HallButton;
-    private JRadioButton LoungeButton;
-    private JRadioButton LibraryButton;
-    private JRadioButton BilliardRoomButton;
-    private JRadioButton DiningRoomButton;
-    private JRadioButton ConservatoryButton;
-    private JRadioButton BallroomButton;
-    private JRadioButton KitchenButton;
+  private static Logger logger = new Logger(MovePanel.class);
+  private static Config config = Config.getInstance();
+  
+  private Router router = null;
+  private MoveFrame frame = null;
+  private Data.Location location = null;
 
-    private JRadioButton Hallway0Button;
-    private JRadioButton Hallway1Button;
-    private JRadioButton Hallway2Button;
-    private JRadioButton Hallway3Button;
-    private JRadioButton Hallway4Button;
-    private JRadioButton Hallway5Button;
-    private JRadioButton Hallway6Button;
-    private JRadioButton Hallway7Button;
-    private JRadioButton Hallway8Button;
-    private JRadioButton Hallway9Button;
-    private JRadioButton Hallway10Button;
-    private JRadioButton Hallway11Button;
+  // Room buttons
+  private JRadioButton StudyButton;
+  private JRadioButton HallButton;
+  private JRadioButton LoungeButton;
+  private JRadioButton LibraryButton;
+  private JRadioButton BilliardRoomButton;
+  private JRadioButton DiningRoomButton;
+  private JRadioButton ConservatoryButton;
+  private JRadioButton BallroomButton;
+  private JRadioButton KitchenButton;
+
+  private JRadioButton Hallway0Button;
+  private JRadioButton Hallway1Button;
+  private JRadioButton Hallway2Button;
+  private JRadioButton Hallway3Button;
+  private JRadioButton Hallway4Button;
+  private JRadioButton Hallway5Button;
+  private JRadioButton Hallway6Button;
+  private JRadioButton Hallway7Button;
+  private JRadioButton Hallway8Button;
+  private JRadioButton Hallway9Button;
+  private JRadioButton Hallway10Button;
+  private JRadioButton Hallway11Button;
+
+  // Submit Button
+  private JButton submitButton = new JButton("Submit");
+
+  // Panel Constructor
+  public MovePanel( Router routerIn, MoveFrame frameIn ) {
+    router = routerIn;
+    frame = frameIn;
+
+
+    // Create Room buttons
+    StudyButton = new JRadioButton( "Study" );
+    HallButton = new JRadioButton( "Hall" );
+    LoungeButton = new JRadioButton( "Lounge" );
+    LibraryButton = new JRadioButton( "Library" );
+    BilliardRoomButton = new JRadioButton( "Billiard Room" );
+    DiningRoomButton = new JRadioButton( "Dining Room" );
+    ConservatoryButton = new JRadioButton( "Conservatory" );
+    BallroomButton = new JRadioButton( "Ballroom" );
+    KitchenButton = new JRadioButton( "Kitchen" );
+
+    Hallway0Button = new JRadioButton( "Hallway 0" );
+    Hallway1Button = new JRadioButton( "Hallway 1" );
+    Hallway2Button = new JRadioButton( "Hallway 2" );
+    Hallway3Button = new JRadioButton( "Hallway 3" );
+    Hallway4Button = new JRadioButton( "Hallway 4" );
+    Hallway5Button = new JRadioButton( "Hallway 5" );
+    Hallway6Button = new JRadioButton( "Hallway 6" );
+    Hallway7Button = new JRadioButton( "Hallway 7" );
+    Hallway8Button = new JRadioButton( "Hallway 8" );
+    Hallway9Button = new JRadioButton( "Hallway 9" );
+    Hallway10Button = new JRadioButton( "Hallway 10" );
+    Hallway11Button = new JRadioButton( "Hallway 11" );
+
+
+    ButtonGroup sizeGroup1 = new ButtonGroup();
+    sizeGroup1.add( StudyButton );
+    sizeGroup1.add( HallButton );
+    sizeGroup1.add( LoungeButton );
+    sizeGroup1.add( LibraryButton );
+    sizeGroup1.add( BilliardRoomButton );
+    sizeGroup1.add( DiningRoomButton );
+    sizeGroup1.add( ConservatoryButton );
+    sizeGroup1.add( BallroomButton );
+    sizeGroup1.add( KitchenButton );
+
+    sizeGroup1.add( Hallway0Button );
+    sizeGroup1.add( Hallway1Button );
+    sizeGroup1.add( Hallway2Button );
+    sizeGroup1.add( Hallway3Button );
+    sizeGroup1.add( Hallway4Button );
+    sizeGroup1.add( Hallway5Button );
+    sizeGroup1.add( Hallway6Button );
+    sizeGroup1.add( Hallway7Button );
+    sizeGroup1.add( Hallway8Button );
+    sizeGroup1.add( Hallway9Button );
+    sizeGroup1.add( Hallway10Button );
+    sizeGroup1.add( Hallway11Button );
+
+    // Add ActionListeners for each radio button
+    StudyButton.addActionListener(this);
+    HallButton.addActionListener(this);
+    LoungeButton.addActionListener(this);
+    LibraryButton.addActionListener(this);
+    BilliardRoomButton.addActionListener(this);
+    DiningRoomButton.addActionListener(this);
+    ConservatoryButton.addActionListener(this);
+    BallroomButton.addActionListener(this);
+    KitchenButton.addActionListener(this);
+
+    Hallway0Button.addActionListener(this);
+    Hallway1Button.addActionListener(this);
+    Hallway2Button.addActionListener(this);
+    Hallway3Button.addActionListener(this);
+    Hallway4Button.addActionListener(this);
+    Hallway5Button.addActionListener(this);
+    Hallway6Button.addActionListener(this);
+    Hallway7Button.addActionListener(this);
+    Hallway8Button.addActionListener(this);
+    Hallway9Button.addActionListener(this);
+    Hallway10Button.addActionListener(this);
+    Hallway11Button.addActionListener(this);
+
+    submitButton.addActionListener(this);
+
+    // By default disable submit button, until location is selected
+    submitButton.setEnabled(false);
+
+    setLayout(new GridLayout(6,5));
+    this.add( StudyButton );
+    this.add( Hallway0Button );
+    this.add( LibraryButton );
+    this.add( Hallway1Button );
+    this.add( HallButton );
+    this.add( Hallway2Button );
+    this.add( new Panel() );
+    this.add( Hallway3Button );
+    this.add( new Panel() );
+    this.add( Hallway4Button );
+    this.add( LoungeButton );
+    this.add( Hallway5Button );
+    this.add( BilliardRoomButton );
+    this.add( Hallway6Button );
+    this.add( DiningRoomButton );
+    this.add( Hallway7Button );
+    this.add( new Panel() );
+    this.add( Hallway8Button );
+    this.add( new Panel() );
+    this.add( Hallway9Button );
+    this.add( ConservatoryButton );
+    this.add( Hallway10Button );
+    this.add( BallroomButton );
+    this.add( Hallway11Button );
+    this.add( KitchenButton );
+    this.add( new Panel() );
+    this.add( new Panel() );
+    this.add( submitButton );
+    this.add( new Panel() );
+    this.add( new Panel() );
+
     
-    // Submit Button
-    private JButton submitButton = new JButton("Submit");
+    frame.addComponentListener(this);
+  }
 
-    // Panel Constructor
-    public MovePanel( Router routerIn, MoveFrame frameIn )
-    {
-    	router = routerIn;
-    	frame = frameIn;
-    	
-		
-	    // Create Room buttons
-    	StudyButton = new JRadioButton( "Study" );
-    	HallButton = new JRadioButton( "Hall" );
-    	LoungeButton = new JRadioButton( "Lounge" );
-    	LibraryButton = new JRadioButton( "Library" );
-    	BilliardRoomButton = new JRadioButton( "Billiard Room" );
-    	DiningRoomButton = new JRadioButton( "Dining Room" );
-    	ConservatoryButton = new JRadioButton( "Conservatory" );
-    	BallroomButton = new JRadioButton( "Ballroom" );
-    	KitchenButton = new JRadioButton( "Kitchen" );
 
-    	Hallway0Button = new JRadioButton( "Hallway 0" );
-    	Hallway1Button = new JRadioButton( "Hallway 1" );
-    	Hallway2Button = new JRadioButton( "Hallway 2" );
-    	Hallway3Button = new JRadioButton( "Hallway 3" );
-    	Hallway4Button = new JRadioButton( "Hallway 4" );
-    	Hallway5Button = new JRadioButton( "Hallway 5" );
-    	Hallway6Button = new JRadioButton( "Hallway 6" );
-    	Hallway7Button = new JRadioButton( "Hallway 7" );
-    	Hallway8Button = new JRadioButton( "Hallway 8" );
-    	Hallway9Button = new JRadioButton( "Hallway 9" );
-    	Hallway10Button = new JRadioButton( "Hallway 10" );
-    	Hallway11Button = new JRadioButton( "Hallway 11" );
-    	
+  /**
+   * This method handles events caused by the user
+   * selecting or deselecting radio buttons or
+   * checkboxes
+   *
+   * @param e is an ActionEvent caused generated by an action listener
+   */
+  public void actionPerformed(ActionEvent e)
+  {    
+    Data.Location moveTo = null;
 
-        ButtonGroup sizeGroup1 = new ButtonGroup();
-        sizeGroup1.add( StudyButton );
-        sizeGroup1.add( HallButton );
-        sizeGroup1.add( LoungeButton );
-        sizeGroup1.add( LibraryButton );
-        sizeGroup1.add( BilliardRoomButton );
-        sizeGroup1.add( DiningRoomButton );
-        sizeGroup1.add( ConservatoryButton );
-        sizeGroup1.add( BallroomButton );
-        sizeGroup1.add( KitchenButton );
-        
-        sizeGroup1.add( Hallway0Button );
-        sizeGroup1.add( Hallway1Button );
-        sizeGroup1.add( Hallway2Button );
-        sizeGroup1.add( Hallway3Button );
-        sizeGroup1.add( Hallway4Button );
-        sizeGroup1.add( Hallway5Button );
-        sizeGroup1.add( Hallway6Button );
-        sizeGroup1.add( Hallway7Button );
-        sizeGroup1.add( Hallway8Button );
-        sizeGroup1.add( Hallway9Button );
-        sizeGroup1.add( Hallway10Button );
-        sizeGroup1.add( Hallway11Button );
-        
-        // Create a button group & add buttons
-    	/*
-        ButtonGroup sizeGroup1 = new ButtonGroup();
-        ButtonGroup sizeGroup2 = new ButtonGroup();
-        sizeGroup1.add( StudyButton );
-        sizeGroup1.add( HallButton );
-        sizeGroup1.add( LoungeButton );
-        sizeGroup1.add( LibraryButton );
-        sizeGroup1.add( BilliardRoomButton );
-        sizeGroup1.add( DiningRoomButton );
-        sizeGroup1.add( ConservatoryButton );
-        sizeGroup1.add( BallroomButton );
-        sizeGroup1.add( KitchenButton );
-        
-        sizeGroup2.add( Hallway0Button );
-        sizeGroup2.add( Hallway1Button );
-        sizeGroup2.add( Hallway2Button );
-        sizeGroup2.add( Hallway3Button );
-        sizeGroup2.add( Hallway4Button );
-        sizeGroup2.add( Hallway5Button );
-        sizeGroup2.add( Hallway6Button );
-        sizeGroup2.add( Hallway7Button );
-        sizeGroup2.add( Hallway8Button );
-        sizeGroup2.add( Hallway9Button );
-        sizeGroup2.add( Hallway10Button );
-        sizeGroup2.add( Hallway11Button );
-
-        // Create the Room button border
-        Border buttonRoomBorder = BorderFactory.createEtchedBorder();
-        buttonRoomBorder = BorderFactory.createTitledBorder( buttonRoomBorder, "Rooms" );
-        Border buttonHallwayBorder = BorderFactory.createEtchedBorder();
-        buttonHallwayBorder = BorderFactory.createTitledBorder( buttonHallwayBorder, "Hallways" );
-        
-
-        // Create a button panel & add buttons
-        JPanel buttonPanel1 = new JPanel();
-        JPanel buttonPanel2 = new JPanel();
-        
-        buttonPanel1.setLayout( new FlowLayout( FlowLayout.LEFT ) );
-        buttonPanel1.add( StudyButton );
-        buttonPanel1.add( HallButton );
-        buttonPanel1.add( LoungeButton );
-        buttonPanel1.add( LibraryButton );
-        buttonPanel1.add( BilliardRoomButton );
-        buttonPanel1.add( DiningRoomButton );
-        buttonPanel1.add( ConservatoryButton );
-        buttonPanel1.add( BallroomButton );
-        buttonPanel1.add( KitchenButton );
-        buttonPanel1.setBorder( buttonRoomBorder );
-        
-        buttonPanel2.setLayout( new FlowLayout( FlowLayout.LEFT ) );
-        buttonPanel2.add( Hallway0Button );
-        buttonPanel2.add( Hallway1Button );
-        buttonPanel2.add( Hallway2Button );
-        buttonPanel2.add( Hallway3Button );
-        buttonPanel2.add( Hallway4Button );
-        buttonPanel2.add( Hallway5Button );
-        buttonPanel2.add( Hallway6Button );
-        buttonPanel2.add( Hallway7Button );
-        buttonPanel2.add( Hallway8Button );
-        buttonPanel2.add( Hallway9Button );
-        buttonPanel2.add( Hallway10Button );
-        buttonPanel2.add( Hallway11Button );
-        buttonPanel2.setBorder( buttonHallwayBorder );
-
-		*/
-    	
-        // Add ActionListeners for each radio button
-        StudyButton.addActionListener(this);
-        HallButton.addActionListener(this);
-        LoungeButton.addActionListener(this);
-        LibraryButton.addActionListener(this);
-        BilliardRoomButton.addActionListener(this);
-        DiningRoomButton.addActionListener(this);
-        ConservatoryButton.addActionListener(this);
-        BallroomButton.addActionListener(this);
-        KitchenButton.addActionListener(this);
-
-        Hallway0Button.addActionListener(this);
-        Hallway1Button.addActionListener(this);
-        Hallway2Button.addActionListener(this);
-        Hallway3Button.addActionListener(this);
-        Hallway4Button.addActionListener(this);
-        Hallway5Button.addActionListener(this);
-        Hallway6Button.addActionListener(this);
-        Hallway7Button.addActionListener(this);
-        Hallway8Button.addActionListener(this);
-        Hallway9Button.addActionListener(this);
-        Hallway10Button.addActionListener(this);
-        Hallway11Button.addActionListener(this);
-        
-        submitButton.addActionListener(this);
-        
-        // By default disable submit button, until location is selected
-    	submitButton.setEnabled(false);
-        
-        // Add panels to the main panel and arrange layout
-        //this.setLayout( new BorderLayout() );
-        //this.add( buttonPanel1, BorderLayout.NORTH );
-        //this.add( buttonPanel2, BorderLayout.CENTER );
-        //this.add( submitButton, BorderLayout.SOUTH );
-
-		setLayout(new GridLayout(6,5));
-		this.add( StudyButton );
-		this.add( Hallway0Button );
-		this.add( LibraryButton );
-		this.add( Hallway1Button );
-		this.add( HallButton );
-		this.add( Hallway2Button );
-		this.add( new Panel() );
-		this.add( Hallway3Button );
-		this.add( new Panel() );
-		this.add( Hallway4Button );
-		this.add( LoungeButton );
-		this.add( Hallway5Button );
-		this.add( BilliardRoomButton );
-		this.add( Hallway6Button );
-		this.add( DiningRoomButton );
-		this.add( Hallway7Button );
-		this.add( new Panel() );
-		this.add( Hallway8Button );
-		this.add( new Panel() );
-		this.add( Hallway9Button );
-		this.add( ConservatoryButton );
-		this.add( Hallway10Button );
-		this.add( BallroomButton );
-		this.add( Hallway11Button );
-		this.add( KitchenButton );
-		this.add( new Panel() );
-		this.add( new Panel() );
-		this.add( submitButton );
-		this.add( new Panel() );
-		this.add( new Panel() );
+    // Rooms
+    if ( StudyButton.isSelected() ) {
+      moveTo = Data.Location.LOC_STUDY;
     }
-    
-
-    /**
-     * This method handles events caused by the user
-     * selecting or deselecting radio buttons or
-     * checkboxes
-     * 
-     * @param e is an ActionEvent caused generated by an action listener
-     */
-    public void actionPerformed(ActionEvent e)
-    {
-    	com.clue.proto.Data.Location moveTo = null;
-    	boolean selectedLocation = false;
-        
-        // Determine message based on selection
-        if ( StudyButton.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_STUDY;
-        	selectedLocation = true;
-        }
-        
-        if ( HallButton.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALL;
-        	selectedLocation = true;
-        }
-        
-        if ( LoungeButton.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_LOUNGE;
-        	selectedLocation = true;
-        }
-
-        if ( LibraryButton.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_LIBRARY;
-        	selectedLocation = true;
-        }
-        
-        if ( BilliardRoomButton.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_BILLIARD_ROOM;
-        	selectedLocation = true;
-        }
-        
-        if ( DiningRoomButton.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_DINING_ROOM;
-        	selectedLocation = true;
-        }
-
-        if ( ConservatoryButton.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_CONSERVATORY;
-        	selectedLocation = true;
-        }
-        
-        if ( BallroomButton.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_BALLROOM;
-        	selectedLocation = true;
-        }
-        
-        if ( KitchenButton.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_KITCHEN;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway0Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_0;
-        	selectedLocation = true;
-        }
-        
-        if ( Hallway1Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_1;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway2Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_2;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway3Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_3;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway4Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_4;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway5Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_5;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway6Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_6;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway7Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_7;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway8Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_8;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway9Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_9;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway10Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_10;
-        	selectedLocation = true;
-        }
-
-        if ( Hallway11Button.isSelected() )
-        {
-        	moveTo = Data.Location.LOC_HALLWAY_11;
-        	selectedLocation = true;
-        }
-
-        // After selecting a location, enable the submit button
-        if ( selectedLocation )
-        {
-        	submitButton.setEnabled(true);
-        }
-        
-        // After submitting, send move message
-        if ( e.getSource().equals(submitButton) )
-        {
-            Msg.PlayerMove mv = Msg.PlayerMove.newBuilder()
-                    .setHeader(Msg.Header.newBuilder()
-                               .setMsgType(Msg.PlayerMove.getDescriptor().getFullName())
-                               .setSource(Instance.getId())
-                               .setDestination(Instance.getServerId())
-                               .build())
-                    .setDestination(moveTo)
-                    .build();
-                router.route(new Message(mv.getHeader(), mv));
-                
-                frame.setVisible(false);
-        }
-        
-        
-
+    if ( HallButton.isSelected() ) {
+      moveTo = Data.Location.LOC_HALL;
+    }
+    if ( LoungeButton.isSelected() ) {
+      moveTo = Data.Location.LOC_LOUNGE;
+    }
+    if ( LibraryButton.isSelected() ) {
+      moveTo = Data.Location.LOC_LIBRARY;
+    }
+    if ( BilliardRoomButton.isSelected() ) {
+      moveTo = Data.Location.LOC_BILLIARD_ROOM;
+    }
+    if ( DiningRoomButton.isSelected() ) {
+      moveTo = Data.Location.LOC_DINING_ROOM;
+    }
+    if ( ConservatoryButton.isSelected() ) {
+      moveTo = Data.Location.LOC_CONSERVATORY;
+    }
+    if ( BallroomButton.isSelected() ) {
+      moveTo = Data.Location.LOC_BALLROOM;
+    }
+    if ( KitchenButton.isSelected() ) {
+      moveTo = Data.Location.LOC_KITCHEN;
     }
 
+    // Hallways
+    if ( Hallway0Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_0;
+    }
+    if ( Hallway1Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_1;
+    }
+    if ( Hallway2Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_2;
+    }
+    if ( Hallway3Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_3;
+    }
+    if ( Hallway4Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_4;
+    }
+    if ( Hallway5Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_5;
+    }
+    if ( Hallway6Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_6;
+    }
+    if ( Hallway7Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_7;
+    }
+    if ( Hallway8Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_8;
+    }
+    if ( Hallway9Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_9;
+    }
+    if ( Hallway10Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_10;
+    }
+    if ( Hallway11Button.isSelected() ) {
+      moveTo = Data.Location.LOC_HALLWAY_11;
+    }
+
+    // After selecting a location, enable the submit button
+    if ( moveTo != null )
+    {
+      submitButton.setEnabled(true);
+    }
+
+    // After submitting, send move message
+    if ( e.getSource().equals(submitButton) )
+    {
+      Msg.PlayerMove mv = Msg.PlayerMove.newBuilder()
+          .setHeader(Msg.Header.newBuilder()
+                     .setMsgType(Msg.PlayerMove.getDescriptor().getFullName())
+                     .setSource(Instance.getId())
+                     .setDestination(Instance.getServerId())
+                     .build())
+          .setDestination(moveTo)
+          .build();
+      router.route(new Message(mv.getHeader(), mv));
+
+      frame.setVisible(false);
+    }
+
+    
+    // // @todo remove this (testing)
+    // setLocation(moveTo);
+  }
+
+
+  @Override
+  public void componentHidden(ComponentEvent event) {
+    logger.debug("Component hidden");
+  }
+
+  @Override
+  public void componentMoved(ComponentEvent event) {
+  }
+
+  @Override
+  public void componentResized(ComponentEvent event) {
+  }
+
+  @Override
+  public void componentShown(ComponentEvent event) {
+    logger.debug("Component shown");
+    Data.Player my_player = ClientState.getInstance().getPlayerById(Instance.getId());
+    setLocation(my_player.getLocation());
+  }
+
+  private void setLocation(Data.Location location) {
+    this.location = location;
+    enableValidMoves();
+  }
+
+  public void enableValidMoves() {
+    if (this.location == null) {
+      return;
+    }
+    
+    // disable all
+    StudyButton.setEnabled(false);
+    HallButton.setEnabled(false);
+    LoungeButton.setEnabled(false);
+    LibraryButton.setEnabled(false);
+    BilliardRoomButton.setEnabled(false);
+    DiningRoomButton.setEnabled(false);
+    ConservatoryButton.setEnabled(false);
+    BallroomButton.setEnabled(false);
+    KitchenButton.setEnabled(false);
+
+    Hallway0Button.setEnabled(false);
+    Hallway1Button.setEnabled(false);
+    Hallway2Button.setEnabled(false);
+    Hallway3Button.setEnabled(false);
+    Hallway4Button.setEnabled(false);
+    Hallway5Button.setEnabled(false);
+    Hallway6Button.setEnabled(false);
+    Hallway7Button.setEnabled(false);
+    Hallway8Button.setEnabled(false);
+    Hallway9Button.setEnabled(false);
+    Hallway10Button.setEnabled(false);
+    Hallway11Button.setEnabled(false);
+
+    // @todo remove testing    
+    // StudyButton.setForeground(Color.BLACK);
+    // HallButton.setForeground(Color.BLACK);
+    // LoungeButton.setForeground(Color.BLACK);
+    // LibraryButton.setForeground(Color.BLACK);
+    // BilliardRoomButton.setForeground(Color.BLACK);
+    // DiningRoomButton.setForeground(Color.BLACK);
+    // ConservatoryButton.setForeground(Color.BLACK);
+    // BallroomButton.setForeground(Color.BLACK);
+    // KitchenButton.setForeground(Color.BLACK);
+
+    // Hallway0Button.setForeground(Color.BLACK);
+    // Hallway1Button.setForeground(Color.BLACK);
+    // Hallway2Button.setForeground(Color.BLACK);
+    // Hallway3Button.setForeground(Color.BLACK);
+    // Hallway4Button.setForeground(Color.BLACK);
+    // Hallway5Button.setForeground(Color.BLACK);
+    // Hallway6Button.setForeground(Color.BLACK);
+    // Hallway7Button.setForeground(Color.BLACK);
+    // Hallway8Button.setForeground(Color.BLACK);
+    // Hallway9Button.setForeground(Color.BLACK);
+    // Hallway10Button.setForeground(Color.BLACK);
+    // Hallway11Button.setForeground(Color.BLACK);
+
+    JRadioButton current_button = null;
+    ArrayList<JRadioButton> buttons = new ArrayList<JRadioButton>();
+    switch (this.location) {
+      case LOC_NONE:
+        logger.error("enableValidMoves() - Unable to choose a valid move because"
+                     + " the location is set to LOC_NONE!");
+        break;
+      case LOC_STUDY:
+        current_button = StudyButton;
+        buttons.add(Hallway0Button);
+        buttons.add(Hallway2Button);
+        buttons.add(KitchenButton); // secret passage
+        break;
+      case LOC_HALL:
+        current_button = HallButton;
+        buttons.add(Hallway1Button);
+        buttons.add(Hallway4Button);
+        buttons.add(ConservatoryButton); // secret passage
+        break;
+      case LOC_LOUNGE:
+        current_button = LoungeButton;
+        buttons.add(Hallway2Button);
+        buttons.add(Hallway5Button);
+        buttons.add(Hallway7Button);
+        break;
+      case LOC_LIBRARY:
+        current_button = LibraryButton;
+        buttons.add(Hallway0Button);
+        buttons.add(Hallway1Button);
+        buttons.add(Hallway3Button);
+        break;
+      case LOC_BILLIARD_ROOM:
+        current_button = BilliardRoomButton;
+        buttons.add(Hallway3Button);
+        buttons.add(Hallway5Button);
+        buttons.add(Hallway6Button);
+        buttons.add(Hallway8Button);
+        break;
+      case LOC_DINING_ROOM:
+        current_button = DiningRoomButton;
+        buttons.add(Hallway4Button);
+        buttons.add(Hallway6Button);
+        buttons.add(Hallway9Button);
+        break;
+      case LOC_CONSERVATORY:
+        current_button = ConservatoryButton;
+        buttons.add(Hallway7Button);
+        buttons.add(Hallway10Button);
+        buttons.add(HallButton); // secret passage
+        break;
+      case LOC_BALLROOM:
+        current_button = BallroomButton;
+        buttons.add(Hallway8Button);
+        buttons.add(Hallway10Button);
+        buttons.add(Hallway11Button);
+        break;
+      case LOC_KITCHEN:
+        current_button = KitchenButton;
+        buttons.add(Hallway9Button);
+        buttons.add(Hallway11Button);
+        buttons.add(StudyButton); // secret passage
+        break;
+      case LOC_HALLWAY_0:
+        current_button = Hallway0Button;
+        buttons.add(StudyButton);
+        buttons.add(LibraryButton);
+        break;
+      case LOC_HALLWAY_1:
+        current_button = Hallway1Button;
+        buttons.add(LibraryButton);
+        buttons.add(HallButton);
+        break;
+      case LOC_HALLWAY_2:
+        current_button = Hallway2Button;
+        buttons.add(StudyButton);
+        buttons.add(LoungeButton);
+        break;
+      case LOC_HALLWAY_3:
+        current_button = Hallway3Button;
+        buttons.add(LibraryButton);
+        buttons.add(BilliardRoomButton);
+        break;
+      case LOC_HALLWAY_4:
+        current_button = Hallway4Button;
+        buttons.add(HallButton);
+        buttons.add(DiningRoomButton);
+        break;
+      case LOC_HALLWAY_5:
+        current_button = Hallway5Button;
+        buttons.add(LoungeButton);
+        buttons.add(BilliardRoomButton);
+        break;
+      case LOC_HALLWAY_6:
+        current_button = Hallway6Button;
+        buttons.add(BilliardRoomButton);
+        buttons.add(DiningRoomButton);
+        break;
+      case LOC_HALLWAY_7:
+        current_button = Hallway7Button;
+        buttons.add(LoungeButton);
+        buttons.add(ConservatoryButton);
+        break;
+      case LOC_HALLWAY_8:
+        current_button = Hallway8Button;
+        buttons.add(BilliardRoomButton);
+        buttons.add(BallroomButton);
+        break;
+      case LOC_HALLWAY_9:
+        current_button = Hallway9Button;
+        buttons.add(DiningRoomButton);
+        buttons.add(KitchenButton);
+        break;
+      case LOC_HALLWAY_10:
+        current_button = Hallway10Button;
+        buttons.add(ConservatoryButton);
+        buttons.add(BallroomButton);
+        break;
+      case LOC_HALLWAY_11:
+        current_button = Hallway11Button;
+        buttons.add(BallroomButton);
+        buttons.add(KitchenButton);
+        break;
+    }
+
+    // disable the current button
+    current_button.setEnabled(false);
+
+    // enable the valid moves
+    for (JRadioButton button : buttons) {
+      button.setEnabled(true);
+    }
+
+
+    // @todo remove testing
+    // current_button.setForeground(Color.RED);
+    // for (JRadioButton button : buttons) {
+    //   button.setForeground(Color.BLUE);
+    // }
+  }
 }

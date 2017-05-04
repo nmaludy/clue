@@ -22,9 +22,14 @@ public class GameLogic implements MessageHandler {
   private static Logger logger = new Logger(GameLogic.class);
   private static Config config = Config.getInstance();
 
+  private enum TurnType {
+    START, NEXT
+  }
+
   private Router router;
   private Msg.GameState.Builder state;
   private Data.Solution solution;
+  private ArrayList<Data.Location> roomLocations;
 
   private Msg.PlayerSuggestion currentSuggestion = null;
   private ArrayList<Integer> currentSuggestionClientList = null;
@@ -40,6 +45,17 @@ public class GameLogic implements MessageHandler {
         .setClientPreviousTurn(-1)
         .setClientCurrentTurn(-1);
     this.solution = null;
+
+    this.roomLocations = new ArrayList<Data.Location>();
+    roomLocations.add(Data.Location.LOC_STUDY);
+    roomLocations.add(Data.Location.LOC_HALL);
+    roomLocations.add(Data.Location.LOC_LOUNGE);
+    roomLocations.add(Data.Location.LOC_LIBRARY);
+    roomLocations.add(Data.Location.LOC_BILLIARD_ROOM);
+    roomLocations.add(Data.Location.LOC_DINING_ROOM);
+    roomLocations.add(Data.Location.LOC_CONSERVATORY);
+    roomLocations.add(Data.Location.LOC_BALLROOM);
+    roomLocations.add(Data.Location.LOC_KITCHEN);
     
     this.router = Router.getInstance();
     this.router.register(new SubscriptionAllIncoming(), this);
@@ -90,10 +106,6 @@ public class GameLogic implements MessageHandler {
       Data.Player.Builder player = state.addPlayersBuilder();
       player.setClientId(req.getClientId());
       player.setName(req.getName());
-
-      player = getPlayerById(req.getClientId());
-      logger.debug("handleConnectionRequest() - retrieval test "
-                   + Integer.toString(req.getClientId()));
     }
 
     // Send response back to client
@@ -136,6 +148,11 @@ public class GameLogic implements MessageHandler {
                    + Integer.toString(client_id));
       Data.Player.Builder player = getPlayerById(client_id);
       player.setSuspect(req.getSuspect());
+      
+      // randomly assign a starting room for the player
+      int idx = ThreadLocalRandom.current().nextInt(0, roomLocations.size());
+      Data.Location location = roomLocations.get(idx);
+      player.setLocation(location);
     }
 
     // Send response back to client
@@ -195,6 +212,8 @@ public class GameLogic implements MessageHandler {
                    + solution.toString());
 
       // Reveal the remaining clues to the clients playing the game
+
+      // create a list of clues to be revealed
       ArrayList<Msg.RevealClues.Builder> reveal_list =
           new ArrayList<Msg.RevealClues.Builder>();
       for (Data.Player.Builder player : state.getPlayersBuilderList()) {
@@ -231,24 +250,98 @@ public class GameLogic implements MessageHandler {
         router.route(new Message(msg.getHeader(), msg));
       }
       
-      
-      // Randomly choose who goes first
-      // nextInt is normally exclusive of the top value,
-      // so add 1 to make it inclusive
-      int current_idx =
-          ThreadLocalRandom.current().nextInt(0, state.getPlayersBuilderList().size());
-      Data.Player.Builder current_player =  state.getPlayersBuilderList().get(current_idx);
-      int current_client_id = current_player.getClientId();
-      state.setStatus(Data.GameStatus.GAME_IN_PROGRESS);
-      state.setClientCurrentTurn(current_client_id);
-
-      logger.debug("handleStartGameRequest() - starting game, player going first = "
-                   + current_client_id);
-
+      // choose a player to start and
       // tell all clients that the game has started
-      sendCurrentGameState(Instance.getBroadcastId());
+      logger.debug("handleStartGameRequest() - starting game, choosing player to go first.. ");
+      advanceTurn(TurnType.START);
     }
   }
+
+  private void advanceTurn(TurnType turnType) {
+    ArrayList<Integer> client_ids = new ArrayList<Integer>();
+    for (Data.Player.Builder player : state.getPlayersBuilderList()) {
+      client_ids.add(player.getClientId());
+    }
+
+    // sort the list 0...n
+    Collections.sort(client_ids);
+
+    // find the current client's turn
+    int prev_client_id = state.getClientCurrentTurn();
+    int next_index = 0;
+
+    // Randomly choose who goes first
+    // nextInt is normally exclusive of the top value,
+    // so add 1 to make it inclusive
+    if (turnType == TurnType.START) {
+      state.setStatus(Data.GameStatus.GAME_IN_PROGRESS);
+      next_index = ThreadLocalRandom.current().nextInt(0, state.getPlayersBuilderList().size());
+    } else {
+      int current_index = client_ids.indexOf(prev_client_id);
+      next_index = ++current_index;
+      if (next_index >= client_ids.size()) {
+        next_index = 0;
+      }
+    }
+
+    int next_client_id = client_ids.get(next_index);
+    logger.debug("advanceTurn() - previous player's turn = " + prev_client_id);
+    logger.debug("advanceTurn() - next player's turn = " + next_client_id);
+    
+    state.setClientPreviousTurn(prev_client_id);
+    state.setClientCurrentTurn(next_client_id);
+
+    // Send updated gate state (next player's turn)
+    sendCurrentGameState(Instance.getBroadcastId());
+    
+    // send a message directly to the player whose turn it is
+    Msg.PlayerTurn msg = Msg.PlayerTurn.newBuilder()
+        .setHeader(Msg.Header.newBuilder()
+                   .setMsgType(Msg.PlayerTurn.getDescriptor().getFullName())
+                   .setSource(Instance.getId())
+                   .setDestination(next_client_id)
+                   .build())
+        .setClientPreviousTurn(prev_client_id)
+        .setClientCurrentTurn(next_client_id)
+        .build();
+    router.route(new Message(msg.getHeader(), msg));
+
+    // @todo handle player accusation failure
+    // they are still in the game, but can't move, make suggestions, or make
+    // accusation *they still need to be able to disprove*
+  }
+
+  private void handlePlayerMove(Msg.PlayerMove move) {
+    Data.Player.Builder player = getPlayerById(move.getHeader().getSource());
+    player.setLocation(move.getDestination());
+    	
+    // Send updated game state (player moved)
+    sendCurrentGameState(Instance.getBroadcastId());
+
+    // if the player mvoed into a hallway advance to the next player
+    switch (move.getDestination()) {
+      case LOC_HALLWAY_0:
+      case LOC_HALLWAY_1:
+      case LOC_HALLWAY_2:
+      case LOC_HALLWAY_3:
+      case LOC_HALLWAY_4:
+      case LOC_HALLWAY_5:
+      case LOC_HALLWAY_6:
+      case LOC_HALLWAY_7:
+      case LOC_HALLWAY_8:
+      case LOC_HALLWAY_9:
+      case LOC_HALLWAY_10:
+      case LOC_HALLWAY_11:
+        logger.debug("handlePlayerMove() - Player moved into a hallway: "+
+                     move.getDestination().name());
+        advanceTurn(TurnType.NEXT);
+        break;
+      default:
+        logger.debug("handlePlayerMove() - Player moved into a room: "+
+                     move.getDestination().name());
+    }
+  }
+
   
   /*
    * this feature is for handling an accusation. @TODO: fix handling msg
@@ -260,14 +353,17 @@ public class GameLogic implements MessageHandler {
 	  
 	  logger.debug("handleAccusationRequest() - received accusation request from: "
                  + Integer.toString(client_id));
-	  logger.debug("handleAccusationRequest()  - client's guess: " + req.getSolution().toString()); 
+	  logger.debug("handleAccusationRequest()  - client's guess: " + req.getSolution().toString());
+    logger.debug("handleAccusationRequest()  - solution : " + this.solution.toString()); 
     
 	  
 	  // check solution message to see if room, weapon, and suspect matches
     // the game's solution
     // if it matches then the player wins
     // else the player "fails"
-	  if (req.getSolution().equals(this.solution))
+	  if (req.getSolution().getWeapon() == this.solution.getWeapon() &&
+        req.getSolution().getSuspect() == this.solution.getSuspect() &&
+        req.getSolution().getLocation() == this.solution.getLocation())
 	  {
 		  // build gameEnd message
 		  Msg.GameEnd.Builder response = Msg.GameEnd.newBuilder()
@@ -275,7 +371,8 @@ public class GameLogic implements MessageHandler {
                      .setMsgType(Msg.GameEnd.getDescriptor().getFullName())
                      .setSource(Instance.getId())
                      .setDestination(Instance.getBroadcastId())
-                     .build());
+                     .build())
+          .setClientWinner(client_id);
 		  
 		  // send response to back to all clients
 		  Msg.GameEnd msg = response.build();
@@ -432,45 +529,9 @@ public class GameLogic implements MessageHandler {
                    Integer.toString(pass.getClientId()));
       return;
     }
-    
-    ArrayList<Integer> client_ids = new ArrayList<Integer>();
-    for (Data.Player.Builder player : state.getPlayersBuilderList()) {
-      client_ids.add(player.getClientId());
-    }
 
-    // sort the list 0...n
-    Collections.sort(client_ids);
-
-    // find the current client's turn
-    int current_index = client_ids.indexOf(pass.getClientId());
-    int next_index = ++current_index;
-    if (next_index >= client_ids.size()) {
-      next_index = 0;
-    }
-
-    int next_client_id = client_ids.get(next_index);
-    int prev_client_id = state.getClientCurrentTurn();
-    state.setClientPreviousTurn(prev_client_id);
-    state.setClientCurrentTurn(next_client_id);
-
-    // Send updated gate state (next player's turn)
-    sendCurrentGameState(Instance.getBroadcastId());
-    
-    // send a message directly to the player whose turn it is
-    Msg.PlayerTurn msg = Msg.PlayerTurn.newBuilder()
-        .setHeader(Msg.Header.newBuilder()
-                   .setMsgType(Msg.PlayerTurn.getDescriptor().getFullName())
-                   .setSource(Instance.getId())
-                   .setDestination(next_client_id)
-                   .build())
-        .setClientPreviousTurn(prev_client_id)
-        .setClientCurrentTurn(next_client_id)
-        .build();
-    router.route(new Message(msg.getHeader(), msg));
-
-    // @todo handle player accusation failure
-    // they are still in the game, but can't move, make suggestions, or make
-    // accusation *they still need to be able to disprove*
+    // move to next player's turn
+    advanceTurn(TurnType.NEXT);
   }
   
   @Override
@@ -493,15 +554,10 @@ public class GameLogic implements MessageHandler {
       
     } else if (msg_type.equals(Msg.PlayerAccusation.getDescriptor().getFullName())) {
     	handlePlayerAccusationRequest((Msg.PlayerAccusation)msg.getMessage());
+      
     } else if (msg_type.equals(Msg.PlayerMove.getDescriptor().getFullName())) {
+      handlePlayerMove((Msg.PlayerMove)msg.getMessage());
     	
-    	Data.Player.Builder player = getPlayerById(msg.getHeader().getSource());
-    	Msg.PlayerMove move_msg = (Msg.PlayerMove)msg.getMessage();
-    	player.setLocation(move_msg.getDestination());
-    	
-    	// Send updated game state (player moved)
-    	sendCurrentGameState(Instance.getBroadcastId());
-    
     } else if (msg_type.equals(Msg.PlayerSuggestion.getDescriptor().getFullName())) {
       handlePlayerSuggestion((Msg.PlayerSuggestion)msg.getMessage());
 

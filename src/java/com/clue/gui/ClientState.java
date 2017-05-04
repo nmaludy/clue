@@ -97,7 +97,34 @@ public class ClientState implements MessageHandler {
   }
 
   public void handleGameState(Msg.GameState response) {
-    state = response;
+    Msg.GameState old_state = this.state;
+    this.state = response;
+
+    Data.Player old_player = getPlayerByIdInState(Instance.getId(), old_state);
+    Data.Player new_player = getPlayerById(Instance.getId());
+    if (new_player == null || old_player == null) {
+      return;
+    }
+
+    // if we're in game and our player moved, then it's time to show
+    // a suggestion to the user
+    // @todo should this happen in the move frame? probably.
+    if (this.state.getStatus() == Data.GameStatus.GAME_IN_PROGRESS &&
+        new_player.getLocation() != old_player.getLocation()) {
+      switch (new_player.getLocation()) {
+        case LOC_STUDY:
+        case LOC_HALL:
+        case LOC_LOUNGE:
+        case LOC_LIBRARY:
+        case LOC_BILLIARD_ROOM:
+        case LOC_DINING_ROOM:
+        case LOC_CONSERVATORY:
+        case LOC_BALLROOM:
+        case LOC_KITCHEN:
+          GUI.getInstance().suggestion(new_player.getLocation());
+          break;
+      }
+    }
   }
 
   public Set<Data.Location> myLocationClues() {
@@ -119,8 +146,12 @@ public class ClientState implements MessageHandler {
   public Set<Data.Suspect> notebookSuspectClues() {
     return notebookSuspects;
   }
-
+  
   public Data.Player getPlayerById(int clientId) {
+    return getPlayerByIdInState(clientId, state);
+  }
+
+  public static Data.Player getPlayerByIdInState(int clientId, Msg.GameState state) {
     for (Data.Player player : state.getPlayersList()) {
       if (player.getClientId() == clientId) {
         return player;

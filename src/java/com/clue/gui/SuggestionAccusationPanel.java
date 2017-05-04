@@ -25,6 +25,7 @@ public class SuggestionAccusationPanel extends JPanel implements ActionListener,
   private Router router = null;
 
   private Data.Solution solution = null;
+  private Data.Location location = null;
   private SuggestionAccusationFrame.Type type;
   
   // Button groups
@@ -221,9 +222,12 @@ public class SuggestionAccusationPanel extends JPanel implements ActionListener,
 
   public void setSolution(Data.Solution solution) {
     this.solution = solution;
-    enableAll();
-    disableCluesInNotebook();
-    selectSolution();
+    updateClues();
+  }
+
+  public void setLocation(Data.Location location) {
+    this.location = location;
+    updateClues();
   }
     
 
@@ -379,9 +383,21 @@ public class SuggestionAccusationPanel extends JPanel implements ActionListener,
   @Override
   public void componentShown(ComponentEvent event) {
     logger.debug("Component shown");
+    updateClues();
+  }
+
+  public void updateClues() {
     enableAll();
     disableCluesInNotebook();
-    selectSolution();
+    
+    switch (type) {
+      case TYPE_ACCUSATION:
+        selectSolution();
+        break;
+      case TYPE_SUGGESTION:
+        enableOnlyThisLocation();
+        break;
+    }
   }
 
   public void enableAll() {
@@ -596,6 +612,60 @@ public class SuggestionAccusationPanel extends JPanel implements ActionListener,
         break;
       case SUS_PROF_PLUM:
         selectButtonIfEnabled(ProfPlumButton);
+        break;
+    }
+  }
+
+  public void enableOnlyThisLocation() {
+    if (this.location == null) {
+      return;
+    }
+    
+    // disable all locations
+    StudyButton.setEnabled(false);
+    HallButton.setEnabled(false);
+    LoungeButton.setEnabled(false);
+    LibraryButton.setEnabled(false);
+    BilliardRoomButton.setEnabled(false);
+    DiningRoomButton.setEnabled(false);
+    ConservatoryButton.setEnabled(false);
+    BallroomButton.setEnabled(false);
+    KitchenButton.setEnabled(false);
+
+    // only enable the location set here
+    switch (this.location) {
+      case LOC_NONE:
+        break;
+      case LOC_STUDY:
+        StudyButton.setEnabled(true);
+        break;
+      case LOC_HALL:
+        HallButton.setEnabled(true);
+        break;
+      case LOC_LOUNGE:
+        LoungeButton.setEnabled(true);
+        break;
+      case LOC_LIBRARY:
+        LibraryButton.setEnabled(true);
+        break;
+      case LOC_BILLIARD_ROOM:
+        BilliardRoomButton.setEnabled(true);
+        break;
+      case LOC_DINING_ROOM:
+        DiningRoomButton.setEnabled(true);
+        break;
+      case LOC_CONSERVATORY:
+        ConservatoryButton.setEnabled(true);
+        break;
+      case LOC_BALLROOM:
+        BallroomButton.setEnabled(true);
+        break;
+      case LOC_KITCHEN:
+        KitchenButton.setEnabled(true);
+        break;
+      default:
+        logger.error("componentShown() - got invalid location clue revealed: "
+                     + location.name());
         break;
     }
   }

@@ -97,6 +97,10 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     moveButton.addActionListener(this);
     suggestionButton.addActionListener(this);
 
+    startButton.setEnabled(false);
+    moveButton.setEnabled(false);
+    suggestionButton.setEnabled(false);
+
     setTitle("Clue-less : " + ClientState.getInstance().getName());
     pack();
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -141,7 +145,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     } else if (e.getSource().equals(moveButton)) {
       move();
     } else if (e.getSource().equals(suggestionButton)) {
-      suggestion();
+      suggestion(Data.Location.LOC_NONE);
     }
   }
 
@@ -166,10 +170,11 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     moveFrame.setState(JFrame.NORMAL);
   }
 
-  public void suggestion() {
+  public void suggestion(Data.Location location) {
     suggestionAccusationFrame.setVisible( true );
     suggestionAccusationFrame.setState(JFrame.NORMAL);
     suggestionAccusationFrame.setType(SuggestionAccusationFrame.Type.TYPE_SUGGESTION);
+    suggestionAccusationFrame.setLocation(location);
   }
 
   public void accusation(Data.Solution solution) {
@@ -189,6 +194,35 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     turnEndFrame.setVisible( true );
     turnEndFrame.setState(JFrame.NORMAL);
     turnEndFrame.setDisproveResponse(resp);
+  }
+
+  public void handleGameState(Msg.GameState state) {
+    for (Data.Player player : state.getPlayersList()) {
+      panel.movePlayer(player.getSuspect(), player.getLocation());
+    }
+    
+    if (state.getStatus() == Data.GameStatus.GAME_IN_PROGRESS) {
+      startButton.setEnabled(false);
+    }
+  }
+
+  public void handlePlayerTurn(Msg.PlayerTurn msg) {
+    if (msg.getClientCurrentTurn() == Instance.getId()) {
+      logger.debug("handlePlayerTurn() - It's now my turn! "
+                   + Integer.toString(msg.getClientCurrentTurn()));
+      
+      logger.debug("handlePlayerTurn() - Opening Move dialog");
+      move();
+    }
+  }
+  
+  public void handleSuspectClaim(Msg.SuspectClaimResponse  response) {
+    if (response.getClaimSuccess()) {
+      connectButton.setEnabled(false);
+      startButton.setEnabled(true);
+    } else {
+      logger.error("ERROR: Suspect already in use!");
+    }
   }
 
   
@@ -227,11 +261,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
       
     } else if (msg_type.equals(Msg.GameState.getDescriptor().getFullName())) {
       logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
-      Msg.GameState state = (Msg.GameState)msg.getMessage();
-      for (Data.Player player : state.getPlayersList())
-      {
-        panel.movePlayer(player.getSuspect(), player.getLocation());
-      }
+      handleGameState((Msg.GameState)msg.getMessage());
       
     } else if (msg_type.equals(Msg.DisproveRequest.getDescriptor().getFullName()))  {
     	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
@@ -244,6 +274,15 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     } else if (msg_type.equals(Msg.GameEnd.getDescriptor().getFullName()))  {
     	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
       handleGameEnd((Msg.GameEnd)msg.getMessage());
+
+    } else if (msg_type.equals(Msg.SuspectClaimResponse.getDescriptor().getFullName())) {
+    	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+      handleSuspectClaim((Msg.SuspectClaimResponse)msg.getMessage());
+
+    } else if (msg_type.equals(Msg.PlayerTurn.getDescriptor().getFullName())) {
+    	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+      handlePlayerTurn((Msg.PlayerTurn)msg.getMessage());
+      
     } else {
     	logger.debug("handleMessage() - got unhandled message type: " + msg_type);
     }
