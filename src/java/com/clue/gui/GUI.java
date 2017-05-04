@@ -40,6 +40,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private JButton startButton = new JButton("Start");
   private JButton moveButton = new JButton("Move");
   private JButton suggestionButton = new JButton("Suggestions & Accustations");
+  private JButton testTurnEndButton = new JButton("Test: Turn End");
   
   private GUIpanel panel = new GUIpanel();
   private NotebookPanel notebook = new NotebookPanel();
@@ -49,6 +50,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private MoveFrame MoveFrame = new MoveFrame(this, router );
   private SuggestionFrame SuggestionFrame = new SuggestionFrame(this, router );
   private DisproveFrame DisproveFrame = new DisproveFrame(this, router );
+  private TurnEndFrame TurnEndFrame = new TurnEndFrame(this, router );
 
   /*
    * Initialze and layout all GUI components.
@@ -67,6 +69,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
             .addComponent(startButton)
             .addComponent(moveButton)
             .addComponent(suggestionButton)
+            .addComponent(testTurnEndButton)
             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
           .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
             .addComponent(panel, 800, 800, 800)
@@ -81,7 +84,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
             .addComponent(connectButton)
             .addComponent(startButton)
             .addComponent(moveButton)
-            .addComponent(suggestionButton))
+            .addComponent(suggestionButton)
+            .addComponent(testTurnEndButton) )
           .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
             .addComponent(panel, 800, 800, 800)
             .addComponent(notebook))
@@ -94,8 +98,9 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     startButton.addActionListener(this);
     moveButton.addActionListener(this);
     suggestionButton.addActionListener(this);
+    testTurnEndButton.addActionListener(this);
 
-    setTitle("Clue-less");
+    setTitle("Clue-less : " + ClientState.getInstance().getName());
     pack();
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     centerFrame(this);
@@ -111,6 +116,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     SuggestionFrame.setVisible(false);
     DisproveFrame.setState(JFrame.ICONIFIED);
     DisproveFrame.setVisible(false);
+    TurnEndFrame.setState(JFrame.ICONIFIED);
+    TurnEndFrame.setVisible(false);
 
     URL imageURL = this.getClass().getResource("/images/clue_icon.png");
     setIconImage(new ImageIcon(imageURL).getImage());
@@ -138,6 +145,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
       move();
     } else if (e.getSource().equals(suggestionButton)) {
       suggestion();
+    } else if (e.getSource().equals(testTurnEndButton)) {
+      turnEnd(null);
     }
   }
 
@@ -173,25 +182,10 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     DisproveFrame.setDisproveRequest(disprove);
   }
 
-  public void disproveResponse(Msg.DisproveResponse resp) {
-    if (resp.getResponse().getLocation() != Data.Location.LOC_NONE) {
-      // make an accusation or passs
-      logger.debug("disproveResponse() - location disproven = "
-                   + resp.getResponse().getLocation().name());
-    } else if (resp.getResponse().getWeapon() != Data.Weapon.WPN_NONE) {
-      // make an accusation or passs
-      logger.debug("disproveResponse() - weapon disproven = "
-                   + resp.getResponse().getWeapon().name());
-    } else if (resp.getResponse().getSuspect() != Data.Suspect.SUS_NONE) {
-      // make an accusation or passs
-      logger.debug("disproveResponse() - suspect disproven = "
-                   + resp.getResponse().getSuspect().name());
-    } else {
-      // nothing was disproven so make an accusation ?
-      logger.debug("disproveResponse() - Nothing was disproven!");
-    }
-
-    
+  public void turnEnd(Msg.DisproveResponse resp) {
+    TurnEndFrame.setVisible( true );
+    TurnEndFrame.setState(JFrame.NORMAL);
+    TurnEndFrame.setDisproveResponse(resp);
   }
 
   
@@ -254,7 +248,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     else if (msg_type.equals(Msg.DisproveResponse.getDescriptor().getFullName())) 
     {
     	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
-      disproveResponse((Msg.DisproveResponse)msg.getMessage());
+      turnEnd((Msg.DisproveResponse)msg.getMessage());
     } 
     else 
     {

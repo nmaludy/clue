@@ -24,6 +24,9 @@ public class DisprovePanel extends JPanel implements ActionListener, ComponentLi
   private JFrame parent = null;
   private Router router = null;
 
+  // Label
+  private JLabel InstructionsLabel;
+  
   // Button groups
   private ButtonGroup ButtonGroup;
 
@@ -67,6 +70,9 @@ public class DisprovePanel extends JPanel implements ActionListener, ComponentLi
     this.router = routerIn;
     this.request = null;
 
+    // Create Labels
+    InstructionsLabel = new JLabel("", SwingConstants.CENTER);
+    
     // Create Suspect buttons
     MsScarlettButton = new JRadioButton( "Ms. Scarlett" );
     ColMustardButton = new JRadioButton( "Col. Mustard" );
@@ -203,8 +209,9 @@ public class DisprovePanel extends JPanel implements ActionListener, ComponentLi
     passButton.setEnabled(false);
 
     // Add panels to the main panel and arrange layout
-    this.setLayout(new GridLayout(4,1));
+    this.setLayout(new GridLayout(5,1));
     //this.setLayout( new BorderLayout() );
+    this.add( InstructionsLabel );
     this.add( buttonSuspectPanel );
     this.add( buttonWeaponPanel );
     this.add( buttonRoomPanel );
@@ -329,8 +336,8 @@ public class DisprovePanel extends JPanel implements ActionListener, ComponentLi
 
   public void setDisproveRequest(Msg.DisproveRequest req) {
     this.request = req;
-    // @todo show suggestion
-
+    
+    // Update disproval section
     MsScarlettButton.setEnabled(false);
     ColMustardButton.setEnabled(false);
     MrsWhiteButton.setEnabled(false);
@@ -469,9 +476,21 @@ public class DisprovePanel extends JPanel implements ActionListener, ComponentLi
       }
     }
 
-    if (!b_can_disprove) {
-      passButton.setEnabled(false);
+    String instructions = "";
+    if (b_can_disprove) {
+      instructions = "Please disprove their suggestion by selecting a clue.";
+    } else {
+      instructions = "You're unable to disprove their suggestion, please pass your turn.";
+      passButton.setEnabled(true);
     }
+    
+    // Update Instructions label
+    Data.Player player = ClientState.getInstance().getPlayerById(req.getGuess().getClientId());
+    String message = "Player '" + player.getName() + "' has made a suggestion!";
+    InstructionsLabel.setText("<html><div style='text-align: center;'>"
+                              + message + "<br>"
+                              + instructions
+                              + "</div></html>");
   }
 
   @Override

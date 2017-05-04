@@ -39,6 +39,12 @@ message GameState {
   optional int32 clientCurrentTurn  = 5;
 }
 
+message PlayerTurn {
+  optional Header header            = 1;
+  optional int32 clientPreviousTurn = 2;
+  optional int32 clientCurrentTurn  = 3;
+}
+
 message RevealClues {
   optional Header header    = 1;
   optional data.Clues clues = 2;
@@ -84,7 +90,13 @@ message DisproveResponse {
   optional data.Solution response = 3;
 }
 
+message PassTurn {
+  optional Header header  = 1;
+  optional int32 clientId = 2;
+}
+
 message GameEnd {
   optional Header header      = 1;
   optional int32 clientWinner = 2;
 }
+

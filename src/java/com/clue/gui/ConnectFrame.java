@@ -81,6 +81,9 @@ public class ConnectFrame extends JFrame implements ActionListener, ComponentLis
     router.register(new SubscriptionAllIncoming(), this);
 
     this.addComponentListener(this);
+    
+    java.net.URL imageURL = this.getClass().getResource("/images/clue_icon.png");
+    setIconImage(new ImageIcon(imageURL).getImage());
   }
 
   public void ok() {

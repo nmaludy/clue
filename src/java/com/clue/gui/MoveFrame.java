@@ -19,6 +19,9 @@ public class MoveFrame extends JFrame implements ComponentListener
     JPanel panel = new MovePanel( router, this );
     this.add( panel );
     this.addComponentListener(this);
+
+    java.net.URL imageURL = this.getClass().getResource("/images/clue_icon.png");
+    setIconImage(new ImageIcon(imageURL).getImage());
   }
 
   @Override
