@@ -601,7 +601,7 @@ public class GameLogic implements MessageHandler {
                     .setHeader(Msg.Header.newBuilder()
                                .setMsgType(Msg.InvalidMove.getDescriptor().getFullName())
                                .setSource(Instance.getId())
-                               .setDestination(Instance.getServerId())
+                               .setDestination(move_msg.getHeader().getSource())
                                .build())
                     .setDestination(Data.Location.LOC_NONE)
                     .build();
