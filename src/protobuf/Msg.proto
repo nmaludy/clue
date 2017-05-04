@@ -8,7 +8,7 @@ import "Data.proto";
 
 message Header {
 	optional string msgType    = 1;
-	optional int32 source      = 2;
+	optional int32 source     = 2;
 	optional int32 destination = 3;
 }
 
