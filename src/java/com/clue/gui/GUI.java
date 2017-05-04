@@ -51,6 +51,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
       new SuggestionAccusationFrame(this, router, SuggestionAccusationFrame.Type.TYPE_SUGGESTION);
   private DisproveFrame disproveFrame = new DisproveFrame(this, router );
   private TurnEndFrame turnEndFrame = new TurnEndFrame(this, router );
+  private GameEndFrame gameEndFrame = new GameEndFrame(this, router );
 
   /*
    * Initialze and layout all GUI components.
@@ -116,6 +117,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     disproveFrame.setVisible(false);
     turnEndFrame.setState(JFrame.ICONIFIED);
     turnEndFrame.setVisible(false);
+    gameEndFrame.setState(JFrame.ICONIFIED);
+    gameEndFrame.setVisible(false);
 
     URL imageURL = this.getClass().getResource("/images/clue_icon.png");
     setIconImage(new ImageIcon(imageURL).getImage());
@@ -223,18 +226,10 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   }
 
   
-  public void handleGameEnd(Msg.GameEnd req) {
-	  logger.debug("winner is : " + req.getClientWinner());
-	  
-	  // if gameEnd.clientWinner equals your clientID print you win else print who won the game. 
-	  if (req.getClientWinner() == Instance.getId()) {
-		  JOptionPane.showMessageDialog(null, "You have solved the mystery. Game Over", "Surprise Surprise: Game Overrrr",
-				  JOptionPane.INFORMATION_MESSAGE);
-	  } else{
-		  JOptionPane.showMessageDialog(null, "The mystery has been solved.. You Lose", "Surprise Surprise: Game Overrrr",
-                                    JOptionPane.INFORMATION_MESSAGE);
-		  
-	  }
+  public void handleGameEnd(Msg.GameEnd msg) {
+    gameEndFrame.setVisible( true );
+    gameEndFrame.setState(JFrame.NORMAL);
+    gameEndFrame.setGameEnd(msg);
   }
   
   @Override
