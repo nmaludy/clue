@@ -3,6 +3,7 @@ package com.clue.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import com.clue.app.Instance;
 import com.clue.app.Logger;
@@ -24,6 +25,10 @@ public class GameLogic implements MessageHandler {
   private Router router;
   private Msg.GameState.Builder state;
   private Data.Solution solution;
+
+  private Msg.PlayerSuggestion currentSuggestion = null;
+  private ArrayList<Integer> currentSuggestionClientList = null;
+  private int currentSuggestionIndex = -1;
 
   public GameLogic() {
     this.state = Msg.GameState.newBuilder()
@@ -242,6 +247,7 @@ public class GameLogic implements MessageHandler {
       sendCurrentGameState(Instance.getBroadcastId());
     }
   }
+<<<<<<< HEAD
   
   /*
    * this feature is for handling an accusation. @TODO: fix handling msg
@@ -306,6 +312,130 @@ public class GameLogic implements MessageHandler {
   
   
   
+=======
+
+  public void handlePlayerSuggestion(Msg.PlayerSuggestion req) {
+    // Round-robin send Msg.DisproveRequest to clients
+
+    currentSuggestion = req;
+    currentSuggestionClientList = new ArrayList<Integer>();
+    currentSuggestionIndex = 0;
+
+    // idea... if client id is x:   0 .. x .. n
+    // we want to start with player x+1, go to player n, then wrap around to 0
+    // then stop at player x-1
+
+    // first add everyone to a list
+    ArrayList<Integer> tmpList = new ArrayList<Integer>();
+    int clientId = req.getHeader().getSource();
+    for (Data.Player.Builder player : state.getPlayersBuilderList()) {
+      if (player.getClientId() != clientId) {
+        currentSuggestionClientList.add(player.getClientId());
+      }
+    }
+
+    // sort the list 0...n
+    Collections.sort(currentSuggestionClientList);
+
+    // remove the ids < client id and put them into tmplist
+    while (!currentSuggestionClientList.isEmpty()) {
+      if (currentSuggestionClientList.get(0) < clientId) {
+        tmpList.add(currentSuggestionClientList.remove(0));
+      } else {
+        break;
+      }
+    }
+
+    // now currentSuggestionClientList has ids x+1..n (in order)
+    // also, tmpList has ids 0...x-1 (in order)
+    // appending tmpList to the end of currentSuggestionClientList and
+    // we will have x+1..n,0...x-1
+    currentSuggestionClientList.addAll(tmpList);
+
+    logger.debug("handlePlayerSuggestion() - disproval client order: "
+                 + String.join(",",
+                               currentSuggestionClientList.stream()
+                               .map(i -> Integer.toString(i))
+                               .collect(Collectors.toList())));
+
+    // send disprove request
+    sendDisproveRequestToCurrentPlayer();
+  }
+
+  public void sendDisproveRequestToCurrentPlayer() {
+    int client_id = currentSuggestionClientList.get(currentSuggestionIndex);
+    Msg.DisproveRequest msg = Msg.DisproveRequest.newBuilder()
+        .setHeader(Msg.Header.newBuilder()
+                   .setMsgType(Msg.DisproveRequest.getDescriptor().getFullName())
+                   .setSource(Instance.getId())
+                   .setDestination(client_id)
+                   .build())
+        .setGuess(currentSuggestion.getSolution().toBuilder().build())
+        .build();
+    
+    logger.debug("sendDisproveRequestToCurrentPlayer() - send disproval to client "
+                 + Integer.toString(client_id));
+    router.route(new Message(msg.getHeader(), msg));
+  }
+
+  public void handleDisproveResponse(Msg.DisproveResponse resp) {
+    // If receive back a Msg.DisproveResponse with all clues set to XXX_NONE
+    //   Goto next player
+    // Else
+    //   Send Msg.DisproveResponse back to player who made suggestion
+    // If we get to end and no one has disproved send back Msg.DisproveResponse with all clues set to XXX_NONE
+
+    if (resp.getResponse().getLocation() == Data.Location.LOC_NONE &&
+        resp.getResponse().getWeapon() == Data.Weapon.WPN_NONE &&
+        resp.getResponse().getSuspect() == Data.Suspect.SUS_NONE) {
+      ++currentSuggestionIndex;
+      if (currentSuggestionIndex < currentSuggestionClientList.size()) {
+        // goto next player
+        sendDisproveRequestToCurrentPlayer();
+      } else {
+        // send back DisproveResponse to original with all NONE
+        Msg.DisproveResponse msg = Msg.DisproveResponse.newBuilder()
+            .setHeader(Msg.Header.newBuilder()
+                       .setMsgType(Msg.DisproveResponse.getDescriptor().getFullName())
+                       .setSource(Instance.getId())
+                       .setDestination(currentSuggestion.getHeader().getSource())
+                       .build())
+            .setGuess(resp.getGuess().toBuilder().build())
+            .setResponse(Data.Solution.newBuilder()
+                         .setClientId(Instance.getId())
+                         .setWeapon(Data.Weapon.WPN_NONE)
+                         .setSuspect(Data.Suspect.SUS_NONE)
+                         .setLocation(Data.Location.LOC_NONE)
+                         .build())
+            .build();
+
+        currentSuggestion = null;
+        currentSuggestionClientList = null;
+        currentSuggestionIndex = -1;
+        
+        router.route(new Message(msg.getHeader(), msg));
+      }
+    } else {
+      // send back DisproveResponse to original with the solution
+      Msg.DisproveResponse msg = Msg.DisproveResponse.newBuilder()
+          .setHeader(Msg.Header.newBuilder()
+                     .setMsgType(Msg.DisproveResponse.getDescriptor().getFullName())
+                     .setSource(Instance.getId())
+                     .setDestination(currentSuggestion.getHeader().getSource())
+                     .build())
+          // copy the guess from the response and forward it on
+          .setGuess(resp.getGuess().toBuilder().build())
+          .setResponse(resp.getResponse().toBuilder().build())
+          .build();
+      
+      currentSuggestion = null;
+      currentSuggestionClientList = null;
+      currentSuggestionIndex = -1;
+      
+      router.route(new Message(msg.getHeader(), msg));
+    }
+  }
+>>>>>>> master
   
   @Override
   public void handleMessage(Message msg) {
@@ -325,8 +455,26 @@ public class GameLogic implements MessageHandler {
     } else if (msg_type.equals(Msg.StartGameRequest.getDescriptor().getFullName())) {
       handleStartGameRequest((Msg.StartGameRequest)msg.getMessage());
       
+<<<<<<< HEAD
     } else if (msg_type.equals(Msg.PlayerAccusation.getDescriptor().getFullName())) {
     	handlePlayerAccusationRequest((Msg.PlayerAccusation)msg.getMessage());
+=======
+    } else if (msg_type.equals(Msg.PlayerMove.getDescriptor().getFullName())) {
+    	
+    	Data.Player.Builder player = getPlayerById(msg.getHeader().getSource());
+    	Msg.PlayerMove move_msg = (Msg.PlayerMove)msg.getMessage();
+    	player.setLocation(move_msg.getDestination());
+    	
+    	// Send updated game state (player moved)
+    	sendCurrentGameState(Instance.getBroadcastId());
+    
+    } else if (msg_type.equals(Msg.PlayerSuggestion.getDescriptor().getFullName())) {
+      handlePlayerSuggestion((Msg.PlayerSuggestion)msg.getMessage());
+
+    } else if (msg_type.equals(Msg.DisproveResponse.getDescriptor().getFullName())) {
+      handleDisproveResponse((Msg.DisproveResponse)msg.getMessage());
+
+>>>>>>> master
     } else {
       logger.debug("handleMessage() - got unhandled message type: " + msg_type);
     }

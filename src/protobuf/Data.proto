@@ -63,14 +63,10 @@ enum GameStatus {
 }
 
 message Solution {
-  optional Weapon weapon = 1;
-  optional Suspect suspect = 2;
-  optional Location location = 3;
-}
-
-message Guess {
-  optional int32 clientId = 1;
-  optional Solution solution = 2;
+  optional int32 clientId    = 1;
+  optional Weapon weapon     = 2;
+  optional Suspect suspect   = 3;
+  optional Location location = 4;
 }
 
 message Clues {

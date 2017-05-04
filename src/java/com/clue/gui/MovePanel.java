@@ -15,6 +15,8 @@ import com.clue.route.Router;
 public class MovePanel extends JPanel implements ActionListener {
 
 	private Router router = null;
+	
+	private MoveFrame frame = null;
 	  
     // Room buttons    
     private JRadioButton StudyButton;
@@ -44,9 +46,12 @@ public class MovePanel extends JPanel implements ActionListener {
     private JButton submitButton = new JButton("Submit");
 
     // Panel Constructor
-    public MovePanel( Router routerIn )
+    public MovePanel( Router routerIn, MoveFrame frameIn )
     {
     	router = routerIn;
+    	frame = frameIn;
+    	
+		
 	    // Create Room buttons
     	StudyButton = new JRadioButton( "Study" );
     	HallButton = new JRadioButton( "Hall" );
@@ -72,7 +77,32 @@ public class MovePanel extends JPanel implements ActionListener {
     	Hallway11Button = new JRadioButton( "Hallway 11" );
     	
 
+        ButtonGroup sizeGroup1 = new ButtonGroup();
+        sizeGroup1.add( StudyButton );
+        sizeGroup1.add( HallButton );
+        sizeGroup1.add( LoungeButton );
+        sizeGroup1.add( LibraryButton );
+        sizeGroup1.add( BilliardRoomButton );
+        sizeGroup1.add( DiningRoomButton );
+        sizeGroup1.add( ConservatoryButton );
+        sizeGroup1.add( BallroomButton );
+        sizeGroup1.add( KitchenButton );
+        
+        sizeGroup1.add( Hallway0Button );
+        sizeGroup1.add( Hallway1Button );
+        sizeGroup1.add( Hallway2Button );
+        sizeGroup1.add( Hallway3Button );
+        sizeGroup1.add( Hallway4Button );
+        sizeGroup1.add( Hallway5Button );
+        sizeGroup1.add( Hallway6Button );
+        sizeGroup1.add( Hallway7Button );
+        sizeGroup1.add( Hallway8Button );
+        sizeGroup1.add( Hallway9Button );
+        sizeGroup1.add( Hallway10Button );
+        sizeGroup1.add( Hallway11Button );
+        
         // Create a button group & add buttons
+    	/*
         ButtonGroup sizeGroup1 = new ButtonGroup();
         ButtonGroup sizeGroup2 = new ButtonGroup();
         sizeGroup1.add( StudyButton );
@@ -136,6 +166,8 @@ public class MovePanel extends JPanel implements ActionListener {
         buttonPanel2.add( Hallway11Button );
         buttonPanel2.setBorder( buttonHallwayBorder );
 
+		*/
+    	
         // Add ActionListeners for each radio button
         StudyButton.addActionListener(this);
         HallButton.addActionListener(this);
@@ -166,10 +198,42 @@ public class MovePanel extends JPanel implements ActionListener {
     	submitButton.setEnabled(false);
         
         // Add panels to the main panel and arrange layout
-        this.setLayout( new BorderLayout() );
-        this.add( buttonPanel1, BorderLayout.NORTH );
-        this.add( buttonPanel2, BorderLayout.CENTER );
-        this.add( submitButton, BorderLayout.SOUTH );
+        //this.setLayout( new BorderLayout() );
+        //this.add( buttonPanel1, BorderLayout.NORTH );
+        //this.add( buttonPanel2, BorderLayout.CENTER );
+        //this.add( submitButton, BorderLayout.SOUTH );
+
+		setLayout(new GridLayout(6,5));
+		this.add( StudyButton );
+		this.add( Hallway0Button );
+		this.add( LibraryButton );
+		this.add( Hallway1Button );
+		this.add( HallButton );
+		this.add( Hallway2Button );
+		this.add( new Panel() );
+		this.add( Hallway3Button );
+		this.add( new Panel() );
+		this.add( Hallway4Button );
+		this.add( LoungeButton );
+		this.add( Hallway5Button );
+		this.add( BilliardRoomButton );
+		this.add( Hallway6Button );
+		this.add( DiningRoomButton );
+		this.add( Hallway7Button );
+		this.add( new Panel() );
+		this.add( Hallway8Button );
+		this.add( new Panel() );
+		this.add( Hallway9Button );
+		this.add( ConservatoryButton );
+		this.add( Hallway10Button );
+		this.add( BallroomButton );
+		this.add( Hallway11Button );
+		this.add( KitchenButton );
+		this.add( new Panel() );
+		this.add( new Panel() );
+		this.add( submitButton );
+		this.add( new Panel() );
+		this.add( new Panel() );
     }
     
 
@@ -330,6 +394,8 @@ public class MovePanel extends JPanel implements ActionListener {
                     .setDestination(moveTo)
                     .build();
                 router.route(new Message(mv.getHeader(), mv));
+                
+                frame.setVisible(false);
         }
         
         

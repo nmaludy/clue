@@ -40,10 +40,10 @@ public class SuspectButtonPanel extends JPanel
 
     // Create a button group & add buttons
     SuspectGroup = new ButtonGroup();
-    SuspectGroup.add( MsScarlettButton );
-    SuspectGroup.add( ColMustardButton );
-    SuspectGroup.add( MrsWhiteButton );
     SuspectGroup.add( MrGreenButton );
+    SuspectGroup.add( MrsWhiteButton );
+    SuspectGroup.add( ColMustardButton );
+    SuspectGroup.add( MsScarlettButton );
     SuspectGroup.add( MrsPeacockButton );
     SuspectGroup.add( ProfPlumButton );
 
@@ -53,10 +53,10 @@ public class SuspectButtonPanel extends JPanel
         
     JPanel buttonSuspectPanel = new JPanel();
     buttonSuspectPanel.setLayout( new FlowLayout( FlowLayout.LEFT ) );
-    buttonSuspectPanel.add( MsScarlettButton );
-    buttonSuspectPanel.add( ColMustardButton );
-    buttonSuspectPanel.add( MrsWhiteButton );
     buttonSuspectPanel.add( MrGreenButton );
+    buttonSuspectPanel.add( MrsWhiteButton );
+    buttonSuspectPanel.add( ColMustardButton );
+    buttonSuspectPanel.add( MsScarlettButton );
     buttonSuspectPanel.add( MrsPeacockButton );
     buttonSuspectPanel.add( ProfPlumButton );
     buttonSuspectPanel.setBorder( buttonSuspectBorder );
