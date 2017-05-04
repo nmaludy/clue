@@ -39,18 +39,18 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private JButton connectButton = new JButton("Connect");
   private JButton startButton = new JButton("Start");
   private JButton moveButton = new JButton("Move");
-  private JButton suggestionButton = new JButton("Suggestions & Accustations");
-  private JButton testTurnEndButton = new JButton("Test: Turn End");
+  private JButton suggestionButton = new JButton("Suggestion");
   
   private GUIpanel panel = new GUIpanel();
   private NotebookPanel notebook = new NotebookPanel();
   private CluesPanel cluesPanel = new CluesPanel();
   private Router router = Router.getInstance();
   private ConnectFrame connectFrame = new ConnectFrame(this);
-  private MoveFrame MoveFrame = new MoveFrame(this, router );
-  private SuggestionFrame SuggestionFrame = new SuggestionFrame(this, router );
-  private DisproveFrame DisproveFrame = new DisproveFrame(this, router );
-  private TurnEndFrame TurnEndFrame = new TurnEndFrame(this, router );
+  private MoveFrame moveFrame = new MoveFrame(this, router );
+  private SuggestionAccusationFrame suggestionAccusationFrame =
+      new SuggestionAccusationFrame(this, router, SuggestionAccusationFrame.Type.TYPE_SUGGESTION);
+  private DisproveFrame disproveFrame = new DisproveFrame(this, router );
+  private TurnEndFrame turnEndFrame = new TurnEndFrame(this, router );
 
   /*
    * Initialze and layout all GUI components.
@@ -69,7 +69,6 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
             .addComponent(startButton)
             .addComponent(moveButton)
             .addComponent(suggestionButton)
-            .addComponent(testTurnEndButton)
             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
           .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
             .addComponent(panel, 800, 800, 800)
@@ -84,8 +83,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
             .addComponent(connectButton)
             .addComponent(startButton)
             .addComponent(moveButton)
-            .addComponent(suggestionButton)
-            .addComponent(testTurnEndButton) )
+            .addComponent(suggestionButton) )
           .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
             .addComponent(panel, 800, 800, 800)
             .addComponent(notebook))
@@ -98,7 +96,6 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     startButton.addActionListener(this);
     moveButton.addActionListener(this);
     suggestionButton.addActionListener(this);
-    testTurnEndButton.addActionListener(this);
 
     setTitle("Clue-less : " + ClientState.getInstance().getName());
     pack();
@@ -110,14 +107,14 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     // will render them as blank boxe
     connectFrame.setState(JFrame.ICONIFIED);
     connectFrame.setVisible(false);
-    MoveFrame.setState(JFrame.ICONIFIED);
-    MoveFrame.setVisible(false);
-    SuggestionFrame.setState(JFrame.ICONIFIED);
-    SuggestionFrame.setVisible(false);
-    DisproveFrame.setState(JFrame.ICONIFIED);
-    DisproveFrame.setVisible(false);
-    TurnEndFrame.setState(JFrame.ICONIFIED);
-    TurnEndFrame.setVisible(false);
+    moveFrame.setState(JFrame.ICONIFIED);
+    moveFrame.setVisible(false);
+    suggestionAccusationFrame.setState(JFrame.ICONIFIED);
+    suggestionAccusationFrame.setVisible(false);
+    disproveFrame.setState(JFrame.ICONIFIED);
+    disproveFrame.setVisible(false);
+    turnEndFrame.setState(JFrame.ICONIFIED);
+    turnEndFrame.setVisible(false);
 
     URL imageURL = this.getClass().getResource("/images/clue_icon.png");
     setIconImage(new ImageIcon(imageURL).getImage());
@@ -145,8 +142,6 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
       move();
     } else if (e.getSource().equals(suggestionButton)) {
       suggestion();
-    } else if (e.getSource().equals(testTurnEndButton)) {
-      turnEnd(null);
     }
   }
 
@@ -167,25 +162,33 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   }
 
   public void move() {
-    MoveFrame.setVisible( true );
-    MoveFrame.setState(JFrame.NORMAL);
+    moveFrame.setVisible( true );
+    moveFrame.setState(JFrame.NORMAL);
   }
 
   public void suggestion() {
-    SuggestionFrame.setVisible( true );
-    SuggestionFrame.setState(JFrame.NORMAL);
+    suggestionAccusationFrame.setVisible( true );
+    suggestionAccusationFrame.setState(JFrame.NORMAL);
+    suggestionAccusationFrame.setType(SuggestionAccusationFrame.Type.TYPE_SUGGESTION);
+  }
+
+  public void accusation(Data.Solution solution) {
+    suggestionAccusationFrame.setVisible( true );
+    suggestionAccusationFrame.setState(JFrame.NORMAL);
+    suggestionAccusationFrame.setType(SuggestionAccusationFrame.Type.TYPE_ACCUSATION);
+    suggestionAccusationFrame.setSolution(solution);
   }
 
   public void disprove(Msg.DisproveRequest disprove) {
-    DisproveFrame.setVisible( true );
-    DisproveFrame.setState(JFrame.NORMAL);
-    DisproveFrame.setDisproveRequest(disprove);
+    disproveFrame.setVisible( true );
+    disproveFrame.setState(JFrame.NORMAL);
+    disproveFrame.setDisproveRequest(disprove);
   }
 
   public void turnEnd(Msg.DisproveResponse resp) {
-    TurnEndFrame.setVisible( true );
-    TurnEndFrame.setState(JFrame.NORMAL);
-    TurnEndFrame.setDisproveResponse(resp);
+    turnEndFrame.setVisible( true );
+    turnEndFrame.setState(JFrame.NORMAL);
+    turnEndFrame.setDisproveResponse(resp);
   }
 
   
@@ -193,23 +196,15 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 	  logger.debug("winner is : " + req.getClientWinner());
 	  
 	  // if gameEnd.clientWinner equals your clientID print you win else print who won the game. 
-	  if (req.getClientWinner() == Instance.getId())
-	  {
+	  if (req.getClientWinner() == Instance.getId()) {
 		  JOptionPane.showMessageDialog(null, "You have solved the mystery. Game Over", "Surprise Surprise: Game Overrrr",
 				  JOptionPane.INFORMATION_MESSAGE);
-		  
-	  }
-	  else{
-		  
+	  } else{
 		  JOptionPane.showMessageDialog(null, "The mystery has been solved.. You Lose", "Surprise Surprise: Game Overrrr",
-				  JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.INFORMATION_MESSAGE);
 		  
 	  }
-	  
- 
   }
-  
-  
   
   @Override
   public boolean shouldCallHandleOnGuiThread() {

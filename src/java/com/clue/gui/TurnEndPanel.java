@@ -185,8 +185,8 @@ public class TurnEndPanel extends JPanel implements ActionListener, ComponentLis
    */
   public void actionPerformed(ActionEvent e) {
     if ( e.getSource().equals(accusationButton) ) {
-      // @todo show accusation
-      
+      GUI.getInstance().accusation(response.getGuess());
+      parent.setVisible(false);
     }
 
     // Pass our turn
