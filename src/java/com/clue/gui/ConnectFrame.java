@@ -1,6 +1,7 @@
 package com.clue.gui;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 import java.awt.event.ActionEvent;
@@ -18,11 +19,12 @@ import com.clue.route.SubscriptionAllIncoming;
 import com.clue.proto.Data;
 import com.clue.proto.Msg;
 
-public class ConnectFrame extends JFrame implements ActionListener, MessageHandler
+public class ConnectFrame extends JFrame implements ActionListener, ComponentListener, MessageHandler
 {
   private static Logger logger = new Logger(ConnectFrame.class);
   private static Config config = Config.getInstance();
 
+  private JFrame parent;
   private Router router;
   private SuspectButtonPanel suspectButtons;
 
@@ -32,8 +34,9 @@ public class ConnectFrame extends JFrame implements ActionListener, MessageHandl
 
   private boolean isConnected;
 
-  public ConnectFrame()
+  public ConnectFrame(JFrame parent)
   {
+    this.parent = parent;
     setTitle( "Connect" );
     setSize( 600, 180 );
     setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
@@ -76,6 +79,8 @@ public class ConnectFrame extends JFrame implements ActionListener, MessageHandl
         
     router = Router.getInstance();
     router.register(new SubscriptionAllIncoming(), this);
+
+    this.addComponentListener(this);
   }
 
   public void ok() {
@@ -163,6 +168,25 @@ public class ConnectFrame extends JFrame implements ActionListener, MessageHandl
       errorLabel.setVisible(true);
       logger.debug("handleMessage() - suspect claim = BAD");
     }
+  }
+
+  @Override
+  public void componentHidden(ComponentEvent event) {
+    logger.debug("Component hidden");
+  }
+
+  @Override
+  public void componentMoved(ComponentEvent event) {
+  }
+
+  @Override
+  public void componentResized(ComponentEvent event) {
+  }
+
+  @Override
+  public void componentShown(ComponentEvent event) {
+    logger.debug("Component shown");
+    FrameUtils.centerChildOnParent(this, parent);
   }
 
 }

@@ -60,13 +60,13 @@ message PlayerMove {
 }
 
 message PlayerSuggestion {
-  optional Header header    = 1;
-  optional data.Guess guess = 2;
+  optional Header header          = 1;
+  optional data.Solution solution = 2;
 }
 
 message PlayerAccusation {
-  optional Header header    = 1;
-  optional data.Guess guess = 2;
+  optional Header header          = 1;
+  optional data.Solution solution = 2;
 }
 
 message PlayerAccusationFailed {
@@ -74,13 +74,14 @@ message PlayerAccusationFailed {
 }
 
 message DisproveRequest {
-  optional Header header    = 1;
-  optional data.Guess guess = 2;
+  optional Header header       = 1;
+  optional data.Solution guess = 2;
 }
 
 message DisproveResponse {
   optional Header header          = 1;
-  optional data.Solution solution = 2;
+  optional data.Solution guess    = 2;
+  optional data.Solution response = 3;
 }
 
 message GameEnd {

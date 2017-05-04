@@ -20,7 +20,6 @@ public class CluesPanel  extends JPanel
 		add(new JLabel( "Wrench" ));
 		add(new JLabel( "Lounge" ));
 		add(new JLabel( "Ballroom" ));
-
 	}
 
 }
