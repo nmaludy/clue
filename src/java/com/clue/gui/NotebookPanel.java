@@ -260,7 +260,9 @@ public class NotebookPanel extends JPanel implements MessageHandler
 
   private JPanel createCluePanel(JCheckBox checkBox, JLabel label) {
     JPanel panel = new JPanel();
-    panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+    FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
+    layout.setVgap(1);
+    panel.setLayout(layout);
     panel.add(checkBox);
     panel.add(label);
     return panel;

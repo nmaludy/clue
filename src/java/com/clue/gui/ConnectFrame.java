@@ -38,7 +38,6 @@ public class ConnectFrame extends JFrame implements ActionListener, ComponentLis
   {
     this.parent = parent;
     setTitle( "Connect" );
-    setSize( 600, 180 );
     setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
     centerFrame(this);
     
@@ -81,6 +80,8 @@ public class ConnectFrame extends JFrame implements ActionListener, ComponentLis
     router.register(new SubscriptionAllIncoming(), this);
 
     this.addComponentListener(this);
+
+    pack();
     
     java.net.URL imageURL = this.getClass().getResource("/images/clue_icon.png");
     setIconImage(new ImageIcon(imageURL).getImage());
@@ -108,6 +109,10 @@ public class ConnectFrame extends JFrame implements ActionListener, ComponentLis
                          + Integer.toString(Instance.getId()));
       errorLabel.setVisible(true);
     }
+
+    revalidate();
+    repaint();
+    pack();
   }
 
   public void cancel() {

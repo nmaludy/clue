@@ -14,11 +14,12 @@ public class MoveFrame extends JFrame implements ComponentListener
   {
     this.parent = parent;
     setTitle( "Move" );
-    setSize( 850, 200 );
     setDefaultCloseOperation( MoveFrame.HIDE_ON_CLOSE );
     JPanel panel = new MovePanel( router, this );
     this.add( panel );
     this.addComponentListener(this);
+
+    pack();
 
     java.net.URL imageURL = this.getClass().getResource("/images/clue_icon.png");
     setIconImage(new ImageIcon(imageURL).getImage());

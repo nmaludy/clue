@@ -38,14 +38,11 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 
   private JButton connectButton = new JButton("Connect");
   private JButton startButton = new JButton("Start");
-  // private JButton moveButton = new JButton("Move");
-  // private JButton suggestionButton = new JButton("Suggestion");
 
   private PlayersPanel playersPanel = new PlayersPanel(this);
   private GUIpanel panel = new GUIpanel();
   private NotebookPanel notebook = new NotebookPanel();
   
-  private CluesPanel cluesPanel = new CluesPanel();
   private Router router = Router.getInstance();
   private ConnectFrame connectFrame = new ConnectFrame(this);
   private MoveFrame moveFrame = new MoveFrame(this, router );
@@ -73,11 +70,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
           .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
             .addComponent(playersPanel)
-            .addComponent(panel, 800, 800, 800)
-            .addComponent(notebook))
-
-          .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-            .addComponent(cluesPanel))));
+            .addComponent(panel, 600, 600, 600)
+            .addComponent(notebook)) ));
 
     layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
         .addGroup(layout.createSequentialGroup()
@@ -86,22 +80,16 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
             .addComponent(startButton) )
           .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
             .addComponent(playersPanel)
-            .addComponent(panel, 800, 800, 800)
-            .addComponent(notebook))
-          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-              .addComponent(cluesPanel))));
+            .addComponent(panel, 600, 600, 600)
+            .addComponent(notebook)) ));
 
     layout.linkSize(SwingConstants.VERTICAL, connectButton, startButton);
     
     connectButton.addActionListener(this);
     startButton.addActionListener(this);
-    // moveButton.addActionListener(this);
-    // suggestionButton.addActionListener(this);
 
     connectButton.setEnabled(true);
     startButton.setEnabled(false);
-    // moveButton.setEnabled(false);
-    // suggestionButton.setEnabled(false);
 
     setTitle("Clue-less : " + ClientState.getInstance().getName());
     pack();
@@ -146,10 +134,6 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
       connect();
     } else if (e.getSource().equals(startButton)) {
       start();
-    // } else if (e.getSource().equals(moveButton)) {
-    //   move();
-    // } else if (e.getSource().equals(suggestionButton)) {
-    //   suggestion(Data.Location.LOC_NONE);
     }
   }
 
