@@ -24,6 +24,8 @@ public class PlayersPanel extends JPanel implements MessageHandler
   private static Logger logger = new Logger(PlayersPanel.class);
   private static Config config = Config.getInstance();
 
+  private JFrame parent;
+  
   private GridBagLayout panelLayout;
   
   // Headings
@@ -38,7 +40,9 @@ public class PlayersPanel extends JPanel implements MessageHandler
   private HashMap<Integer, ColorIcon> playerColorIcons;
   private HashMap<Integer, JLabel> playerTurnLabels;
 
-  public PlayersPanel() {
+  public PlayersPanel(JFrame parent) {
+    this.parent = parent;
+    
     playerNameLabels = new HashMap<Integer, JLabel>();
     playerColorIcons = new HashMap<Integer, ColorIcon>();
     playerTurnLabels = new HashMap<Integer, JLabel>();
@@ -117,6 +121,10 @@ public class PlayersPanel extends JPanel implements MessageHandler
 
       revalidate();
       repaint();
+
+      parent.revalidate();
+      parent.pack();
+      parent.repaint();
     }
   }
 

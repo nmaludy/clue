@@ -22,6 +22,10 @@ public class NotebookPanel extends JPanel implements MessageHandler
   private static Logger logger = new Logger(NotebookPanel.class);
   private static Config config = Config.getInstance();
 
+  private enum ClueType {
+    REVEAL, DISPROVAL
+  }
+
   // Heading Labels
   private JLabel NotebookLabel;
   private JLabel SuspectsLabel;
@@ -132,7 +136,7 @@ public class NotebookPanel extends JPanel implements MessageHandler
     ConservatoryCheckBox.setEnabled(false);
     BallroomCheckBox.setEnabled(false);
     KitchenCheckBox.setEnabled(false);
-
+    
     // Weapons
     KnifeLabel       = new JLabel( "Knife" );
     CandlestickLabel = new JLabel( "Candlestick" );
@@ -262,87 +266,86 @@ public class NotebookPanel extends JPanel implements MessageHandler
     return panel;
   }
 
-
-  // Function for striking through text of clues that are known to not be in case file
-  public void strikeThrough()
-  {
-    ProfPlumLabel.setText("<html><strike>Prof. Plum</strike></html>");
-    RevolverLabel.setText("<html><strike>Revolver</strike></html>");
-    WrenchLabel.setText("<html><strike>Wrench</strike></html>");
-    LoungeLabel.setText("<html><strike>Lounge</strike></html>");
-    BallroomLabel.setText("<html><strike>Ballroom</strike></html>");
-  }
-
-
-  public void addSolution(Data.Solution solution) {
+  public void disproveClues(Data.Solution solution) {
     if (solution.hasLocation()) {
-      addLocation(solution.getLocation());
+      addLocation(solution.getLocation(), ClueType.DISPROVAL);
     }
     if (solution.hasWeapon()) {
-      addWeapon(solution.getWeapon());
+      addWeapon(solution.getWeapon(), ClueType.DISPROVAL);
     }
     if (solution.hasSuspect()) {
-      addSuspect(solution.getSuspect());
+      addSuspect(solution.getSuspect(), ClueType.DISPROVAL);
     }
   }
 
-  public void addClues(Data.Clues clues) {
+  public void revealClues(Data.Clues clues) {
     // Rooms
     for (Data.Location location : clues.getLocationsList()) {
-      logger.debug("addClues() - revelaed location: " + location.name());
-      addLocation(location);
+      logger.debug("revealClues() - revelaed location: " + location.name());
+      addLocation(location, ClueType.REVEAL);
     }
 
     // Weapons
     for (Data.Weapon weapon : clues.getWeaponsList()) {
-      logger.debug("addClues() - revelaed weapon: " + weapon.name());
-      addWeapon(weapon);
+      logger.debug("revealClues() - revelaed weapon: " + weapon.name());
+      addWeapon(weapon, ClueType.REVEAL);
     }
 
     // Suspects
     for (Data.Suspect suspect : clues.getSuspectsList()) {
-      logger.debug("addClues() - revelaed suspect: " + suspect.name());
-      addSuspect(suspect);
+      logger.debug("revealClues() - revelaed suspect: " + suspect.name());
+      addSuspect(suspect, ClueType.REVEAL);
     }
   }
 
-  public void addLocation(Data.Location location) {
+  public void addLocation(Data.Location location, ClueType clueType) {
+    JLabel label = null;
+    
     switch (location) {
       case LOC_NONE:
         break;
       case LOC_STUDY:
+        label = StudyLabel;
         StudyLabel.setEnabled(false);
         StudyCheckBox.setSelected(true);
         break;
       case LOC_HALL:
+        label = HallLabel;
         HallLabel.setEnabled(false);
         HallCheckBox.setSelected(true);
         break;
       case LOC_LOUNGE:
+        label = LoungeLabel;
         LoungeLabel.setEnabled(false);
         LoungeCheckBox.setSelected(true);
         break;
       case LOC_LIBRARY:
+        label = LibraryLabel; 
         LibraryLabel.setEnabled(false);
         LibraryCheckBox.setSelected(true);
         break;
       case LOC_BILLIARD_ROOM:
+        label = BilliardRoomLabel;
         BilliardRoomLabel.setEnabled(false);
         BilliardRoomCheckBox.setSelected(true);
         break;
       case LOC_DINING_ROOM:
+        label = DiningRoomLabel;
         DiningRoomLabel.setEnabled(false);
         DiningRoomCheckBox.setSelected(true);
         break;
       case LOC_CONSERVATORY:
+        label = ConservatoryLabel;
         ConservatoryLabel.setEnabled(false);
         ConservatoryCheckBox.setSelected(true);
         break;
       case LOC_BALLROOM:
+        label = BallroomLabel;
         BallroomLabel.setEnabled(false);
         BallroomCheckBox.setSelected(true);
         break;
       case LOC_KITCHEN:
+        label = KitchenLabel;
         KitchenLabel.setEnabled(false);
         KitchenCheckBox.setSelected(true);
         break;
@@ -351,67 +354,101 @@ public class NotebookPanel extends JPanel implements MessageHandler
                      + location.name());
         break;
     }
+    
+    if (label != null &&
+        clueType == ClueType.REVEAL &&
+        !label.getText().toLowerCase().contains("<html>")) {
+      label.setText("<html><u>" + label.getText() + "</u></html>");
+    }
   }
 
-  public void addWeapon(Data.Weapon weapon) {
+  public void addWeapon(Data.Weapon weapon, ClueType clueType) {
+    JLabel label = null;
+    
     switch (weapon) {
       case WPN_NONE:
         break;
       case WPN_CANDLESTICK:
+        label = CandlestickLabel;
         CandlestickLabel.setEnabled(false);
         CandlestickCheckBox.setSelected(true);
         break;
       case WPN_KNIFE:
+        label = KnifeLabel;
         KnifeLabel.setEnabled(false);
         KnifeCheckBox.setSelected(true);
         break;
       case WPN_LEAD_PIPE:
+        label = LeadPipeLabel;
         LeadPipeLabel.setEnabled(false);
         LeadPipeCheckBox.setSelected(true);
         break;
       case WPN_REVOLVER:
+        label = RevolverLabel;
         RevolverLabel.setEnabled(false);
         RevolverCheckBox.setSelected(true);
         break;
       case WPN_ROPE:
+        label = RopeLabel;
         RopeLabel.setEnabled(false);
         RopeCheckBox.setSelected(true);
         break;
       case WPN_WRENCH:
+        label = WrenchLabel;
         WrenchLabel.setEnabled(false);
         WrenchCheckBox.setSelected(true);
         break;
     }
+    
+    if (label != null &&
+        clueType == ClueType.REVEAL &&
+        !label.getText().toLowerCase().contains("<html>")) {
+      label.setText("<html><u>" + label.getText() + "</u></html>");
+    }
   }
 
-  public void addSuspect(Data.Suspect suspect) {
+  public void addSuspect(Data.Suspect suspect, ClueType clueType) {
+    JLabel label = null;
+    
     switch (suspect) {
       case SUS_NONE:
         break;
       case SUS_MISS_SCARLETT:
+        label = MissScarletLabel;
         MissScarletLabel.setEnabled(false);
         MissScarletCheckBox.setSelected(true);
         break;
       case SUS_COL_MUSTARD:
+        label = ColMustardLabel;
         ColMustardLabel.setEnabled(false);
         ColMustardCheckBox.setSelected(true);
         break;
       case SUS_MRS_WHITE:
+        label = MrsWhiteLabel;
         MrsWhiteLabel.setEnabled(false);
         MrsWhiteCheckBox.setSelected(true);
         break;
       case SUS_MR_GREEN:
+        label = MrGreenLabel;
         MrGreenLabel.setEnabled(false);
         MrGreenCheckBox.setSelected(true);
         break;
       case SUS_MRS_PEACOCK:
+        label = MrsPeacockLabel;
         MrsPeacockLabel.setEnabled(false);
         MrsPeacockCheckBox.setSelected(true);
         break;
       case SUS_PROF_PLUM:
+        label = ProfPlumLabel;
         ProfPlumLabel.setEnabled(false);
         ProfPlumCheckBox.setSelected(true);
         break;
+    }
+
+    if (label != null &&
+        clueType == ClueType.REVEAL &&
+        !label.getText().toLowerCase().contains("<html>")) {
+      label.setText("<html><u>" + label.getText() + "</u></html>");
     }
   }
 
@@ -428,12 +465,12 @@ public class NotebookPanel extends JPanel implements MessageHandler
     if (msg_type.equals(Msg.RevealClues.getDescriptor().getFullName())) {
       Msg.RevealClues reveal = (Msg.RevealClues)msg.getMessage();
       logger.debug("handleMessage() - got clue reveal: " + reveal.toString());
-      addClues(reveal.getClues());
+      revealClues(reveal.getClues());
     }
     else if (msg_type.equals(Msg.DisproveResponse.getDescriptor().getFullName())) {
       Msg.DisproveResponse disprove = (Msg.DisproveResponse)msg.getMessage();
       logger.debug("handleMessage() - got disprove respone: " + disprove.toString());
-      addSolution(disprove.getResponse());
+      disproveClues(disprove.getResponse());
 
       // @todo what if all are NONE? should show GUI to make accusation
     }

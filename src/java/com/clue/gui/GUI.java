@@ -41,7 +41,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   // private JButton moveButton = new JButton("Move");
   // private JButton suggestionButton = new JButton("Suggestion");
 
-  private PlayersPanel playersPanel = new PlayersPanel();
+  private PlayersPanel playersPanel = new PlayersPanel(this);
   private GUIpanel panel = new GUIpanel();
   private NotebookPanel notebook = new NotebookPanel();
   
