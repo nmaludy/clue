@@ -18,7 +18,7 @@ import com.clue.route.Router;
 
 public class SuggestionAccusationPanel extends JPanel implements ActionListener, ComponentListener {
 
-  private static Logger logger = new Logger(SuggestionPanel.class);
+  private static Logger logger = new Logger(SuggestionAccusationPanel.class);
   private static Config config = Config.getInstance();
 
   private JFrame parent = null;
