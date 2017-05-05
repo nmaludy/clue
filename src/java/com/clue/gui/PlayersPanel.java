@@ -6,6 +6,7 @@ import javax.swing.*;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.clue.app.Config;
 import com.clue.app.Logger;
@@ -28,15 +29,24 @@ public class PlayersPanel extends JPanel implements MessageHandler
   // Headings
   private JLabel playersHeadingLabel;
   private JLabel fillLabel;
+
+  private Icon turnIcon;
+  private Icon transparentIcon;
   
   // Players
   private HashMap<Integer, JLabel> playerNameLabels;
   private HashMap<Integer, ColorIcon> playerColorIcons;
+  private HashMap<Integer, JLabel> playerTurnLabels;
 
   public PlayersPanel() {
     playerNameLabels = new HashMap<Integer, JLabel>();
     playerColorIcons = new HashMap<Integer, ColorIcon>();
+    playerTurnLabels = new HashMap<Integer, JLabel>();
 
+    URL imageURL = this.getClass().getResource("/images/clue_icon.png");
+    turnIcon = getScaledImageIcon( new ImageIcon(imageURL), 25, 25);
+    transparentIcon = createTransparentIcon(25, 25);
+    
     // Layout
     panelLayout = new GridBagLayout();
     setLayout(panelLayout);
@@ -78,14 +88,17 @@ public class PlayersPanel extends JPanel implements MessageHandler
       JLabel nameLabel = new JLabel(player.getName());
       Color color = GUIpanel.getSuspectColor(player.getSuspect());
       ColorIcon colorIcon = new ColorIcon(25, 25, color);
-
       nameLabel.setIcon(colorIcon);
+
+      JLabel turnLabel = new JLabel( transparentIcon );
     
       playerNameLabels.put(player.getClientId(), nameLabel);
       playerColorIcons.put(player.getClientId(), colorIcon);
+      playerTurnLabels.put(player.getClientId(), turnLabel);
     
       JPanel panel = new JPanel();
       panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+      panel.add(turnLabel);
       panel.add(nameLabel);
 
       remove(fillLabel);
@@ -107,6 +120,18 @@ public class PlayersPanel extends JPanel implements MessageHandler
     }
   }
 
+  private ImageIcon getScaledImageIcon(ImageIcon srcIcon, int w, int h){
+    Image srcImg = srcIcon.getImage();
+    BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D g2 = resizedImg.createGraphics();
+
+    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    g2.drawImage(srcImg, 0, 0, w, h, null);
+    g2.dispose();
+
+    return new ImageIcon(resizedImg);
+  }
 
   @Override
   public boolean shouldCallHandleOnGuiThread() {
@@ -124,7 +149,25 @@ public class PlayersPanel extends JPanel implements MessageHandler
       for (Data.Player player : state.getPlayersList()) {
         createPlayerPanel(player);
       }
+
+      updateTurnIcons(state);
     }
+  }
+
+  public void updateTurnIcons(Msg.GameState state) {
+    for (Map.Entry<Integer, JLabel> entry : playerTurnLabels.entrySet()) {
+      int client_id = entry.getKey();
+      JLabel label  = entry.getValue();
+
+      if (client_id == state.getClientCurrentTurn()) {
+        label.setIcon( turnIcon );
+      } else {
+        label.setIcon( transparentIcon );
+      }
+    }
+    revalidate();
+    repaint();
+
   }
 
   public class ColorIcon implements Icon {
@@ -202,4 +245,13 @@ public class PlayersPanel extends JPanel implements MessageHandler
     }
   }
 
+  public static BufferedImage createTransparentImage(int width, int height)
+  {
+    return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+  }
+  
+  public static Icon createTransparentIcon(int width, int height)
+  {
+    return new ImageIcon(createTransparentImage(width, height));
+  }
 }
