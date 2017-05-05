@@ -91,7 +91,7 @@
   <target name="jar" depends="dist"/>
   <target name="package" depends="dist"/>
 
-  <target name="run-client" depends="dist" description="run the compiled jar as a client">
+  <target name="run-client-1" depends="dist" description="run the compiled jar as a client">
     <java jar="${jar}" fork="true">
       <jvmarg value="-Dlogger.id=client"/>
       <jvmarg value="-Dconfig.file=./config/client.yaml"/>
@@ -109,6 +109,42 @@
     </java>
   </target>
 
+  <target name="run-client-3" depends="dist" description="run the compiled jar as a client">
+    <java jar="${jar}" fork="true">
+      <jvmarg value="-Dlogger.id=client"/>
+      <jvmarg value="-Dconfig.file=./config/client-3.yaml"/>
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8103,suspend=n"/>
+    </java>
+  </target>
+
+  <target name="run-client-4" depends="dist" description="run the compiled jar as a client">
+    <java jar="${jar}" fork="true">
+      <jvmarg value="-Dlogger.id=client"/>
+      <jvmarg value="-Dconfig.file=./config/client-4.yaml"/>
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8104,suspend=n"/>
+    </java>
+  </target>
+
+  <target name="run-client-5" depends="dist" description="run the compiled jar as a client">
+    <java jar="${jar}" fork="true">
+      <jvmarg value="-Dlogger.id=client"/>
+      <jvmarg value="-Dconfig.file=./config/client-5.yaml"/>
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8105,suspend=n"/>
+    </java>
+  </target>
+
+  <target name="run-client-6" depends="dist" description="run the compiled jar as a client">
+    <java jar="${jar}" fork="true">
+      <jvmarg value="-Dlogger.id=client"/>
+      <jvmarg value="-Dconfig.file=./config/client-6.yaml"/>
+      <jvmarg value="-Xdebug"/>
+      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8106,suspend=n"/>
+    </java>
+  </target>
+  
   <target name="run-server" depends="dist" description="run the compiled jar as a server">
     <java jar="${jar}" fork="true">
       <jvmarg value="-Dlogger.id=server"/>

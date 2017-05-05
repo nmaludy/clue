@@ -1,0 +1,14 @@
+
+main.class: com.clue.app.Client
+
+instance:
+  type: client
+  id: 3
+  broadcast_id: -1
+  name: Client 3
+
+server:
+  id: 0
+  host: localhost
+  port: 5559
+  protocol: tcp
