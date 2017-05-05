@@ -40,9 +40,11 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private JButton startButton = new JButton("Start");
   // private JButton moveButton = new JButton("Move");
   // private JButton suggestionButton = new JButton("Suggestion");
-  
+
+  private PlayersPanel playersPanel = new PlayersPanel();
   private GUIpanel panel = new GUIpanel();
   private NotebookPanel notebook = new NotebookPanel();
+  
   private CluesPanel cluesPanel = new CluesPanel();
   private Router router = Router.getInstance();
   private ConnectFrame connectFrame = new ConnectFrame(this);
@@ -70,6 +72,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
             .addComponent(startButton)
             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
           .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addComponent(playersPanel)
             .addComponent(panel, 800, 800, 800)
             .addComponent(notebook))
 
@@ -82,6 +85,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
             .addComponent(connectButton)
             .addComponent(startButton) )
           .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+            .addComponent(playersPanel)
             .addComponent(panel, 800, 800, 800)
             .addComponent(notebook))
           .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)

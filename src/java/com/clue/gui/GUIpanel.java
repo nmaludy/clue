@@ -7,7 +7,7 @@ import javax.swing.*;
 import com.clue.proto.Data;
 
 public class GUIpanel extends JPanel {
-    
+
   public static final Color cRoom = new Color(214,217,223);
   public static final Color cHallway = new Color(176,196,222);
   public static final Color cBlack = new Color(0,0,0);
@@ -19,6 +19,18 @@ public class GUIpanel extends JPanel {
   public static final Color cMrsPeacock = new Color(67,110,238);
   public static final Color cProfPlum = new Color(142,56,142);
 
+  public static Color getSuspectColor(Data.Suspect suspect) {
+    switch (suspect) {
+      case SUS_MISS_SCARLETT: return cMsScarlett;
+      case SUS_COL_MUSTARD: return cColMustard;
+      case SUS_MRS_WHITE: return cMrsWhite;
+      case SUS_MR_GREEN: return cMrGreen;
+      case SUS_MRS_PEACOCK: return cMrsPeacock;
+      case SUS_PROF_PLUM: return cProfPlum;
+    }
+    return Color.BLACK;
+  }
+
   // Suspect Positions;
   public int[] pMsScarlett = {-1,-1};
   public int[] pColMustard = {-1,-1};
@@ -29,9 +41,9 @@ public class GUIpanel extends JPanel {
 
   public static final int NUM_ROWS = 15;
   public static final int NUM_COLS = 15;
-  
+
   public static final int PREFERRED_GRID_SIZE_PIXELS = 10;
-  
+
   private final Color[][] gameGrid;
 
   private JLabel StudyLabel;
@@ -56,8 +68,8 @@ public class GUIpanel extends JPanel {
   private JLabel Hallway9Label;
   private JLabel Hallway10Label;
   private JLabel Hallway11Label;
-    
-  
+
+
   public GUIpanel()
   {
     // Set layout to 5 by 5 for 9 rooms with hallways between
@@ -85,7 +97,7 @@ public class GUIpanel extends JPanel {
     Hallway9Label     = new JLabel( "9", SwingConstants.CENTER );
     Hallway10Label    = new JLabel( "10", SwingConstants.CENTER );
     Hallway11Label    = new JLabel( "11", SwingConstants.CENTER );
-    
+
     // Set Room Label fonts
     StudyLabel.setFont(new Font("Serif", Font.PLAIN, 16));
     HallLabel.setFont(new Font("Serif", Font.PLAIN, 16));
@@ -96,7 +108,7 @@ public class GUIpanel extends JPanel {
     ConservatoryLabel.setFont(new Font("Serif", Font.PLAIN, 16));
     BallroomLabel.setFont(new Font("Serif", Font.PLAIN, 16));
     KitchenLabel.setFont(new Font("Serif", Font.PLAIN, 16));
-    
+
     // Add Room Labels to game board
     add(StudyLabel);
     add(Hallway0Label);
@@ -115,18 +127,18 @@ public class GUIpanel extends JPanel {
     add(BallroomLabel);
     add(Hallway11Label);
     add(KitchenLabel);
-    
+
     // Color Grid of Game Board
     this.gameGrid = new Color[NUM_ROWS][NUM_COLS];
-    
+
     // Initialize board with rooms and hallways
     redrawBoardColor();
-    
+
     // Initialize Player Color positions
     //initializePlayerColors();
-    
+
   }
-  
+
   public void movePlayer(Data.Suspect suspect, Data.Location location)
   {
     // Suspects
@@ -136,7 +148,7 @@ public class GUIpanel extends JPanel {
     Data.Suspect dataMrGreen = Data.Suspect.SUS_MR_GREEN;
     Data.Suspect dataMrsPeacock = Data.Suspect.SUS_MRS_PEACOCK;
     Data.Suspect dataProfPlum = Data.Suspect.SUS_PROF_PLUM;
-    
+
     // Rooms
     Data.Location dataBallroom = Data.Location.LOC_BALLROOM;
     Data.Location dataBilliardRoom = Data.Location.LOC_BILLIARD_ROOM;
@@ -159,7 +171,7 @@ public class GUIpanel extends JPanel {
     Data.Location dataHallway9 = Data.Location.LOC_HALLWAY_9;
     Data.Location dataHallway10 = Data.Location.LOC_HALLWAY_10;
     Data.Location dataHallway11 = Data.Location.LOC_HALLWAY_11;
-    
+
     // Place Ms. Scarlett in Upper Left Corner of Room Or Center of Hallway
     if (suspect == dataMsScarlett)
     {
@@ -313,7 +325,7 @@ public class GUIpanel extends JPanel {
 
     repaint();
   }
-  
+
   // Set board colors based on room vs. hallway
   public void redrawBoardColor()
   {
@@ -396,7 +408,7 @@ public class GUIpanel extends JPanel {
         }
       }
     }
-    
+
     // Top
     gameGrid[0][3]=cBlack; gameGrid[0][4]=cBlack; gameGrid[0][5]=cBlack;
     gameGrid[1][3]=cHallway; gameGrid[1][4]=cHallway; gameGrid[1][5]=cHallway;
@@ -410,7 +422,7 @@ public class GUIpanel extends JPanel {
     gameGrid[3][0]=cBlack; gameGrid[3][1]=cHallway; gameGrid[3][2]=cBlack;
     gameGrid[4][0]=cBlack; gameGrid[4][1]=cHallway; gameGrid[4][2]=cBlack;
     gameGrid[5][0]=cBlack; gameGrid[5][1]=cHallway; gameGrid[5][2]=cBlack;
-    
+
     gameGrid[3][3]=cBlack; gameGrid[3][4]=cBlack; gameGrid[3][5]=cBlack;
     gameGrid[4][3]=cBlack; gameGrid[4][4]=cBlack; gameGrid[4][5]=cBlack;
     gameGrid[5][3]=cBlack; gameGrid[5][4]=cBlack; gameGrid[5][5]=cBlack;
@@ -435,12 +447,12 @@ public class GUIpanel extends JPanel {
     gameGrid[6][9]=cBlack; gameGrid[6][10]=cBlack; gameGrid[6][11]=cBlack;
     gameGrid[7][9]=cHallway; gameGrid[7][10]=cHallway; gameGrid[7][11]=cHallway;
     gameGrid[8][9]=cBlack; gameGrid[8][10]=cBlack; gameGrid[8][11]=cBlack;
-    
+
     // 4th
     gameGrid[9][0]=cBlack; gameGrid[9][1]=cHallway; gameGrid[9][2]=cBlack;
     gameGrid[10][0]=cBlack; gameGrid[10][1]=cHallway; gameGrid[10][2]=cBlack;
     gameGrid[11][0]=cBlack; gameGrid[11][1]=cHallway; gameGrid[11][2]=cBlack;
-    
+
     gameGrid[9][3]=cBlack; gameGrid[9][4]=cBlack; gameGrid[9][5]=cBlack;
     gameGrid[10][3]=cBlack; gameGrid[10][4]=cBlack; gameGrid[10][5]=cBlack;
     gameGrid[11][3]=cBlack; gameGrid[11][4]=cBlack; gameGrid[11][5]=cBlack;
@@ -452,7 +464,7 @@ public class GUIpanel extends JPanel {
     gameGrid[9][9]=cBlack; gameGrid[9][10]=cBlack; gameGrid[9][11]=cBlack;
     gameGrid[10][9]=cBlack; gameGrid[10][10]=cBlack; gameGrid[10][11]=cBlack;
     gameGrid[11][9]=cBlack; gameGrid[11][10]=cBlack; gameGrid[11][11]=cBlack;
-    
+
     gameGrid[9][12]=cBlack; gameGrid[9][13]=cHallway; gameGrid[9][14]=cBlack;
     gameGrid[10][12]=cBlack; gameGrid[10][13]=cHallway; gameGrid[10][14]=cBlack;
     gameGrid[11][12]=cBlack; gameGrid[11][13]=cHallway; gameGrid[11][14]=cBlack;
@@ -465,7 +477,7 @@ public class GUIpanel extends JPanel {
     gameGrid[12][9]=cBlack; gameGrid[12][10]=cBlack; gameGrid[12][11]=cBlack;
     gameGrid[13][9]=cHallway; gameGrid[13][10]=cHallway; gameGrid[13][11]=cHallway;
     gameGrid[14][9]=cBlack; gameGrid[14][10]=cBlack; gameGrid[14][11]=cBlack;
-    
+
     // Color player locations
     if (pMsScarlett[0]>-1 && pMsScarlett[1]>-1)
     {
@@ -497,16 +509,16 @@ public class GUIpanel extends JPanel {
       gameGrid[pProfPlum[0]][pProfPlum[1]]=cProfPlum;
     }
   }
-    
+
   @Override
   // Make sure grid gets painted like we want
   public void paintComponent(Graphics g) {
     // Important to call super class method
     super.paintComponent(g);
-        
+
     // Redraw gameGrid
     redrawBoardColor();
-        
+
     //System.out.println("In My paintComponent");
     // Clear the board
     g.clearRect(0, 0, getWidth(), getHeight());
