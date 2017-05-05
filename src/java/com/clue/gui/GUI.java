@@ -219,6 +219,10 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     gameEndFrame.setState(JFrame.NORMAL);
     gameEndFrame.setGameEnd(msg);
   }
+
+  public void handlePlayerAccusationFailed(Msg.PlayerAccusationFailed msg) {
+    // @todo show accusation failed message
+  }
   
   @Override
   public boolean shouldCallHandleOnGuiThread() {
@@ -262,6 +266,10 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     } else if (msg_type.equals(Msg.PlayerTurn.getDescriptor().getFullName())) {
     	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
       handlePlayerTurn((Msg.PlayerTurn)msg.getMessage());
+
+    } else if (msg_type.equals(Msg.PlayerAccusationFailed.getDescriptor().getFullName())) {
+    	logger.debug("handleMessage() - explicitly handling message of type: " + msg_type);
+      handlePlayerAccusationFailed((Msg.PlayerAccusationFailed)msg.getMessage());
       
     } else {
     	logger.debug("handleMessage() - got unhandled message type: " + msg_type);

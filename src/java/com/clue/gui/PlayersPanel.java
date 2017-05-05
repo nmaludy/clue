@@ -38,6 +38,7 @@ public class PlayersPanel extends JPanel implements MessageHandler
   // Players
   private HashMap<Integer, JLabel> playerNameLabels;
   private HashMap<Integer, ColorIcon> playerColorIcons;
+  private HashMap<Integer, JLabel> playerColorLabels;
   private HashMap<Integer, JLabel> playerTurnLabels;
 
   public PlayersPanel(JFrame parent) {
@@ -45,6 +46,7 @@ public class PlayersPanel extends JPanel implements MessageHandler
     
     playerNameLabels = new HashMap<Integer, JLabel>();
     playerColorIcons = new HashMap<Integer, ColorIcon>();
+    playerColorLabels = new HashMap<Integer, JLabel>();
     playerTurnLabels = new HashMap<Integer, JLabel>();
 
     URL imageURL = this.getClass().getResource("/images/clue_icon.png");
@@ -92,17 +94,21 @@ public class PlayersPanel extends JPanel implements MessageHandler
       JLabel nameLabel = new JLabel(player.getName());
       Color color = GUIpanel.getSuspectColor(player.getSuspect());
       ColorIcon colorIcon = new ColorIcon(25, 25, color);
-      nameLabel.setIcon(colorIcon);
-
+      JLabel colorLabel = new JLabel( colorIcon );
       JLabel turnLabel = new JLabel( transparentIcon );
     
       playerNameLabels.put(player.getClientId(), nameLabel);
       playerColorIcons.put(player.getClientId(), colorIcon);
+      playerColorLabels.put(player.getClientId(), colorLabel);
       playerTurnLabels.put(player.getClientId(), turnLabel);
     
       JPanel panel = new JPanel();
-      panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+      FlowLayout layout = new FlowLayout(FlowLayout.LEFT);
+      layout.setHgap(1);
+      layout.setVgap(1);
+      panel.setLayout(layout);
       panel.add(turnLabel);
+      panel.add(colorLabel);
       panel.add(nameLabel);
 
       remove(fillLabel);
@@ -156,6 +162,15 @@ public class PlayersPanel extends JPanel implements MessageHandler
       logger.debug("handleMessage() - got state: " + state.toString());
       for (Data.Player player : state.getPlayersList()) {
         createPlayerPanel(player);
+        if (player.getInactive() == true ||
+            player.getMadeFalseAccusation() == true) {
+          
+          int client_id = player.getClientId();
+          if (playerNameLabels.containsKey(client_id)) {
+            JLabel label = playerNameLabels.get(client_id);
+            label.setEnabled(false);
+          }
+        }
       }
 
       updateTurnIcons(state);

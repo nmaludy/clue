@@ -85,18 +85,18 @@ public class GUIpanel extends JPanel {
     ConservatoryLabel   = new JLabel( "Conservatory", SwingConstants.CENTER );
     BallroomLabel     = new JLabel( "Ballroom", SwingConstants.CENTER );
     KitchenLabel    = new JLabel( "Kitchen", SwingConstants.CENTER );
-    Hallway0Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway1Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway2Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway3Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway4Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway5Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway6Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway7Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway8Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway9Label     = new JLabel( "", SwingConstants.CENTER );
-    Hallway10Label    = new JLabel( "", SwingConstants.CENTER );
-    Hallway11Label    = new JLabel( "", SwingConstants.CENTER );
+    Hallway0Label     = new JLabel( "0", SwingConstants.CENTER );
+    Hallway1Label     = new JLabel( "1", SwingConstants.CENTER );
+    Hallway2Label     = new JLabel( "2", SwingConstants.CENTER );
+    Hallway3Label     = new JLabel( "3", SwingConstants.CENTER );
+    Hallway4Label     = new JLabel( "4", SwingConstants.CENTER );
+    Hallway5Label     = new JLabel( "5", SwingConstants.CENTER );
+    Hallway6Label     = new JLabel( "6", SwingConstants.CENTER );
+    Hallway7Label     = new JLabel( "7", SwingConstants.CENTER );
+    Hallway8Label     = new JLabel( "8", SwingConstants.CENTER );
+    Hallway9Label     = new JLabel( "9", SwingConstants.CENTER );
+    Hallway10Label    = new JLabel( "10", SwingConstants.CENTER );
+    Hallway11Label    = new JLabel( "11", SwingConstants.CENTER );
 
     // Set Room Label fonts
     StudyLabel.setFont(new Font("Serif", Font.PLAIN, 16));

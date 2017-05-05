@@ -61,6 +61,35 @@ public class GameLogic implements MessageHandler {
     this.router.register(new SubscriptionAllIncoming(), this);
   }
 
+  public static String suspectToString(Data.Suspect suspect) {
+    switch (suspect) {
+      case SUS_NONE:          return "None";
+      case SUS_MISS_SCARLETT: return "Miss. Scarlett";
+      case SUS_COL_MUSTARD:   return "Col. Mustard";
+      case SUS_MRS_WHITE:     return "Mrs. White";
+      case SUS_MR_GREEN:      return "Mr. Green";
+      case SUS_MRS_PEACOCK:   return "Mrs. Peacock";
+      case SUS_PROF_PLUM:     return "Prof. Plum";
+    }
+    return "Invalid";
+  }
+
+  
+  public static Data.Location suspectStartingLocation(Data.Suspect suspect) {
+    // see picture in game description PDF
+    switch (suspect) {
+      case SUS_NONE:          return Data.Location.LOC_NONE;
+      case SUS_MISS_SCARLETT: return Data.Location.LOC_HALLWAY_1;
+      case SUS_COL_MUSTARD:   return Data.Location.LOC_HALLWAY_4;
+      case SUS_MRS_WHITE:     return Data.Location.LOC_HALLWAY_11;
+      case SUS_MR_GREEN:      return Data.Location.LOC_HALLWAY_10;
+      case SUS_MRS_PEACOCK:   return Data.Location.LOC_HALLWAY_7;
+      case SUS_PROF_PLUM:     return Data.Location.LOC_HALLWAY_2;
+    }
+    return Data.Location.LOC_NONE;
+  }
+
+  
   private void sendCurrentGameState(int clientId) {
     Msg.GameState.Builder bldr = state.clone();
     bldr.getHeaderBuilder().setDestination(clientId);    
@@ -106,6 +135,7 @@ public class GameLogic implements MessageHandler {
       Data.Player.Builder player = state.addPlayersBuilder();
       player.setClientId(req.getClientId());
       player.setName(req.getName());
+      player.setInactive(false);
       player.setMadeFalseAccusation(false);
     }
 
@@ -148,12 +178,9 @@ public class GameLogic implements MessageHandler {
       logger.debug("handleSuspectClaimRequest() - claim good! "
                    + Integer.toString(client_id));
       Data.Player.Builder player = getPlayerById(client_id);
-      player.setSuspect(req.getSuspect());
-      
-      // randomly assign a starting room for the player
-      int idx = ThreadLocalRandom.current().nextInt(0, roomLocations.size());
-      Data.Location location = roomLocations.get(idx);
-      player.setLocation(location);
+      player.setSuspect( req.getSuspect() );
+      // assign starting location based on picture in PDF
+      player.setLocation( suspectStartingLocation(req.getSuspect()) );
     }
 
     // Send response back to client
@@ -178,6 +205,7 @@ public class GameLogic implements MessageHandler {
       suspects.add(Data.Suspect.SUS_MR_GREEN);
       suspects.add(Data.Suspect.SUS_MRS_PEACOCK);
       suspects.add(Data.Suspect.SUS_PROF_PLUM);
+      ArrayList<Data.Suspect> all_suspects = new ArrayList<Data.Suspect>(suspects);
 
       ArrayList<Data.Location> locations = new ArrayList<Data.Location>();
       locations.add(Data.Location.LOC_STUDY);
@@ -250,6 +278,30 @@ public class GameLogic implements MessageHandler {
                      + msg.toString());
         router.route(new Message(msg.getHeader(), msg));
       }
+
+      // add all of the inactive characters
+      int inactive_client_id = 100;
+      for (Data.Suspect suspect : all_suspects) {
+
+        Data.Player.Builder suspect_player = null;
+        for (Data.Player.Builder player : state.getPlayersBuilderList()) {
+          if ( player.getSuspect() == suspect ) {
+            suspect_player = player;
+            break;
+          }
+        }
+
+        if (suspect_player == null) {
+          Data.Player.Builder player = state.addPlayersBuilder();
+          player.setClientId( inactive_client_id++ );
+          player.setName( "* " + suspectToString(suspect) + " *" );
+          player.setMadeFalseAccusation(false);
+          player.setInactive(true);
+          player.setSuspect(suspect);
+          player.setLocation( suspectStartingLocation(suspect) );
+        }
+      }
+
       
       // choose a player to start and
       // tell all clients that the game has started
@@ -266,7 +318,8 @@ public class GameLogic implements MessageHandler {
       // a turn.
       // @note: they are still kept in the list because they still
       // need to be able to disprove suggestions
-      if ( !player.getMadeFalseAccusation() ) {
+      if ( player.getInactive() == false &&
+           player.getMadeFalseAccusation() == false ) {
         client_ids.add(player.getClientId());
       }
     }
@@ -286,9 +339,11 @@ public class GameLogic implements MessageHandler {
 
       // Determine if a player has chosen Miss Scarlett
       int miss_scarlett_idx = -1;
-      for (int i = 0; i < state.getPlayersBuilderList().size(); ++i) {
-        Data.Player.Builder player = state.getPlayersBuilderList().get(i);
-        if (player.getSuspect() == Data.Suspect.SUS_MISS_SCARLETT) {
+      for (int i = 0; i < client_ids.size(); ++i) {
+        int client_id = client_ids.get(i);
+        Data.Player.Builder player = getPlayerById(client_id);
+        if (player.getSuspect() == Data.Suspect.SUS_MISS_SCARLETT &&
+            player.getInactive() == false) {
           miss_scarlett_idx = i;
           break;
         }
@@ -301,7 +356,7 @@ public class GameLogic implements MessageHandler {
         next_index = miss_scarlett_idx;
       } else {
         logger.debug("advanceTurn() - Miss Scarlett is NOT playing picking at random!");
-        next_index = ThreadLocalRandom.current().nextInt(0, state.getPlayersBuilderList().size());
+        next_index = ThreadLocalRandom.current().nextInt(0, client_ids.size());
       }
       
     } else {
@@ -313,6 +368,7 @@ public class GameLogic implements MessageHandler {
     }
 
     int next_client_id = client_ids.get(next_index);
+    
     logger.debug("advanceTurn() - previous player's turn = " + prev_client_id);
     logger.debug("advanceTurn() - next player's turn = " + next_client_id);
     
@@ -433,6 +489,22 @@ public class GameLogic implements MessageHandler {
   }
 
   public void handlePlayerSuggestion(Msg.PlayerSuggestion req) {
+    // move the player who is the character in the suggestion to the
+    // room in the suggestion    
+    for (Data.Player.Builder player : state.getPlayersBuilderList()) {      
+      if (req.getSolution().getSuspect() == player.getSuspect()) {
+        Msg.PlayerMove move = Msg.PlayerMove.newBuilder()
+            .setHeader(Msg.Header.newBuilder()
+                       .setMsgType(Msg.DisproveRequest.getDescriptor().getFullName())
+                       .setSource(player.getClientId())
+                       .setDestination(Instance.getId())
+                       .build())
+            .setDestination(req.getSolution().getLocation())
+            .build();
+        handlePlayerMove(move);
+      }
+    }
+    
     // Round-robin send Msg.DisproveRequest to clients
 
     currentSuggestion = req;
@@ -447,7 +519,8 @@ public class GameLogic implements MessageHandler {
     ArrayList<Integer> tmpList = new ArrayList<Integer>();
     int clientId = req.getHeader().getSource();
     for (Data.Player.Builder player : state.getPlayersBuilderList()) {
-      if (player.getClientId() != clientId) {
+      if (player.getClientId() != clientId &&
+          player.getInactive() == false) {
         currentSuggestionClientList.add(player.getClientId());
       }
     }

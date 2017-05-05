@@ -55,6 +55,7 @@ message Player {
   optional Suspect suspect = 3;
   optional Location location = 4;
   optional bool madeFalseAccusation = 5 [default = false];
+  optional bool inactive            = 6 [default = false];
 }
 
 enum GameStatus {
