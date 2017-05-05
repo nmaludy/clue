@@ -6,6 +6,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import java.util.*;
+
 import com.clue.app.Logger;
 import com.clue.app.Instance;
 
@@ -23,6 +25,9 @@ public class SuspectButtonPanel extends JPanel
   private JRadioButton MrGreenButton;
   private JRadioButton MrsPeacockButton;
   private JRadioButton ProfPlumButton;
+
+  private ArrayList<JRadioButton> buttonList = new ArrayList<JRadioButton>();
+  
   private ButtonGroup SuspectGroup;
   
   // Panel Constructor
@@ -46,6 +51,13 @@ public class SuspectButtonPanel extends JPanel
     SuspectGroup.add( MsScarlettButton );
     SuspectGroup.add( MrsPeacockButton );
     SuspectGroup.add( ProfPlumButton );
+
+    buttonList.add( MrGreenButton );
+    buttonList.add( MrsWhiteButton );
+    buttonList.add( ColMustardButton );
+    buttonList.add( MsScarlettButton );
+    buttonList.add( MrsPeacockButton );
+    buttonList.add( ProfPlumButton );
 
     // Create the button border
     Border buttonSuspectBorder = BorderFactory.createEtchedBorder();
@@ -99,8 +111,7 @@ public class SuspectButtonPanel extends JPanel
   public void disableClaimedSuspects(Msg.GameState state)
   {
     logger.debug("disableClaimedSuspects() - disabling based on received state");
-    for (Data.Player player : state.getPlayersList())
-    {
+    for (Data.Player player : state.getPlayersList()) {
       logger.debug("disableClaimedSuspects() - disabling suspect: "
                    + player.getSuspect().name());
       switch (player.getSuspect())
@@ -123,6 +134,12 @@ public class SuspectButtonPanel extends JPanel
         case SUS_PROF_PLUM:
           ProfPlumButton.setEnabled(false);
           break;
+      }
+    }
+
+    for (JRadioButton button : buttonList) {
+      if (button.isSelected() && button.isEnabled() == false) {
+        SuspectGroup.clearSelection();
       }
     }
   }

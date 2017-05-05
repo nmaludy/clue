@@ -79,12 +79,12 @@ public class GameLogic implements MessageHandler {
     // see picture in game description PDF
     switch (suspect) {
       case SUS_NONE:          return Data.Location.LOC_NONE;
-      case SUS_MISS_SCARLETT: return Data.Location.LOC_HALLWAY_1;
-      case SUS_COL_MUSTARD:   return Data.Location.LOC_HALLWAY_4;
-      case SUS_MRS_WHITE:     return Data.Location.LOC_HALLWAY_11;
-      case SUS_MR_GREEN:      return Data.Location.LOC_HALLWAY_10;
-      case SUS_MRS_PEACOCK:   return Data.Location.LOC_HALLWAY_7;
-      case SUS_PROF_PLUM:     return Data.Location.LOC_HALLWAY_2;
+      case SUS_MISS_SCARLETT: return Data.Location.LOC_HOME;
+      case SUS_COL_MUSTARD:   return Data.Location.LOC_HOME;
+      case SUS_MRS_WHITE:     return Data.Location.LOC_HOME;
+      case SUS_MR_GREEN:      return Data.Location.LOC_HOME;
+      case SUS_MRS_PEACOCK:   return Data.Location.LOC_HOME;
+      case SUS_PROF_PLUM:     return Data.Location.LOC_HOME;
     }
     return Data.Location.LOC_NONE;
   }

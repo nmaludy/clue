@@ -456,10 +456,37 @@ public class MovePanel extends JPanel implements ActionListener, ComponentListen
         buttons.add(BallroomButton);
         buttons.add(KitchenButton);
         break;
-    }
+      case LOC_HOME:
+        Data.Player my_player = ClientState.getInstance().getPlayerById(Instance.getId());
+        switch (my_player.getSuspect()) {
+          case SUS_NONE:
+            break;
+          case SUS_MISS_SCARLETT:
+            buttons.add( Hallway1Button );
+            break;
+          case SUS_COL_MUSTARD:
+            buttons.add( Hallway4Button );
+            break;
+          case SUS_MRS_WHITE:
+            buttons.add( Hallway11Button );
+            break;
+          case SUS_MR_GREEN:
+            buttons.add( Hallway10Button );
+            break;
+          case SUS_MRS_PEACOCK:
+            buttons.add( Hallway7Button );
+            break;
+          case SUS_PROF_PLUM:
+            buttons.add( Hallway2Button );
+            break;
+        } // end suspect
+        break;
+    } // end location
 
     // disable the current button
-    current_button.setEnabled(false);
+    if (current_button != null) {
+      current_button.setEnabled(false);
+    }
 
     // enable the valid moves
     for (JRadioButton button : buttons) {

@@ -171,6 +171,7 @@ public class GUIpanel extends JPanel {
     Data.Location dataHallway9 = Data.Location.LOC_HALLWAY_9;
     Data.Location dataHallway10 = Data.Location.LOC_HALLWAY_10;
     Data.Location dataHallway11 = Data.Location.LOC_HALLWAY_11;
+    Data.Location dataHome      = Data.Location.LOC_HOME;
 
     // Place Ms. Scarlett in Upper Left Corner of Room Or Center of Hallway
     if (suspect == dataMsScarlett)
@@ -196,6 +197,7 @@ public class GUIpanel extends JPanel {
       else if (location == dataHallway9)    { pMsScarlett[0]=10;  pMsScarlett[1]=13; }
       else if (location == dataHallway10)   { pMsScarlett[0]=13;  pMsScarlett[1]=4; }
       else if (location == dataHallway11)   { pMsScarlett[0]=13;  pMsScarlett[1]=10; }
+      else if (location == dataHome)        { pMsScarlett[0]=0;   pMsScarlett[1]=10; }
     }
     // Place Col. Mustard in Upper Middle of Room Or Center of Hallway
     else if (suspect == dataColMustard)
@@ -221,6 +223,7 @@ public class GUIpanel extends JPanel {
       else if (location == dataHallway9)    { pColMustard[0]=10;  pColMustard[1]=13; }
       else if (location == dataHallway10)   { pColMustard[0]=13;  pColMustard[1]=4; }
       else if (location == dataHallway11)   { pColMustard[0]=13;  pColMustard[1]=10; }
+      else if (location == dataHome)        { pColMustard[0]=4;   pColMustard[1]=14; }
     }
     // Place Mrs. White in Upper Right of Room Or Center of Hallway
     else if (suspect == dataMrsWhite)
@@ -246,6 +249,7 @@ public class GUIpanel extends JPanel {
       else if (location == dataHallway9)    { pMrsWhite[0]=10;    pMrsWhite[1]=13; }
       else if (location == dataHallway10)   { pMrsWhite[0]=13;    pMrsWhite[1]=4; }
       else if (location == dataHallway11)   { pMrsWhite[0]=13;    pMrsWhite[1]=10; }
+      else if (location == dataHome)        { pMrsWhite[0]=14;    pMrsWhite[1]=10; }
     }
     // Place Mr. Green in Lower Left Corner of Room Or Center of Hallway
     else if (suspect == dataMrGreen)
@@ -271,6 +275,7 @@ public class GUIpanel extends JPanel {
       else if (location == dataHallway9)    { pMrGreen[0]=10;   pMrGreen[1]=13; }
       else if (location == dataHallway10)   { pMrGreen[0]=13;     pMrGreen[1]=4; }
       else if (location == dataHallway11)   { pMrGreen[0]=13;   pMrGreen[1]=10; }
+      else if (location == dataHome)        { pMrGreen[0]=14;   pMrGreen[1]=4; }
     }
     // Place Mrs. Peacock in Lower Middle of Room Or Center of Hallway
     else if (suspect == dataMrsPeacock)
@@ -296,6 +301,7 @@ public class GUIpanel extends JPanel {
       else if (location == dataHallway9)    { pMrsPeacock[0]=10;  pMrsPeacock[1]=13; }
       else if (location == dataHallway10)   { pMrsPeacock[0]=13;  pMrsPeacock[1]=4; }
       else if (location == dataHallway11)   { pMrsPeacock[0]=13;  pMrsPeacock[1]=10; }
+      else if (location == dataHome)        { pMrsPeacock[0]=10;  pMrsPeacock[1]=0; }
     }
     // Place Prof. Plum in Lower Right of Room Or Center of Hallway
     else if (suspect == dataProfPlum)
@@ -321,6 +327,7 @@ public class GUIpanel extends JPanel {
       else if (location == dataHallway9)    { pProfPlum[0]=10;    pProfPlum[1]=13; }
       else if (location == dataHallway10)   { pProfPlum[0]=13;    pProfPlum[1]=4; }
       else if (location == dataHallway11)   { pProfPlum[0]=13;    pProfPlum[1]=10; }
+      else if (location == dataHome)        { pProfPlum[0]=4;     pProfPlum[1]=0; }
     }
 
     repaint();

@@ -37,6 +37,7 @@ enum Location {
   LOC_HALLWAY_9 = 18;
   LOC_HALLWAY_10 = 19;
   LOC_HALLWAY_11 = 20;
+  LOC_HOME       = 21;
 }
 
 enum Weapon {
