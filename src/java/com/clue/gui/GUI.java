@@ -38,6 +38,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
 
   private JButton connectButton = new JButton("Connect");
   private JButton startButton = new JButton("Start");
+  private JButton accusationButton = new JButton("Make Accusation");
 
   private PlayersPanel playersPanel = new PlayersPanel(this);
   private GUIpanel panel = new GUIpanel();
@@ -52,6 +53,9 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
   private TurnEndFrame turnEndFrame = new TurnEndFrame(this, router );
   private GameEndFrame gameEndFrame = new GameEndFrame(this, router );
 
+  private SuggestionAccusationFrame newAccusationFrame =
+	      new SuggestionAccusationFrame(this, router, SuggestionAccusationFrame.Type.TYPE_ACCUSATION);
+	  
   /*
    * Initialze and layout all GUI components.
    */
@@ -67,6 +71,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
             .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(connectButton)
             .addComponent(startButton)
+            .addComponent(accusationButton)
             .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
           .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
             .addComponent(playersPanel)
@@ -77,7 +82,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
         .addGroup(layout.createSequentialGroup()
           .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
             .addComponent(connectButton)
-            .addComponent(startButton) )
+            .addComponent(startButton)
+          	.addComponent(accusationButton) )
           .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
             .addComponent(playersPanel)
             .addComponent(panel, 600, 600, 600)
@@ -87,9 +93,11 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     
     connectButton.addActionListener(this);
     startButton.addActionListener(this);
+    accusationButton.addActionListener(this);
 
     connectButton.setEnabled(true);
     startButton.setEnabled(false);
+    accusationButton.setEnabled(false);
 
     setTitle("Clue-less : " + ClientState.getInstance().getName());
     pack();
@@ -105,6 +113,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     moveFrame.setVisible(false);
     suggestionAccusationFrame.setState(JFrame.ICONIFIED);
     suggestionAccusationFrame.setVisible(false);
+    newAccusationFrame.setState(JFrame.ICONIFIED);
+    newAccusationFrame.setVisible(false);
     disproveFrame.setState(JFrame.ICONIFIED);
     disproveFrame.setVisible(false);
     turnEndFrame.setState(JFrame.ICONIFIED);
@@ -134,6 +144,8 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
       connect();
     } else if (e.getSource().equals(startButton)) {
       start();
+    } else if (e.getSource().equals(accusationButton)) {
+      anytimeAccusation();
     }
   }
 
@@ -172,6 +184,12 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     suggestionAccusationFrame.setSolution(solution);
   }
 
+  public void anytimeAccusation() {
+	newAccusationFrame.setVisible( true );
+    newAccusationFrame.setState(JFrame.NORMAL);
+    newAccusationFrame.setType(SuggestionAccusationFrame.Type.TYPE_ACCUSATION);
+  }
+
   public void disprove(Msg.DisproveRequest disprove) {
     disproveFrame.setVisible( true );
     disproveFrame.setState(JFrame.NORMAL);
@@ -208,6 +226,7 @@ public class GUI extends JFrame implements ActionListener, MessageHandler {
     if (response.getClaimSuccess()) {
       connectButton.setEnabled(false);
       startButton.setEnabled(true);
+      accusationButton.setEnabled(true);
     } else {
       logger.error("ERROR: Suspect already in use!");
     }
